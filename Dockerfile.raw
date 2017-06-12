@@ -1,0 +1,19 @@
+from $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Install app dependencies
+COPY lib-$DOCKER_IMAGE lib
+RUN $BUILD_COMMAND
+
+# Copy GCP Service Account keyfile
+COPY keyfile-gcp-$STAGE.json /usr/src/app/keyfile.json
+
+# Setting environment variables
+ENV STAGE=$STAGE
+ENV AWS_PROJ_ID=$AWS_PROJ_ID
+ENV GCP_PROJ_ID=$GCP_PROJ_ID
+ENV API_END_POINT=$API_END_POINT
+ENV GOOGLE_APPLICATION_CREDENTIALS=/usr/src/app/keyfile.json
