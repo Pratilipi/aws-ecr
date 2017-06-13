@@ -3,7 +3,7 @@ STAGE=$2
 APP_NAME=$3
 APP_VERSION=$4
 
-if [ "$COMMAND" != "create" -a "$COMMAND" != "build" -a "$COMMAND" != "push" -a "$COMMAND" != "delete" ] || [ "$STAGE" != "devo" -a "$STAGE" != "prod" ] || [ "$APP_NAME" == "" ]
+if [ "$COMMAND" != "create" -a "$COMMAND" != "build" -a "$COMMAND" != "push" -a "$COMMAND" != "update" -a "$COMMAND" != "delete" ] || [ "$STAGE" != "devo" -a "$STAGE" != "prod" ] || [ "$APP_NAME" == "" ]
 then
   echo "syntax: bash build-app.sh <command> <stage> <app-name> <app-version>"
   exit 0
@@ -28,7 +28,7 @@ if [ $COMMAND == "create" ]
 then
 
   aws ecr create-repository --repository-name $APP_NAME
-# Create a service with node:hello-world task-def
+  aws ecs create-service --cluster pratilipi-$STAGE-ecs --service-name $APP_NAME --task-definition hello-world_with_node:2 --desired-count 1
 
 elif [ $COMMAND == "build" ]
 then
@@ -53,6 +53,28 @@ then
   sudo docker build --tag $ECR_IMAGE .
   sudo docker push $ECR_IMAGE
   aws ecs register-task-definition --cli-input-json file://ecr-task-def.json
+  rm Dockerfile
+  rm ecr-task-def.json
+
+elif [ $COMMAND == "update" ]
+then
+
+  cat Dockerfile.raw \
+    | sed "s/\$DOCKER_REPO/$ECR_REPO/g" \
+    > Dockerfile
+  cat ecr-task-def.raw \
+    | sed "s/\$AWS_PROJ_ID/$AWS_PROJ_ID/g" \
+    | sed "s/\$APP_NAME/$APP_NAME/g" \
+    | sed "s/\$APP_VERSION/$APP_VERSION/g" \
+    > ecr-task-def.json
+  sudo docker build --tag $ECR_IMAGE .
+  sudo docker push $ECR_IMAGE
+  TASK_DEF_VER=$(aws ecs register-task-definition --cli-input-json file://ecr-task-def.json | grep -Po '"revision": \K[0-9]+')
+  aws ecs update-service \
+    --cluster pratilipi-$STAGE-ecs \
+    --service $APP_NAME \
+    --desired-count 1 \
+    --task-definition $APP_NAME:$TASK_DEF_VER
   rm Dockerfile
   rm ecr-task-def.json
 
