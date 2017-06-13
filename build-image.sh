@@ -38,8 +38,8 @@ cat Dockerfile.raw \
   | sed "s/\$API_END_POINT/$API_END_POINT/g" \
   | sed "s/\$BUILD_COMMAND/$BUILD_COMMAND/g" \
   > Dockerfile
-sudo docker build --tag $ECR_IMAGE .
-rm Dockerfile
 
+sudo docker build --tag $ECR_IMAGE .
 sudo docker push $ECR_IMAGE
 
+rm Dockerfile
