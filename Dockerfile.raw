@@ -8,6 +8,15 @@ WORKDIR /usr/src/app
 COPY lib-$DOCKER_IMAGE lib
 RUN $BUILD_COMMAND
 
+RUN ls
+RUN ls
+RUN ls
+RUN ls lib
+RUN ls node_modules
+
+RUN ls lib
+RUN ls node_modules
+
 # Copy GCP Service Account keyfile
 COPY keyfile-gcp-$STAGE.json /usr/src/app/keyfile.json
 
