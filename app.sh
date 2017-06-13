@@ -3,7 +3,7 @@ STAGE=$2
 APP_NAME=$3
 APP_VERSION=$4
 
-if [ "$COMMAND" != "create" -a "$COMMAND" != "build" -a "$COMMAND" != "push" -a ] || [ "$STAGE" != "devo" -a "$STAGE" != "prod" ] || [ "$APP_NAME" == "" ]
+if [ "$COMMAND" != "create" -a "$COMMAND" != "build" -a "$COMMAND" != "push" -a "$COMMAND" != "delete" ] || [ "$STAGE" != "devo" -a "$STAGE" != "prod" ] || [ "$APP_NAME" == "" ]
 then
   echo "syntax: bash build-app.sh <command> <stage> <app-name> <app-version>"
   exit 0
