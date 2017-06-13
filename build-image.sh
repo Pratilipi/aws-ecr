@@ -23,7 +23,7 @@ fi
 
 if [ $DOCKER_IMAGE == "node" ]
 then
-  BUILD_COMMAND="npm install lib"
+  BUILD_COMMAND="npm install --prefix .. lib"
 fi
 
 ECR_IMAGE=$AWS_PROJ_ID.dkr.ecr.ap-southeast-1.amazonaws.com/$DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
