@@ -13,7 +13,7 @@ if [ $STAGE == "devo" ]
 then
   AWS_PROJ_ID="381780986962"
   GCP_PROJ_ID="devo-pratilipi"
-  API_END_POINT="internal-pratilipi-devo-elb-internal-2113898828.ap-southeast-1.elb.amazonaws.com"
+  API_END_POINT="internal-devo-lb-pvt-1359086914.ap-southeast-1.elb.amazonaws.com"
 elif [ $STAGE == "prod" ]
 then
   AWS_PROJ_ID="to-do"
