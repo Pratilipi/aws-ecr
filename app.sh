@@ -25,10 +25,10 @@ elif [ $STAGE == "prod" ]
 then
   AWS_PROJ_ID="370531249777"
   VPC_ID="vpc-c13c7da5"
-  LB_LISTNER="arn:aws:elasticloadbalancing:ap-southeast-1:370531249777:listener/app/prod-lb-pvt/5d4cd78e25a127b4/cf1e0ebdc85f1320"
+  LB_LISTNER="arn:aws:elasticloadbalancing:ap-southeast-1:370531249777:listener/app/prod-lb-pvt/bfbfa36e82445261/0104e43e491b57f8"
 fi
 
-ECR_REPO=$AWS_PROJ_ID.dkr.ecr.ap-southeast-1.amazonaws.com
+ECR_REPO=$AWS_PROJ_ID.dkr.ecr.ap-southeast-1.amazonaws.com/$STAGE
 ECR_IMAGE=$ECR_REPO/$APP_NAME:$APP_VERSION
 
 
@@ -37,19 +37,19 @@ if [ $COMMAND == "create" ]
 then
 
   cat Dockerfile.raw \
-    | sed "s/\$DOCKER_REPO/$ECR_REPO/g" \
+    | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   cat ecr-task-def.raw \
-    | sed "s/\$AWS_PROJ_ID/$AWS_PROJ_ID/g" \
-    | sed "s/\$APP_NAME/$APP_NAME/g" \
-    | sed "s/\$APP_VERSION/$APP_VERSION/g" \
+    | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
+    | sed "s#\$APP_NAME#$APP_NAME#g" \
+    | sed "s#\$APP_VERSION#$APP_VERSION#g" \
     > ecr-task-def.json
 
-  aws ecr create-repository --repository-name $APP_NAME >> /dev/null 2>&1
-  echo ... create ecr repository: $APP_NAME
+  aws ecr create-repository --repository-name $STAGE/$APP_NAME >> /dev/null 2>&1
+  echo ... create ecr repository: $STAGE/$APP_NAME
 
   TARGET_GRP=$(aws elbv2 create-target-group \
-    --name ecs-$APP_NAME-tg \
+    --name ecs-$STAGE-$APP_NAME-tg \
     --protocol HTTP \
     --port 80 \
     --vpc-id $VPC_ID \
@@ -97,7 +97,7 @@ elif [ $COMMAND == "build" ]
 then
 
   cat Dockerfile.raw \
-    | sed "s/\$DOCKER_REPO/$ECR_REPO/g" \
+    | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   sudo docker build --tag $ECR_IMAGE .
   rm Dockerfile
@@ -106,7 +106,7 @@ elif [ $COMMAND == "run" ]
 then
 
   cat Dockerfile.raw \
-    | sed "s/\$DOCKER_REPO/$ECR_REPO/g" \
+    | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   sudo docker build --tag $ECR_IMAGE .
   rm Dockerfile
@@ -116,14 +116,15 @@ elif [ $COMMAND == "push" ]
 then
 
   cat Dockerfile.raw \
-    | sed "s/\$DOCKER_REPO/$ECR_REPO/g" \
+    | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   cat ecr-task-def.raw \
-    | sed "s/\$AWS_PROJ_ID/$AWS_PROJ_ID/g" \
-    | sed "s/\$APP_NAME/$APP_NAME/g" \
-    | sed "s/\$APP_VERSION/$APP_VERSION/g" \
+    | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
+    | sed "s#\$APP_NAME#$APP_NAME#g" \
+    | sed "s#\$APP_VERSION#$APP_VERSION#g" \
     > ecr-task-def.json
   sudo docker build --tag $ECR_IMAGE .
+  sudo $(aws ecr get-login)
   sudo docker push $ECR_IMAGE
   aws ecs register-task-definition --cli-input-json file://ecr-task-def.json
   rm Dockerfile
@@ -133,14 +134,15 @@ elif [ $COMMAND == "update" ]
 then
 
   cat Dockerfile.raw \
-    | sed "s/\$DOCKER_REPO/$ECR_REPO/g" \
+    | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   cat ecr-task-def.raw \
-    | sed "s/\$AWS_PROJ_ID/$AWS_PROJ_ID/g" \
-    | sed "s/\$APP_NAME/$APP_NAME/g" \
-    | sed "s/\$APP_VERSION/$APP_VERSION/g" \
+    | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
+    | sed "s#\$APP_NAME#$APP_NAME#g" \
+    | sed "s#\$APP_VERSION#$APP_VERSION#g" \
     > ecr-task-def.json
   sudo docker build --tag $ECR_IMAGE .
+  sudo $(aws ecr get-login)
   sudo docker push $ECR_IMAGE
   TASK_DEF_VER=$(aws ecs register-task-definition --cli-input-json file://ecr-task-def.json | grep -Po '"revision": \K[0-9]+')
   aws ecs update-service \
