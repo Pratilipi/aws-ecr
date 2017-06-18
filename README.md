@@ -17,8 +17,14 @@
 
 ### Amit ###
 * [Image Service](https://github.com/Pratilipi/ecs-image)
-* Resource allocation, auto-scaling and load testing (for all services)
+* PWA front-end on ECS
+* Resource allocation, auto-scaling and load testing
+  - For all services
 
 ### Gauri ###
 * [Search Service](https://github.com/Pratilipi/search)
-* Logging, metrics & alarms (for all services)
+* Logging, metrics & alarms
+  - For all services
+
+### Prashant ###
+* [GAE Port](https://github.com/Pratilipi/ecs-gae)
