@@ -1,12 +1,12 @@
 module.exports = datastoreUtility;
 
-var datastoreClient = require( '@google-cloud/datastore' );
+var datastore = require( '@google-cloud/datastore' );
 
 function datastoreUtility ( config ) {
 
   // private data
   var resourceType = config.resourceType;
-  datastore = datastoreClient( { projectId: config.projectId } );
+  datastore = datastore( { projectId: config.projectId } );
   // API/data for end-user
   return {
 
@@ -23,17 +23,17 @@ function datastoreUtility ( config ) {
 
     getResourcesFromDb: function( ids ) {
       var keys = ids
+      // .map( parseInt ) // TODO: find why it didnt work
       .map( ( id ) => {
-        var keyValue = isNaN( id ) ? id : parseInt( id );
-        return datastore.key( [ resourceType, keyValue ] );
+        return datastore.key( [ resourceType, parseInt( id ) ] );
       })
       ;
+
       return datastore.get( keys )
       .then( ( res ) => {
         res[ 0 ].forEach( ( entity, index ) => {
-          // TODO: check once if it also works for numeric ids
-          var keyValue = entity[ datastore.KEY ].id ? parseInt( entity[ datastore.KEY ].id ) : entity[ datastore.KEY ].name;
-          entity.id = keyValue;
+          // ids[ index ] = entity[ datastore.KEY ].id;
+          entity.id = parseInt( entity[ datastore.KEY ].id );
         } );
         return res[ 0 ];
       })
@@ -62,10 +62,36 @@ function datastoreUtility ( config ) {
         var arrayEntity = entities[ 0 ];
         for( var i = 0; i < arrayEntity.length; i++ ) {
           var objectEntity = arrayEntity[ i ];
-          objectEntity.id = objectEntity[ datastore.KEY ].id;
+          objectEntity.id = parseInt(objectEntity[ datastore.KEY ].id);
         }
         return arrayEntity;
       } );
+    },
+
+    insertResourceInDb: function( kind, data ) {
+      var key = datastore.key([kind]);
+      var task = {
+        key: key,
+        data: data
+      };
+      return datastore.save(task)
+      .then(() => {
+        return parseInt(task.key.id);
+      });
+    },
+
+    updateResourceInDb: function( kind, id, data ) {
+      var key = datastore.key([kind,id]);
+      var task = {
+        key: key,
+        data: data
+      };
+      return datastore.save(task);
+    },
+
+   deleteResourceInDb: function( kind, id ) {
+     var key = datastore.key([kind,id]);
+     return datastore.delete(key);
     }
   };
 }
