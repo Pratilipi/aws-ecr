@@ -5,8 +5,10 @@
   "author": "Prashant",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/monitoring": "^0.2.0",
-    "googleapis": "^18.0.0",
-    "redis": "^2.7.1"
+    "@google-cloud/monitoring": "0.2.0",
+    "googleapis": "18.0.0",
+    "redis": "2.7.1",
+    "@google-cloud/datastore": "1.0.0",
+    "bluebird": "3.5.0"
   }
 }
