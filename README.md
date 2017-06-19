@@ -28,3 +28,5 @@
 
 ### Prashant ###
 * [GAE Port](https://github.com/Pratilipi/ecs-gae)
+* Deployment scrips and continuous integration
+  - For all services
