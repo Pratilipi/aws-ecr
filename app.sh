@@ -40,6 +40,7 @@ then
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   cat ecr-task-def.raw \
+    | sed "s#\$STAGE#$STAGE#g" \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     | sed "s#\$APP_NAME#$APP_NAME#g" \
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
@@ -119,6 +120,7 @@ then
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   cat ecr-task-def.raw \
+    | sed "s#\$STAGE#$STAGE#g" \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     | sed "s#\$APP_NAME#$APP_NAME#g" \
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
@@ -137,6 +139,7 @@ then
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   cat ecr-task-def.raw \
+    | sed "s#\$STAGE#$STAGE#g" \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     | sed "s#\$APP_NAME#$APP_NAME#g" \
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
