@@ -10,7 +10,7 @@ function datastoreUtility ( config ) {
   function getKey( id ) {
     return datastore.key([ kind, id ]);
   }
-  
+
   function processEntity( entity ) {
     entity[ kind + '_ID' ] = entity[ datastore.KEY ].id
       ? entity[ datastore.KEY ].id
@@ -21,7 +21,7 @@ function datastoreUtility ( config ) {
   function processEntities( entities ) {
     entities.forEach( ( entity, index ) => {
       entities[ index ] = processEntity( entity );
-    }
+    } );
     return entities;
   }
 
@@ -37,26 +37,26 @@ function datastoreUtility ( config ) {
       var keys = ids.map( ( id ) => { return getKey( id ); } );
       return datastore.get( keys ).then( ( data ) => {
         var entityMap = {};
-        processEntities( data[ 0 ] ).forEach( entity ) {
+        processEntities( data[ 0 ] ).forEach( ( entity ) => {
           entityMap[ entity[ kind + '_ID' ] ] = entity;
-        }
+        } );
         var entities = [];
-        ids.forEach( id ) {
+        ids.forEach( ( id ) => {
           entities.push( entityMap[ id ] );
-        }
+        } );
       } );
     },
 
     runQuery: function( filter, orderBy, cursor, offset, limit ) {
 
       var query = datastore.createQuery( kind );
-      
+
       if( filter != null ) {
         for( var i = 0; i < filter.length; i++ ) {
           query.filter(
             filter[ i ][ 0 ], // property
             filter[ i ][ 1 ], // operator
-            filter[ i ][ 2 ], ); // value
+            filter[ i ][ 2 ] ); // value
          }
       }
 
@@ -70,19 +70,22 @@ function datastoreUtility ( config ) {
         });
       }
 
-      if( cursor != null )
+      if( cursor != null ) {
         query.start( cursor );
-        
-      if( offset != null )
+      }
+
+      if( offset != null ) {
         query.offset( offset );
-      
-      if( limit != null )
+      }
+
+      if( limit != null ) {
         query.limit( limit );
-      
+      }
+
       return datastore.runQuery( query ).then( ( data ) => {
         return processEntities( data[ 0 ] );
       } );
-    
+
     },
 
     save: function( id, data ) {
@@ -98,8 +101,7 @@ function datastoreUtility ( config ) {
    delete: function( kind, id ) {
      return datastore.delete( getKey( id ) );
     }
-    
-  };
-  
-}
 
+  };
+
+}
