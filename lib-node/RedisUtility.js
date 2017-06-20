@@ -8,10 +8,11 @@ function redisUtility ( config ) {
 
   // private data
   var resourceType = config.resourceType;
-  var redisClient = redisModule.createClient( config.port, config.hostIp );
+  var db = config.db;
+  var redisClient = redisModule.createClient( config.port, config.hostIp,{'db':db} );
 
   redisClient.on( 'connect', () => {
-    console.log( 'connected' );
+    console.log( 'Redis Connected');
   });
 
   // API/data for end-user
@@ -36,7 +37,8 @@ function redisUtility ( config ) {
     insertResourcesInRedis: function( ids, entities ) {
 
       var arrayCombined = ids.reduce( ( arr, v, i ) => {
-        return arr.concat( v, JSON.stringify( entities[ i ] ) );  //combine ids and entities alternative acc to redis syntax
+        //combine ids and entities alternative acc to redis syntax
+        return arr.concat( v, JSON.stringify( entities[ i ] ) );
       }, [] );
 
       return redisClient.msetAsync( ...arrayCombined );
@@ -50,6 +52,14 @@ function redisUtility ( config ) {
     setListItems: function( key, values ) {
 
       return redisClient.rpushAsync( key, ...values );
+    },
+
+    updateResourceInRedis: function( id, entity ) {
+      return redisClient.setAsync( id, JSON.stringify( entity ) );
+    },
+
+    deleteResourceInRedis: function( id ) {
+      return redisClient.delAsync( id );
     }
   };
 
