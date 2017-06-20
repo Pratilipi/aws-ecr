@@ -40,6 +40,7 @@ then
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   cat ecr-task-def.raw \
+    | sed "s#\$STAGE#$STAGE#g" \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     | sed "s#\$APP_NAME#$APP_NAME#g" \
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
@@ -119,6 +120,7 @@ then
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   cat ecr-task-def.raw \
+    | sed "s#\$STAGE#$STAGE#g" \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     | sed "s#\$APP_NAME#$APP_NAME#g" \
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
@@ -137,6 +139,7 @@ then
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
   cat ecr-task-def.raw \
+    | sed "s#\$STAGE#$STAGE#g" \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     | sed "s#\$APP_NAME#$APP_NAME#g" \
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
@@ -144,7 +147,7 @@ then
   sudo docker build --tag $ECR_IMAGE .
   sudo $(aws ecr get-login)
   sudo docker push $ECR_IMAGE
-  TASK_DEF_VER=$(aws ecs register-task-definition --cli-input-json file://ecr-task-def.json | grep -Po '"revision": \K[0-9]+')
+  TASK_DEF_VER=$(aws ecs register-task-definition --cli-input-json file://ecr-task-def.json | grep -Eo '"revision": *[0-9]+' | grep -Eo [0-9]+)
   aws ecs update-service \
     --cluster $STAGE-ecs \
     --service $APP_NAME \
