@@ -3,57 +3,66 @@ var expect = require('chai').expect;
 
 
 var config = {
-	resourceType: 'TEST',
-	port: 6379,
-	hostIp: 'localhost',
-	db: 15
+  resourceType: 'TEST',
+  port: 6379,
+  hostIp: 'localhost',
+  db: 15
 };
 
 var redisUtility = require('../redisUtility')(config);
 
 describe('Single Get', function() {
-	var testObject = {id: 5164567311155200, text: 'TestEntity'};
+  var testObject = {id: 5164567311155200, text: 'TestEntity'};
 
   before(function () {
     redisUtility.insertResourceInRedis(testObject.id, testObject);
   });
 
   it('should return an object when a valid param is passed', function (done) {
-  	redisUtility.getResourceFromRedis(testObject.id)
-  		.then(resource => {
-  			expect(resource).to.be.an('object');
-  			expect(resource).to.deep.equal(testObject);
-  			done();
-  		})
-  		;
+    redisUtility.getResourceFromRedis(testObject.id)
+      .then(resource => {
+        expect(resource).to.be.an('object');
+        expect(resource).to.deep.equal(testObject);
+        done();
+      })
+      ;
   });
 
   it('should return a null object when an invalid or unexisting param is passed', function (done) {
-  	redisUtility.getResourceFromRedis('randomKey')
-  		.then(resource => {
-  			expect(resource).to.be.null;
-  			done();
-  		})
-  		;
+    redisUtility.getResourceFromRedis('randomKey')
+      .then(resource => {
+        expect(resource).to.be.null;
+        done();
+      })
+      ;
   }); 
 
   it('should return a error when null param is passed', function (done) {
-  	redisUtility.getResourceFromRedis(null)
-  		.catch(err => {
-  			expect(err.status).to.equal(400);
-  			done();
-  		})
-  		;
+    redisUtility.getResourceFromRedis(null)
+      .catch(err => {
+        expect(err.status).to.equal(400);
+        done();
+      })
+      ;
   }); 
 
   it('should return a error when undefined param is passed', function (done) {
-  	redisUtility.getResourceFromRedis(undefined)
-  		.catch(err => {
-  			expect(err.status).to.equal(400);
-  			done();
-  		})
-  		;
+    redisUtility.getResourceFromRedis(undefined)
+      .catch(err => {
+        expect(err.status).to.equal(400);
+        done();
+      })
+      ;
   }); 
+
+  it('should return a null object when empty string param is passed', function (done) {
+    redisUtility.getResourceFromRedis('')
+      .then(resource => {
+        expect(resource).to.be.null;
+        done();
+      })
+      ;
+  });
 
   after(function () {
     redisUtility.deleteResourceInRedis(testObject.id)
@@ -62,104 +71,104 @@ describe('Single Get', function() {
 }); 
 
 describe('Multiple Get', function() {
-	var testObjects = [
-		{id: 5164567311155200, text: 'TestEntity1'},
-		{id: 12233445566778899, text: 'TestEntity2'}
-	]
-	;
+  var testObjects = [
+    {id: 5164567311155200, text: 'TestEntity1'},
+    {id: 12233445566778899, text: 'TestEntity2'}
+  ]
+  ;
 
-	var testIds = testObjects.map(obj => {
-		return obj.id;
-	});
+  var testIds = testObjects.map(obj => {
+    return obj.id;
+  });
 
   before(function () {
     redisUtility.insertResourcesInRedis(testIds, testObjects);
   });
 
   it('should return an array when a valid array param is passed', function (done) {
-  	redisUtility.getResourcesFromRedis(testIds)
-  		.then(resources => {
-  			expect(resources).to.be.an('array');
-  			expect(resources).to.deep.equal(testObjects);
-  			done();
-  		})
-  		;
+    redisUtility.getResourcesFromRedis(testIds)
+      .then(resources => {
+        expect(resources).to.be.an('array');
+        expect(resources).to.deep.equal(testObjects);
+        done();
+      })
+      ;
   });
 
   it('should return an array of null objects when unexisting params are passed', function (done) {
-  	var incorrectTestIds = [123, 234];
-  	redisUtility.getResourcesFromRedis(incorrectTestIds)
-  		.then(resources => {
-  			expect(resources).to.be.an('array');
-  			expect(resources).to.deep.equal([null, null]);
-  			done();
-  		})
-  		;
+    var incorrectTestIds = [123, 234];
+    redisUtility.getResourcesFromRedis(incorrectTestIds)
+      .then(resources => {
+        expect(resources).to.be.an('array');
+        expect(resources).to.deep.equal([null, null]);
+        done();
+      })
+      ;
   }); 
 
   it('should return a error when one or more params is undefined or null', function (done) {
-  	redisUtility.getResourceFromRedis([null, undefined])
-  		.catch(err => {
-  			expect(err.status).to.equal(400);
-  			done();
-  		})
-  		;
+    redisUtility.getResourceFromRedis([null, undefined])
+      .catch(err => {
+        expect(err.status).to.equal(400);
+        done();
+      })
+      ;
   }); 
 
   after(function () {
-  	for( var i = 0; i < testIds.length; i++) {
-  		redisUtility.deleteResourceInRedis(testIds[i]);
-  	}    
+    for( var i = 0; i < testIds.length; i++) {
+      redisUtility.deleteResourceInRedis(testIds[i]);
+    }    
   });
 
 });
 
 describe('Single Insert', function() {
-	var testObject = {id: 5164567311155200, text: 'TestEntity'};
+  var testObject = {id: 5164567311155200, text: 'TestEntity'};
 
   it('should return okay when a valid key and object are passed', function (done) {
-  	redisUtility.insertResourceInRedis(testObject.id, testObject)
-  		.then(response => {
-  			expect(response).to.equal('OK');
-  			done();
-  		})
-  		;
+    redisUtility.insertResourceInRedis(testObject.id, testObject)
+      .then(response => {
+        expect(response).to.equal('OK');
+        done();
+      })
+      ;
   });
 
   it('should return an error when a null key and valid object are passed', function (done) {
-  	redisUtility.insertResourceInRedis(null, testObject)
-  		.catch(err => {
-  			expect(err.status).to.equal(400);
-  			done();
-  		})
-  		;
+    redisUtility.insertResourceInRedis(null, testObject)
+      .catch(err => {
+        expect(err.status).to.equal(400);
+        done();
+      })
+      ;
   });
 
   it('should return an error when a undefined key and valid object are passed', function (done) {
-  	redisUtility.insertResourceInRedis(undefined, testObject)
-  		.catch(err => {
-  			expect(err.status).to.equal(400);
-  			done();
-  		})
-  		;
+    redisUtility.insertResourceInRedis(undefined, testObject)
+      .catch(err => {
+        expect(err.status).to.equal(400);
+        done();
+      })
+      ;
   });
 
   it('should return an error when a valid key and null object are passed', function (done) {
-  	redisUtility.insertResourceInRedis(testObject.id, null)
-  		.catch(err => {
-  			expect(err.status).to.equal(400);
-  			done();
-  		})
-  		;
+    redisUtility.insertResourceInRedis(testObject.id, null)
+      .catch(err => {
+        expect(err.status).to.equal(400);
+        done();
+      })
+      ;
   });
 
   it('should return an error when a valid key and undefined object are passed', function (done) {
-  	redisUtility.insertResourceInRedis(testObject.id, undefined)
-  		.catch(err => {
-  			expect(err.status).to.equal(400);
-  			done();
-  		})
-  		;
+    redisUtility.insertResourceInRedis(testObject.id, undefined)
+      .catch(err => {
+        expect(err.status).to.equal(400);
+        done();
+      })
+      ;
   });
 
   after(function () {
@@ -182,21 +191,21 @@ describe('Multiple Insert', function() {
   });
 
   it('should return okay when valid keys array and valid objects array are passed', function (done) {
-  	redisUtility.insertResourcesInRedis(testIds, testObjects)
-  		.then(response => {
-  			expect(response).to.equal('OK');
-  			done();
-  		})
-  		;
+    redisUtility.insertResourcesInRedis(testIds, testObjects)
+      .then(response => {
+        expect(response).to.equal('OK');
+        done();
+      })
+      ;
   });
 
   it('should return an error when atleast one keys array item is null and valid objects are passed', function (done) {
-  	redisUtility.insertResourceInRedis([null, 12233445566778899], testObjects)
-  		.catch(err => {
-  			expect(err.status).to.equal(400);
-  			done();
-  		})
-  		;
+    redisUtility.insertResourceInRedis([null, 12233445566778899], testObjects)
+      .catch(err => {
+        expect(err.status).to.equal(400);
+        done();
+      })
+      ;
   });
 
   it('should return an error when atleast one keys array item is undefined and valid objects are passed', function (done) {
@@ -209,21 +218,21 @@ describe('Multiple Insert', function() {
   });
 
   it('should return an error when valid keys and atleast one null object are passed', function (done) {
-  	redisUtility.insertResourceInRedis(testIds, [null, testObjects[1]])
-  		.catch(err => {
-  			expect(err.status).to.equal(400);
-  			done();
-  		})
-  		;
+    redisUtility.insertResourceInRedis(testIds, [null, testObjects[1]])
+      .catch(err => {
+        expect(err.status).to.equal(400);
+        done();
+      })
+      ;
   });
 
   it('should return an error when valid key and atleast one undefined objects are passed', function (done) {
-  	redisUtility.insertResourceInRedis(testIds, [undefined, testObjects[1]])
-  		.catch(err => {
-  			expect(err.status).to.equal(400);
-  			done();
-  		})
-  		;
+    redisUtility.insertResourceInRedis(testIds, [undefined, testObjects[1]])
+      .catch(err => {
+        expect(err.status).to.equal(400);
+        done();
+      })
+      ;
   });
 
   after(function () {
