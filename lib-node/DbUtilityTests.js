@@ -808,6 +808,70 @@ describe('dbUtility Tests',function() {
       });
     });
   } );
+  describe('get', function() {
+    it('with undefined',function() {
+      return dbUtility.get()
+      .then( ( data ) => {
+        expect(data).to.be.a('null');
+        expect(data).to.be.deep.equal(null);
+      } );
+    });
+    it('with blank object',function() {
+      return dbUtility.get([])
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with blank object',function() {
+      return dbUtility.get({})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with single primary key',function() {
+      return dbUtility.get(1234512345123451)
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' );
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
+      });
+    });
+    it('with wrong primary key number',function() {
+      return dbUtility.get( -0.0 )
+      .then( ( data ) => {
+        expect( data ).to.be.a( 'null' );
+        expect( data ).to.be.deep.equal( null );
+      });
+    });
+    it('with wrong primary key string',function() {
+      return dbUtility.get("micheal")
+      .then( ( data ) => {
+        expect( data ).to.be.a( 'null' );
+        expect( data ).to.be.deep.equal( null );
+      });
+    });
+    it('with wrong primary key',function() {
+      return dbUtility.get(0)
+      .then( ( data ) => {
+        expect( data ).to.be.a( 'null' );
+        expect( data ).to.be.deep.equal( null );
+      });
+    });
+    it('with wrong primary key null',function() {
+      return dbUtility.get(null)
+      .then( ( data ) => {
+        expect( data ).to.be.a( 'null' );
+        expect( data ).to.be.deep.equal( null );
+      });
+    });
+    it('with wrong primary key empty string',function() {
+      return dbUtility.get('')
+      .then( ( data ) => {
+        expect( data ).to.be.a( 'null' );
+        expect( data ).to.be.deep.equal( null );
+      });
+    });
+  } );
   describe('update', function() {
     it('with undefined',function() {
       return dbUtility.update()

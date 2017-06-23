@@ -502,6 +502,34 @@ function DbUtility ( config ) {
           reject( error );
         } );
       }
+    },
+
+    //GET SINGLE PRIMARY KEY
+    get: function( id ) {
+      try {
+        if( id == null || id === '' || id === 0 || typeof id === 'boolean') {
+          return new Promise( ( resolve, reject ) => {
+            resolve( null );
+          } ) ;
+        } else if( typeof id === 'number' || typeof id === 'string' ) {
+          return datastoreClient.get( getKey( id ) ).then( ( dataArray ) => {
+            var data = dataArray[ 0 ];
+            if( data === undefined ) {
+              return null;
+            } else {
+              return processEntity( data );
+            }
+          } ).catch( ( error ) => {
+            throw error;
+          } );
+        } else {
+          throw new Error( 'Wrong type of id' );
+        }
+      } catch(error) {
+        return new Promise( ( resolve, reject ) => {
+          reject( error );
+        } );
+      }
     }
   };
 }
