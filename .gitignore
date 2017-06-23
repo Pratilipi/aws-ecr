@@ -1,3 +1,14 @@
 keyfile-gcp-devo.json
 keyfile-gcp-gamma.json
 keyfile-gcp-prod.json
+.editorconfig
+.jshintrc
+.project
+.eslintrc
+.jshintrc
+.settings/
+*/lib/
+*/npm-debug.log
+*/node_modules/
+*/keyfile.json
+keyfile.json
