@@ -71,11 +71,11 @@ then
     --actions Type=forward,TargetGroupArn=$TARGET_GRP_ARN >> /dev/null 2>&1
   echo ... added target group to the internal load balancer
   
-  sudo docker build --tag $ECR_IMAGE .
+  docker build --tag $ECR_IMAGE .
   echo ... built docker image: $ECR_IMAGE
   
-  sudo $(aws ecr get-login)
-  sudo docker push $ECR_IMAGE
+  $(aws ecr get-login)
+  docker push $ECR_IMAGE
   echo ... pushed docker image: $ECR_IMAGE
 
   TASK_DEF=$(aws ecs register-task-definition --cli-input-json file://ecr-task-def.json)
@@ -88,6 +88,7 @@ then
     --task-definition $APP_NAME:$TASK_DEF_VER \
     --role ecsServiceRole \
     --load-balancers targetGroupArn=$TARGET_GRP_ARN,containerName=$APP_NAME,containerPort=80 \
+    --placement-strategy type="spread",field="attribute:ecs.availability-zone" type="binpack",field="cpu" \
     --desired-count 1 >> /dev/null 2>&1
   echo ... created service: $APP_NAME
 
@@ -100,7 +101,7 @@ then
   cat Dockerfile.raw \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
-  sudo docker build --tag $ECR_IMAGE .
+  docker build --tag $ECR_IMAGE .
   rm Dockerfile
 
 elif [ $COMMAND == "run" ]
@@ -109,9 +110,9 @@ then
   cat Dockerfile.raw \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     > Dockerfile
-  sudo docker build --tag $ECR_IMAGE .
+  docker build --tag $ECR_IMAGE .
   rm Dockerfile
-  sudo docker run $ECR_IMAGE
+  docker run $ECR_IMAGE
 
 elif [ $COMMAND == "push" ]
 then
@@ -125,9 +126,9 @@ then
     | sed "s#\$APP_NAME#$APP_NAME#g" \
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
     > ecr-task-def.json
-  sudo docker build --tag $ECR_IMAGE .
-  sudo $(aws ecr get-login)
-  sudo docker push $ECR_IMAGE
+  docker build --tag $ECR_IMAGE .
+  $(aws ecr get-login)
+  docker push $ECR_IMAGE
   aws ecs register-task-definition --cli-input-json file://ecr-task-def.json
   rm Dockerfile
   rm ecr-task-def.json
@@ -144,9 +145,9 @@ then
     | sed "s#\$APP_NAME#$APP_NAME#g" \
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
     > ecr-task-def.json
-  sudo docker build --tag $ECR_IMAGE .
-  sudo $(aws ecr get-login)
-  sudo docker push $ECR_IMAGE
+  docker build --tag $ECR_IMAGE .
+  $(aws ecr get-login)
+  docker push $ECR_IMAGE
   TASK_DEF_VER=$(aws ecs register-task-definition --cli-input-json file://ecr-task-def.json | grep -Eo '"revision": *[0-9]+' | grep -Eo [0-9]+)
   aws ecs update-service \
     --cluster $STAGE-ecs \
