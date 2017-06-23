@@ -808,39 +808,634 @@ describe('dbUtility Tests',function() {
       });
     });
   } );
+  describe('update', function() {
+    it('with undefined',function() {
+      return dbUtility.update()
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with one blank object and other undefined',function() {
+      return dbUtility.update({})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with both blank object',function() {
+      return dbUtility.update({}, {})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with just primary key',function() {
+      return dbUtility.update({"id":1234512345123451})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with primary key and data is_alive false',function() {
+      return dbUtility.update({"id":1234512345123451}, {"is_alive":false})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
+        expect( data.NAME ).to.be.an( 'null' );
+        expect( data.NAME ).to.be.deep.equal( null );
+        expect( data.DOB ).to.be.a( 'null' );
+        expect( data.DOB ).to.be.deep.equal( null );
+        expect( data.UPDATED_TS ).to.be.a( 'null' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( null );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 0 );
+      });
+    });
+    it('with primary key and name and data',function() {
+      return dbUtility.update({"id":1234512345123451, "name":"micheal"}, {"is_alive":false, "dob":"2017-01-10"})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with blank object and data',function() {
+      return dbUtility.update({}, {"is_alive":false, "dob":"2017-01-10"})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with primary key and name and blank data',function() {
+      return dbUtility.update({"id":1234512345123451, "name":"micheal"}, {})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with name and data',function() {
+      return dbUtility.update({"name":"micheal"}, {"is_alive":false})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with uppercase name and uppercase data',function() {
+      return dbUtility.update({"NAME":"micheal"}, {"IS_ALIVE":false})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with wrong key and wrong data',function() {
+      return dbUtility.update({"abba":"dabba"}, {"jaaba":"oppa"})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with is_alive and data',function() {
+      return dbUtility.update({"is_alive":true}, {"is_alive":false})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with id and data',function() {
+      return dbUtility.update({"id":1234512345123451}, {"name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
+        expect( data.NAME ).to.be.a( 'string' );
+        expect( data.NAME ).to.be.deep.equal( 'michealX' );
+        expect( data.DOB ).to.be.a( 'string' );
+        expect( data.DOB ).to.be.deep.equal( '2018-01-01' );
+        expect( data.UPDATED_TS ).to.be.a( 'string' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( '2018-01-01 12:56:56' );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
+      });
+    });
+    it('with id and data name',function() {
+      return dbUtility.update({"id":1234512345123451}, {"name":"sarah"})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
+        expect( data.NAME ).to.be.a( 'string' );
+        expect( data.NAME ).to.be.deep.equal( 'sarah' );
+        expect( data.DOB ).to.be.a( 'null' );
+        expect( data.DOB ).to.be.deep.equal( null );
+        expect( data.UPDATED_TS ).to.be.a( 'null' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( null );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 0 );
+      });
+    });
+    it('with id and data dob',function() {
+      return dbUtility.update({"id":1234512345123451}, {"dob":"2000-01-01"})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
+        expect( data.NAME ).to.be.an( 'null' );
+        expect( data.NAME ).to.be.deep.equal( null );
+        expect( data.DOB ).to.be.a( 'string' );
+        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
+        expect( data.UPDATED_TS ).to.be.a( 'null' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( null );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 0 );
+      });
+    });
+    it('with id and updated_ts',function() {
+      return dbUtility.update({"id":1234512345123451}, {"updated_ts":"2000-01-01 12:56:56"})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
+        expect( data.NAME ).to.be.an( 'null' );
+        expect( data.NAME ).to.be.deep.equal( null );
+        expect( data.DOB ).to.be.a( 'null' );
+        expect( data.DOB ).to.be.deep.equal( null );
+        expect( data.UPDATED_TS ).to.be.a( 'string' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 0 );
+      });
+    });
+    it('with id and data is_alive',function() {
+      return dbUtility.update({"id":1234512345123451}, {"is_alive": true})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
+        expect( data.NAME ).to.be.an( 'null' );
+        expect( data.NAME ).to.be.deep.equal( null );
+        expect( data.DOB ).to.be.a( 'null' );
+        expect( data.DOB ).to.be.deep.equal( null );
+        expect( data.UPDATED_TS ).to.be.a( 'null' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( null );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( true );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 0 );
+      });
+    });
+    it('with id and data height',function() {
+      return dbUtility.update({"id":1234512345123451}, {"height":5.9})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
+        expect( data.NAME ).to.be.an( 'null' );
+        expect( data.NAME ).to.be.deep.equal( null );
+        expect( data.DOB ).to.be.a( 'null' );
+        expect( data.DOB ).to.be.deep.equal( null );
+        expect( data.UPDATED_TS ).to.be.a( 'null' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( null );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
+      });
+    });
+    it('with name and data id',function() {
+      return dbUtility.update({"name":"sarah"}, {"id":1234512345123451})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with dob and data id',function() {
+      return dbUtility.update({"dob":"2000-01-01"}, {"id":1234512345123451})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with updated_ts and data id',function() {
+      return dbUtility.update({"updated_ts":"2000-01-01 12:56:56"}, {"id":1234512345123451})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with is_alive and data id',function() {
+      return dbUtility.update({"is_alive": true}, {"id":1234512345123451})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with height and data id',function() {
+      return dbUtility.update({"height":5.9}, {"id":1234512345123451})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with height and name and data id',function() {
+      return dbUtility.update({"height":5.9, "name":"micheal"}, {"id":1234512345123451})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with id and wrong data',function() {
+      return dbUtility.update({"id":1234512345123451}, {"abba":"dabba", "jaaba":"oppa", "name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with id and uppercase data',function() {
+      return dbUtility.update({"id":1234512345123451}, {"is_alive":false, "DOB":"2017-01-10"})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
+        expect( data.NAME ).to.be.an( 'null' );
+        expect( data.NAME ).to.be.deep.equal( null );
+        expect( data.DOB ).to.be.a( 'string' );
+        expect( data.DOB ).to.be.deep.equal( '2017-01-10' );
+        expect( data.UPDATED_TS ).to.be.a( 'null' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( null );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 0 );
+      });
+    });
+    it('with id and data having id',function() {
+      return dbUtility.update({"id":1234512345123451}, {"name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5, "id":1234512345123451})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+  } );
+  describe('patch', function() {
+    it('with undefined',function() {
+      return dbUtility.patch()
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with one blank object and other undefined',function() {
+      return dbUtility.patch({})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with both blank object',function() {
+      return dbUtility.patch({}, {})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with just primary key',function() {
+      return dbUtility.patch({"id":1234512345123452})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with primary key and data is_alive false',function() {
+      return dbUtility.patch({"id":1234512345123452}, {"is_alive":false})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
+        expect( data.NAME ).to.be.an( 'string' );
+        expect( data.NAME ).to.be.deep.equal( "sarah" );
+        expect( data.DOB ).to.be.a( 'null' );
+        expect( data.DOB ).to.be.deep.equal( null );
+        expect( data.UPDATED_TS ).to.be.a( 'null' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( null );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 0 );
+      });
+    });
+    it('with primary key and name and data',function() {
+      return dbUtility.patch({"id":1234512345123452, "name":"micheal"}, {"is_alive":false, "dob":"2017-01-10"})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with blank object and data',function() {
+      return dbUtility.patch({}, {"is_alive":false, "dob":"2017-01-10"})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with primary key and name and blank data',function() {
+      return dbUtility.patch({"id":1234512345123452, "name":"micheal"}, {})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with name and data',function() {
+      return dbUtility.patch({"name":"micheal"}, {"is_alive":false})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with uppercase name and uppercase data',function() {
+      return dbUtility.patch({"NAME":"micheal"}, {"IS_ALIVE":false})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with wrong key and wrong data',function() {
+      return dbUtility.patch({"abba":"dabba"}, {"jaaba":"oppa"})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with is_alive and data',function() {
+      return dbUtility.patch({"is_alive":true}, {"is_alive":false})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with id and data',function() {
+      return dbUtility.patch({"id":1234512345123452}, {"name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
+        expect( data.NAME ).to.be.a( 'string' );
+        expect( data.NAME ).to.be.deep.equal( 'michealX' );
+        expect( data.DOB ).to.be.a( 'string' );
+        expect( data.DOB ).to.be.deep.equal( '2018-01-01' );
+        expect( data.UPDATED_TS ).to.be.a( 'string' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( '2018-01-01 12:56:56' );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
+      });
+    });
+    it('with id and data name',function() {
+      return dbUtility.patch({"id":1234512345123452}, {"name":"sarah"})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
+        expect( data.NAME ).to.be.a( 'string' );
+        expect( data.NAME ).to.be.deep.equal( 'sarah' );
+        expect( data.DOB ).to.be.a( 'string' );
+        expect( data.DOB ).to.be.deep.equal( '2018-01-01' );
+        expect( data.UPDATED_TS ).to.be.a( 'string' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( '2018-01-01 12:56:56' );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
+      });
+    });
+    it('with id and data dob',function() {
+      return dbUtility.patch({"id":1234512345123452}, {"dob":"2000-01-01"})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
+        expect( data.NAME ).to.be.a( 'string' );
+        expect( data.NAME ).to.be.deep.equal( 'sarah' );
+        expect( data.DOB ).to.be.a( 'string' );
+        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
+        expect( data.UPDATED_TS ).to.be.a( 'string' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( '2018-01-01 12:56:56' );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
+      });
+    });
+    it('with id and updated_ts',function() {
+      return dbUtility.patch({"id":1234512345123452}, {"updated_ts":"2000-01-01 12:56:56"})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
+        expect( data.NAME ).to.be.a( 'string' );
+        expect( data.NAME ).to.be.deep.equal( 'sarah' );
+        expect( data.DOB ).to.be.a( 'string' );
+        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
+        expect( data.UPDATED_TS ).to.be.a( 'string' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
+      });
+    });
+    it('with id and data is_alive',function() {
+      return dbUtility.patch({"id":1234512345123452}, {"is_alive": true})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
+        expect( data.NAME ).to.be.a( 'string' );
+        expect( data.NAME ).to.be.deep.equal( 'sarah' );
+        expect( data.DOB ).to.be.a( 'string' );
+        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
+        expect( data.UPDATED_TS ).to.be.a( 'string' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( true );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
+      });
+    });
+    it('with id and data height',function() {
+      return dbUtility.patch({"id":1234512345123452}, {"height":5.9})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
+        expect( data.NAME ).to.be.a( 'string' );
+        expect( data.NAME ).to.be.deep.equal( 'sarah' );
+        expect( data.DOB ).to.be.a( 'string' );
+        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
+        expect( data.UPDATED_TS ).to.be.a( 'string' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( true );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
+      });
+    });
+    it('with name and data id',function() {
+      return dbUtility.patch({"name":"sarah"}, {"id":1234512345123452})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with dob and data id',function() {
+      return dbUtility.patch({"dob":"2000-01-01"}, {"id":1234512345123452})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with updated_ts and data id',function() {
+      return dbUtility.patch({"updated_ts":"2000-01-01 12:56:56"}, {"id":1234512345123452})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with is_alive and data id',function() {
+      return dbUtility.patch({"is_alive": true}, {"id":1234512345123452})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with height and data id',function() {
+      return dbUtility.patch({"height":5.9}, {"id":1234512345123452})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with height and name and data id',function() {
+      return dbUtility.patch({"height":5.9, "name":"micheal"}, {"id":1234512345123452})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with id and wrong data',function() {
+      return dbUtility.patch({"id":1234512345123452}, {"abba":"dabba", "jaaba":"oppa", "name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+    it('with id and uppercase data',function() {
+      return dbUtility.patch({"id":1234512345123452}, {"is_alive":false, "DOB":"2017-01-10"})
+      .then( ( data ) => {
+        expect( data ).to.be.an( 'object' ).to.have.property('ID');
+        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
+        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
+        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
+        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
+        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
+        expect( data.ID ).to.be.a( 'number' );
+        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
+        expect( data.NAME ).to.be.a( 'string' );
+        expect( data.NAME ).to.be.deep.equal( 'sarah' );
+        expect( data.DOB ).to.be.a( 'string' );
+        expect( data.DOB ).to.be.deep.equal( '2017-01-10' );
+        expect( data.UPDATED_TS ).to.be.a( 'string' );
+        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
+        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
+        expect( data.IS_ALIVE ).to.be.deep.equal( false );
+        expect( data.HEIGHT ).to.be.a( 'number' );
+        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
+      });
+    });
+    it('with id and data having id',function() {
+      return dbUtility.patch({"id":1234512345123452}, {"name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5, "id":1234512345123452})
+      .catch((error) => {
+        expect(error).to.be.an('error');
+      });
+    });
+  } );
   describe('delete', function() {
     it('with undefined',function() {
       return dbUtility.delete()
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with blank object',function() {
       return dbUtility.delete({})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with wrong type',function() {
       return dbUtility.delete(0)
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with wrong primary key',function() {
       return dbUtility.delete({"id":100})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with primary key',function() {
       return dbUtility.delete({"id":1234512345123451})
       .then( ( data ) => {
-        console.log(data);
         expect(data).to.be.a('number');
         expect(data).to.be.deep.equal(1);
       } );
@@ -848,91 +1443,78 @@ describe('dbUtility Tests',function() {
     it('with primary key as string enclosed',function() {
       return dbUtility.delete({"id":"1234512345123452"})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with just primary key',function() {
       return dbUtility.delete(1234512345123451)
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with another keyname',function() {
       return dbUtility.delete({"name":"micheal"})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with primary key string',function() {
       return dbUtility.delete({"id":"2018-01-01"})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with primary key negative number',function() {
       return dbUtility.delete({"id":-100})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with primary key float number',function() {
       return dbUtility.delete({"id":100.12})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with primary key negative float number',function() {
       return dbUtility.delete({"id":-100.12})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with primary key boolean',function() {
       return dbUtility.delete({"id":true})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with wrong keyname',function() {
       return dbUtility.delete({"abba":"dabba"})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with wrong and correct key name',function() {
       return dbUtility.delete({"abba":"dabba", "id":1234512345123451})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with extra fieldname and primary key',function() {
       return dbUtility.delete({"name":"micheal", "id":1234512345123451})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with uppercase id and uppercase extra fieldname',function() {
       return dbUtility.delete({"NAME":"micheal", "ID":1234512345123451})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });
     it('with uppercase extra fieldname and id',function() {
       return dbUtility.delete({"NAME":"micheal", "id":1234512345123451})
       .catch((error) => {
-        console.log(error);
         expect(error).to.be.an('error');
       });
     });

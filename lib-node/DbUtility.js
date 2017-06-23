@@ -22,12 +22,14 @@ function DbUtility ( config ) {
   //CREATE A DATASTORE CLIENT FOR A SPECIFIC PROJECT
   const datastore = datastoreModule( { 'projectId' : projectId } );
 
-  //MAKE A PRIMARY KEY FOR DATASTORE WITH PROVIDED ID
+  //HELPER UTILITY
+
+  //MAKE A PRIMARY KEY FOR DATASTORE WITH PROVIDED ID NOTE: DATASTORE SPECIFIC
   function getKey( id ) {
     return datastore.key([ kind, id ]);
   }
 
-  //MAKE A PRIMARY KEY FOR DATASTORE WITHOUT ANY ID
+  //MAKE A PRIMARY KEY FOR DATASTORE WITHOUT ANY ID NOTE: DATASTORE SPECIFIC
   function getNewKey() {
     return datastore.key([ kind ]);
   }
@@ -42,7 +44,7 @@ function DbUtility ( config ) {
     try {
       var entities = [];
       ids.forEach( ( id ) => {
-        //IF ID IS STRING THEN TAKE NAME_ID ELSE ID_ID
+        //IF ID IS STRING THEN TAKE NAME_ID ELSE ID_ID NOTE: DATASTORE SPECIFIC
         if( typeof id === 'string' ) {
           if( entityMap[ 'NAME_' + id ] ) {
             entities.push( entityMap[ 'NAME_' + id ] );
@@ -74,12 +76,12 @@ function DbUtility ( config ) {
     }
   }
 
-  //MAKE ENTITY TO SPECIFIED SCHEMA STRUCTURE
+  //MAKE ENTITY TO SPECIFIED SCHEMA STRUCTURE AND ADD PRIMARY KEY
   function processEntity( entity ) {
     try {
       //MAKE THE ENTITY TO SPECIFIED SCHEMA
-      entity = schemaMaker( entity );
-      //EXPLICIT CHECK FOR PRIMARY KEY IN DATASTORE
+      entity = makeSchema( entity );
+      //EXPLICIT CHECK FOR PRIMARY KEY IN DATASTORE NOTE: DATASTORE SPECIFIC
       if( structure[ primaryKey ].type === 'INTEGER' ) {
         entity[ primaryKey ] = parseInt( entity[ datastore.KEY ].id );
       } else {
@@ -91,7 +93,8 @@ function DbUtility ( config ) {
     }
   }
 
-  function schemaMaker( entity ) {
+  //MAKE ENTITY TO SPECIFIED SCHEMA STRUCTURE
+  function makeSchema( entity ) {
     try {
       //DELETE EXTRA KEYS FROM MAP WHICH ARE NOT IN SCHEMA STRUCTURE
       Object.keys( entity ).forEach( ( property ) => {
@@ -99,7 +102,7 @@ function DbUtility ( config ) {
           delete entity[ property ];
         }
       });
-      //ADD A DEFAULT VALUE TO NON EXISTING KEYS
+      //ADD NON EXISTING KEYS WITH DEFAULT VALUE
       Object.keys( structure ).forEach( ( property ) => {
         if( entity[ property ] == null ) {
           entity[ property ] = structure[ property ].default;
@@ -111,6 +114,7 @@ function DbUtility ( config ) {
     }
   }
 
+  //CHECK IF ENTITY CONFORMS TO THE SCHEMA STRUCTURE
   function checkSchema( entity ) {
     try {
       var b = 1;
@@ -131,6 +135,7 @@ function DbUtility ( config ) {
 
   return {
 
+    //PERFORMS QUERY ON TABLE WITH 'AND' OPERATION BETWEEN CONDITIONS WHERE CONDITIONS ARE EQUAL RELATIONS
     query: function( filter ) {
       try {
         //FILTER SHOULD BE A MAP
@@ -144,7 +149,7 @@ function DbUtility ( config ) {
             var keysUpper = keys.map( toUpperCase );
             //WHERE ( KEY = VALUE ) ( AND ) ( KEY = VALUE )...
             for( var i = 0; i < keys.length; i++ ) {
-              //EXPLICIT CHECK FOR DATASTORE PRIMARY KEY
+              //EXPLICIT CHECK FOR DATASTORE PRIMARY KEY NOTE: DATASTORE SPECIFIC
               if( keysUpper[ i ] === primaryKey ) {
                 filter[ keys[ i ] ] = getKey( filter[ keys[ i ] ] );
                 keysUpper[ i ] = '__key__';
@@ -185,6 +190,7 @@ function DbUtility ( config ) {
       }
     },
 
+    //INSERT DATA IN TABLE, PRIMARY KEY IS USED IF PROVIDED ELSE GENERATED ON ITS OWN
     insert: function( data ) {
       try {
         //DATA SHOULD BE A MAP
@@ -202,6 +208,8 @@ function DbUtility ( config ) {
             }
             //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
             if( checkSchema( newData ) ) {
+
+              //NOTE: DATASTORE SPECIFIC
               var key;
               //CREATE KEY IF PROVIDED EXPLICITLY
               if( newData[ primaryKey ] == null ) {
@@ -209,19 +217,22 @@ function DbUtility ( config ) {
               } else {
                 var value = newData[ primaryKey ];
                 key = getKey( value );
-                //EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
+                //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
                 delete newData[ primaryKey ];
               }
+
               var task = {
                 key: key,
                 data: newData
               };
+
               //INSERT DATA IF IT NOT EXISTS
               return datastore.insert( task )
               .then( () => {
+                //NOTE: DATASTORE SPECIFIC
                 newData[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
                 //MAKE DATA IN SPECIFIED SCHEMA
-                return schemaMaker( newData );
+                return makeSchema( newData );
               } )
               .catch( ( error ) => {
                 throw error;
@@ -245,21 +256,25 @@ function DbUtility ( config ) {
       }
     },
 
+    //GET ENTITY FOR PRIMARY KEYS PROVIDED
     list: function( ids ) {
       try{
         //CHECK IF IDS IS ARRAY
         if( Array.isArray( ids ) ) {
           //IF ARRAY IS EMPTY
           if( ids.length !== 0 ) {
-            //HANDLING CASE WHERE IDS HAVE NULL, UNDEFINED, 0, '' BECAUSE KEY GENERATION WILL FAIL
+            //HANDLING CASE WHERE IDS HAVE NULL, UNDEFINED, 0, '', TRUE, FALSE BECAUSE KEY GENERATION WILL FAIL NOTE: DATASTORE SPECIFIC
             var newIds = _.without( ids, null, undefined, '', 0, true, false );
+
             //IF VALID NEWIDS
             if( newIds.length !== 0 ) {
-              //GENERATE KEY FOR EACH ID
+              //GENERATE KEY FOR EACH ID NOTE: DATASTORE SPECIFIC
               var keys = newIds.map( getKey );
+
               //FETCH KEYS FROM DATASTORE
               return datastore.get( keys ).then( ( dataArray ) => {
                 var entityMap = {};
+
                 //MAKE ENTITY IN DESIRED SCHEMA AND MAKE AN ENTITY MAP TO HAVE DUPLICATE ENTITY FOR DUPLICATE IDS
                 processEntities( dataArray[ 0 ] ).forEach( ( entity ) => {
                   if( typeof entity[ primaryKey ] === 'string' ) {
@@ -268,6 +283,7 @@ function DbUtility ( config ) {
                     entityMap[ 'ID_' + entity[ primaryKey ] ] = entity;
                   }
                 } );
+
                 //SORT THE IDS IN THE ORDER IDS ARE SENT AND ALSO APPEND NULL FOR IDS WHERE OBJECT IS NOT FOUND
                 return sortEntities( ids, entityMap );
               } ).catch( ( error ) => {
@@ -295,12 +311,13 @@ function DbUtility ( config ) {
       }
     },
 
+    //DELETE KEYS FOR ONLY PRIMARY KEYS PROVIDED
     delete: function( id ) {
       try{
         if( !(Array.isArray( id ) ) ) {
           //KEY NAMES OF MAP
           var keys = Object.keys(id);
-          //IF NO KEY NAMES
+          //ONLY ONE KEY NAME NOTE: DATASTORE SPECIFIC
           if( keys.length === 1 ) {
             //HANDLING CASE WHERE FIELDNAMES ARE IN LOWER CASE
             var keysUpper = keys.map(toUpperCase);
@@ -309,11 +326,13 @@ function DbUtility ( config ) {
             for( var i = 0; i < keysUpper.length; i++  ) {
               idData[ keysUpper[ i ] ] = id[ keys[ i ] ];
             }
+            //IF PRIMARY KEY IS NOT GIVEN THEN ERROR
             if( idData[ primaryKey ] != null ) {
+              //DELETE ID IF IT EXISTS
               return datastore.delete( getKey( idData[ primaryKey ] ) )
               .then( (data) => {
                 if( data[ 0 ].indexUpdates === 0 ){
-                  throw new Error( 'id doesn\'t exist' );
+                  throw new Error( 'Id doesn\'t exist' );
                 } else {
                   return 1;
                 }
@@ -322,12 +341,15 @@ function DbUtility ( config ) {
                 throw error;
               });
             } else {
+              //PRIMARY KEY IS NOT PROVIDED
               throw new Error( 'Primary key not provided.');
             }
           } else{
+            //EXTRA FIELDS ARE PROVIDED
             throw new Error( 'Wrong number of arguments');
           }
         } else {
+          //ID TYPE IS NOT CORRECT
           throw new Error( 'Not correct type of id' );
         }
       } catch( error ) {
@@ -337,6 +359,7 @@ function DbUtility ( config ) {
       }
     },
 
+    //UPDATE ENTITY FOR PRIMARY KEY AND DATA PROVIDED
     update: function( id, data ) {
       try {
         //DATA SHOULD BE A MAP
@@ -362,7 +385,7 @@ function DbUtility ( config ) {
               //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
               if( checkSchema( newData ) ) {
                 var key;
-                //CREATE KEY
+                //CREATE KEY NOTE: DATASTORE SPECIFIC
                 var value = newIdData[ primaryKey ];
                 key = getKey( value );
                 var task = {
@@ -374,7 +397,7 @@ function DbUtility ( config ) {
                 .then( () => {
                   newData[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
                   //MAKE DATA IN SPECIFIED SCHEMA
-                  return schemaMaker( newData );
+                  return makeSchema( newData );
                 } )
                 .catch( ( error ) => {
                   throw error;
@@ -384,6 +407,85 @@ function DbUtility ( config ) {
                 //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
                 throw new Error( 'Wrong fields provided. It is not according to SCHEMA structure provided.');
               }
+            } else {
+              throw new Error( 'Primary key provided in Data object or Primary key is not provided in ID object' );
+            }
+          } else {
+            //EMPTY MAP IS PROVIDED
+            throw new Error( 'Empty Objects or Wrong number of keys in ID object.' );
+          }
+        } else {
+          //DATA IS NOT A MAP
+          throw new Error( 'Wrong type of data' );
+        }
+      } catch( error ) {
+        return new Promise( ( resolve, reject ) => {
+          reject( error );
+        } );
+      }
+    },
+
+    //UPDATE ENTITY FOR PRIMARY KEY AND DATA PROVIDED
+    patch: function( id, data ) {
+      try {
+        //DATA SHOULD BE A MAP
+        if( !(Array.isArray( id ) ) && !(Array.isArray( data ) ) ) {
+          //KEY NAMES OF MAP
+          var keys = Object.keys( data );
+          var keysId = Object.keys( id );
+          //IF NO KEY NAMES
+          if( keys.length !== 0 && keysId.length === 1 ) {
+            //HANDLING CASE WHERE FIELDNAMES ARE IN LOWER CASE
+            var keysUpper = keys.map(toUpperCase);
+            var keysIdUpper = keysId.map(toUpperCase);
+            var newData ={};
+            var newIdData = {};
+            //CREATING NEW DATA WHERE KEYS ARE IN UPPERCASE
+            for( var i = 0; i < keysUpper.length; i++  ) {
+              newData[ keysUpper[ i ] ] = data[ keys[ i ] ];
+            }
+            for( i = 0; i < keysIdUpper.length; i++  ) {
+              newIdData[ keysIdUpper[ i ] ] = id[ keysId[ i ] ];
+            }
+            if( newData[ primaryKey ] === undefined && newIdData[ primaryKey ] != null ) {
+              var key;
+              //CREATE KEY
+              var value = newIdData[ primaryKey ];
+              key = getKey( value );
+              return datastore.get(key)
+              .then( ( dataArray ) => {
+                if( dataArray[ 0 ] === undefined ) {
+                  throw new Error( 'id doesn\'t exist' );
+                } else {
+                  var dataEntity = dataArray[ 0 ];
+                  for( var i = 0; i < keysUpper.length; i++ ) {
+                    dataEntity[ keysUpper[ i ] ] = newData[ keysUpper[ i ] ];
+                  }
+                  //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
+                  if( checkSchema( dataEntity ) ) {
+                    var task = {
+                      key: key,
+                      data: dataEntity
+                    };
+                    //UPDATE DATA IF IT EXISTS
+                    return datastore.update( task )
+                    .then( () => {
+                      dataEntity[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
+                      //MAKE DATA IN SPECIFIED SCHEMA
+                      return makeSchema( dataEntity );
+                    } )
+                    .catch( ( error ) => {
+                      throw error;
+                    } );
+                  } else {
+                    //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
+                    throw new Error( 'Wrong fields provided. It is not according to SCHEMA structure provided.');
+                  }
+                }
+              } )
+              .catch( (error) => {
+                throw error;
+              } );
             } else {
               throw new Error( 'Primary key provided in Data object or Primary key is not provided in ID object' );
             }
