@@ -20,18 +20,18 @@ function DbUtility ( config ) {
   const primaryKey = schema.primaryKey;
 
   //CREATE A DATASTORE CLIENT FOR A SPECIFIC PROJECT
-  const datastore = datastoreModule( { 'projectId' : projectId } );
+  const datastoreClient = datastoreModule( { 'projectId' : projectId } );
 
   //HELPER UTILITY
 
   //MAKE A PRIMARY KEY FOR DATASTORE WITH PROVIDED ID NOTE: DATASTORE SPECIFIC
   function getKey( id ) {
-    return datastore.key([ kind, id ]);
+    return datastoreClient.key([ kind, id ]);
   }
 
   //MAKE A PRIMARY KEY FOR DATASTORE WITHOUT ANY ID NOTE: DATASTORE SPECIFIC
   function getNewKey() {
-    return datastore.key([ kind ]);
+    return datastoreClient.key([ kind ]);
   }
 
   //CONVERT THE STRING TO UPPERCASE
@@ -83,9 +83,9 @@ function DbUtility ( config ) {
       entity = makeSchema( entity );
       //EXPLICIT CHECK FOR PRIMARY KEY IN DATASTORE NOTE: DATASTORE SPECIFIC
       if( structure[ primaryKey ].type === 'INTEGER' ) {
-        entity[ primaryKey ] = parseInt( entity[ datastore.KEY ].id );
+        entity[ primaryKey ] = parseInt( entity[ datastoreClient.KEY ].id );
       } else {
-        entity[ primaryKey ] = entity[ datastore.KEY ].name;
+        entity[ primaryKey ] = entity[ datastoreClient.KEY ].name;
       }
       return entity;
     } catch( error ) {
@@ -141,7 +141,7 @@ function DbUtility ( config ) {
         //FILTER SHOULD BE A MAP
         if( !(Array.isArray( filter ) ) ) {
           //SELECT * FROM KIND
-          var query = datastore.createQuery( kind );
+          var query = datastoreClient.createQuery( kind );
           var keys = Object.keys( filter );
           //IF FIELDNAMES ARE NOT SPECIFIED THEN SENDING ERROR INSTEAD OF COMPLETE TABLE
           if( keys.length !== 0 ) {
@@ -162,7 +162,7 @@ function DbUtility ( config ) {
               );
             }
             //EXECUTE QUERY
-            return datastore.runQuery( query )
+            return datastoreClient.runQuery( query )
             .then( ( data ) => {
               if ( data[ 0 ].length === 0 ) {
                 //NO DATA FOUND
@@ -227,7 +227,7 @@ function DbUtility ( config ) {
               };
 
               //INSERT DATA IF IT NOT EXISTS
-              return datastore.insert( task )
+              return datastoreClient.insert( task )
               .then( () => {
                 //NOTE: DATASTORE SPECIFIC
                 newData[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
@@ -272,7 +272,7 @@ function DbUtility ( config ) {
               var keys = newIds.map( getKey );
 
               //FETCH KEYS FROM DATASTORE
-              return datastore.get( keys ).then( ( dataArray ) => {
+              return datastoreClient.get( keys ).then( ( dataArray ) => {
                 var entityMap = {};
 
                 //MAKE ENTITY IN DESIRED SCHEMA AND MAKE AN ENTITY MAP TO HAVE DUPLICATE ENTITY FOR DUPLICATE IDS
@@ -329,7 +329,7 @@ function DbUtility ( config ) {
             //IF PRIMARY KEY IS NOT GIVEN THEN ERROR
             if( idData[ primaryKey ] != null ) {
               //DELETE ID IF IT EXISTS
-              return datastore.delete( getKey( idData[ primaryKey ] ) )
+              return datastoreClient.delete( getKey( idData[ primaryKey ] ) )
               .then( (data) => {
                 if( data[ 0 ].indexUpdates === 0 ){
                   throw new Error( 'Id doesn\'t exist' );
@@ -393,7 +393,7 @@ function DbUtility ( config ) {
                   data: newData
                 };
                 //UPDATE DATA IF IT EXISTS
-                return datastore.update( task )
+                return datastoreClient.update( task )
                 .then( () => {
                   newData[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
                   //MAKE DATA IN SPECIFIED SCHEMA
@@ -452,7 +452,7 @@ function DbUtility ( config ) {
               //CREATE KEY
               var value = newIdData[ primaryKey ];
               key = getKey( value );
-              return datastore.get(key)
+              return datastoreClient.get(key)
               .then( ( dataArray ) => {
                 if( dataArray[ 0 ] === undefined ) {
                   throw new Error( 'id doesn\'t exist' );
@@ -468,7 +468,7 @@ function DbUtility ( config ) {
                       data: dataEntity
                     };
                     //UPDATE DATA IF IT EXISTS
-                    return datastore.update( task )
+                    return datastoreClient.update( task )
                     .then( () => {
                       dataEntity[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
                       //MAKE DATA IN SPECIFIED SCHEMA
