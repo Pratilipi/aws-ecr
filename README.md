@@ -1,3 +1,12 @@
+## Dependency ##
+Install jq: https://stedolan.github.io/jq/
+
+On Ubuntu:
+`sudo apt-get install jq`
+
+On Mac:
+`brew install jq`
+
 ## Platform Ownerships ##
 
 ### Radhika ###
