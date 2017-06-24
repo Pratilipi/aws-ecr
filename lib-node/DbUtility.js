@@ -105,7 +105,12 @@ function DbUtility ( config ) {
       //ADD NON EXISTING KEYS WITH DEFAULT VALUE
       Object.keys( structure ).forEach( ( property ) => {
         if( entity[ property ] == null ) {
-          entity[ property ] = structure[ property ].default;
+          //NOTE: TIMESTAMP SPECIFIC FOR CURRENT TIME
+          if( structure[ property ].default === 'Date()' && structure[ property ].type === 'TIMESTAMP' ) {
+            entity[ property ] = eval( structure[ property ].default );
+          } else {
+            entity[ property ] = structure[ property ].default;
+          }
         }
       });
       return entity;
@@ -384,6 +389,9 @@ function DbUtility ( config ) {
             if( newData[ primaryKey ] === undefined && newIdData[ primaryKey ] != null ) {
               //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
               if( checkSchema( newData ) ) {
+                newData = makeSchema( newData );
+                //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
+                delete newData[ primaryKey ];
                 var key;
                 //CREATE KEY NOTE: DATASTORE SPECIFIC
                 var value = newIdData[ primaryKey ];
