@@ -218,8 +218,8 @@ function DbUtility ( config ) {
               } else {
                 var value = newData[ primaryKey ];
                 key = getKey( value );
-                //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
               }
+              //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
               delete newData[ primaryKey ];
               var task = {
                 key: key,
