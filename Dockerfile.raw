@@ -1,5 +1,9 @@
 from $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
 
+# Setting timezone to IST
+ENV TZ=Asia/Kolkata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Create app directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
