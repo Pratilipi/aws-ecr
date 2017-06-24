@@ -124,9 +124,9 @@ then
     --period 60 \
     --threshold 80 \
     --comparison-operator GreaterThanThreshold \
-    --dimensions Name="Cluster­Name",Value="$STAGE-ecs" Name="ServiceName",Value="$APP_NAME" \
+    --dimensions Name="ServiceName",Value="$APP_NAME" Name="ClusterName",Value="$STAGE-ecs" \
     --evaluation-periods 2 \
-    --unit Percent \
+    --treat-missing-data missing \
     --alarm-actions $SNS_RESOURCE $SCALING_POLICY_ARN >> /dev/null 2>&1
 
   SCALING_POLICY_ARN=$(aws application-autoscaling put-scaling-policy \
@@ -147,9 +147,9 @@ then
     --period 60 \
     --threshold 40 \
     --comparison-operator LessThanThreshold \
-    --dimensions Name="Cluster­Name",Value="$STAGE-ecs" Name="ServiceName",Value="$APP_NAME" \
+    --dimensions Name="ServiceName",Value="$APP_NAME" Name="ClusterName",Value="$STAGE-ecs" \
     --evaluation-periods 10 \
-    --unit Percent \
+    --treat-missing-data missing \
     --alarm-actions $SNS_RESOURCE $SCALING_POLICY_ARN >> /dev/null 2>&1
 
   SCALING_POLICY_ARN=$(aws application-autoscaling put-scaling-policy \
@@ -170,9 +170,9 @@ then
     --period 60 \
     --threshold 100 \
     --comparison-operator GreaterThanOrEqualToThreshold \
-    --dimensions Name="Cluster­Name",Value="$STAGE-ecs" Name="ServiceName",Value="$APP_NAME" \
+    --dimensions Name="ServiceName",Value="$APP_NAME" Name="ClusterName",Value="$STAGE-ecs" \
     --evaluation-periods 15 \
-    --unit Percent \
+    --treat-missing-data missing \
     --alarm-actions $SNS_RESOURCE $SCALING_POLICY_ARN >> /dev/null 2>&1
 
   SCALING_POLICY_ARN=$(aws application-autoscaling put-scaling-policy \
@@ -193,9 +193,9 @@ then
     --period 60 \
     --threshold 90 \
     --comparison-operator GreaterThanThreshold \
-    --dimensions Name="Cluster­Name",Value="$STAGE-ecs" Name="ServiceName",Value="$APP_NAME" \
+    --dimensions Name="ServiceName",Value="$APP_NAME" Name="ClusterName",Value="$STAGE-ecs" \
     --evaluation-periods 5 \
-    --unit Percent \
+    --treat-missing-data missing \
     --alarm-actions $SNS_RESOURCE $SCALING_POLICY_ARN >> /dev/null 2>&1
 
   echo ... service autoscaling rules and alarms created: $APP_NAME
