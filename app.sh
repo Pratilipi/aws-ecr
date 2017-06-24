@@ -182,9 +182,7 @@ then
     --scalable-dimension ecs:service:DesiredCount \
     --policy-type StepScaling \
     --step-scaling-policy-configuration "AdjustmentType=ChangeInCapacity,StepAdjustments=[{MetricIntervalLowerBound=0.0,ScalingAdjustment=1}],Cooldown=300,MetricAggregationType=Average" \
-    | grep -Eo '"PolicyARN":.*?".*"' \
-    | grep -Eo '"arn:aws(.*)"' \
-    | sed -e 's/^"//' -e 's/"$//')
+    | jq -r '.PolicyARN')
 
   aws cloudwatch put-metric-alarm \
     --alarm-name ecs-$STAGE-$APP_NAME-memory90-hi \
