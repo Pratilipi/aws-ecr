@@ -209,18 +209,18 @@ function DbUtility ( config ) {
             //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
             if( checkSchema( newData ) ) {
 
+              newData = makeSchema( newData );
               //NOTE: DATASTORE SPECIFIC
               var key;
               //CREATE KEY IF PROVIDED EXPLICITLY
-              if( newData[ primaryKey ] == null ) {
+              if( newData[ primaryKey ] === structure[ primaryKey ].default ) {
                 key = getNewKey();
               } else {
                 var value = newData[ primaryKey ];
                 key = getKey( value );
-                //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
-                delete newData[ primaryKey ];
               }
-
+              //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
+              delete newData[ primaryKey ];
               var task = {
                 key: key,
                 data: newData
