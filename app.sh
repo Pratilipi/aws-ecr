@@ -73,7 +73,7 @@ then
   aws elbv2 create-rule \
     --listener-arn $LB_LISTNER \
     --priority $(date +%M)$(date +%H) \
-    --conditions Field=path-pattern,Values=\'/$APP_NAME*\' \
+    --conditions Field=path-pattern,Values=\'/$APP_NAME/*\' \
     --actions Type=forward,TargetGroupArn=$TARGET_GRP_ARN >> /dev/null 2>&1
   echo ... added target group to the internal load balancer
 
