@@ -1,6 +1,9 @@
-keyfile-gcp-devo.json
-keyfile-gcp-gamma.json
-keyfile-gcp-prod.json
+aws-devo
+aws-gamma
+aws-prod
+gcp-devo.json
+gcp-gamma.json
+gcp-prod.json
 .editorconfig
 .jshintrc
 .project

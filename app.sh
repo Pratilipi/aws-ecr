@@ -39,6 +39,24 @@ ECR_IMAGE=$ECR_REPO/$APP_NAME:$APP_VERSION
 
 
 
+if [ $APP_NAME == "ecs" ]
+then
+  GIT_REPO=ecs
+else
+  GIT_REPO=ecs-$APP_NAME
+fi
+
+if [ ! -d "$GIT_REPO" ]
+then
+  git clone https://github.com/Pratilipi/$GIT_REPO.git
+fi
+
+cd $GIT_REPO
+git pull
+  
+
+
+
 if [ $COMMAND == "create" ]
 then
 
@@ -271,3 +289,7 @@ then
   aws ecs delete-service --cluster pratilipi-$STAGE-ecs --service $APP_NAME
 
 fi
+
+
+
+cd ..

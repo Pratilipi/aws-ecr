@@ -1,0 +1,14 @@
+{
+  "name": "cont-dep",
+  "version": "1.0.0",
+  "description": "Continuous Deployment in Gamma",
+  "author": "Prashant Gupta <prashant@pratilipi.com>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "4.13.3"
+  }
+}
+

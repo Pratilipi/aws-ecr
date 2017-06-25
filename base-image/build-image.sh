@@ -26,6 +26,11 @@ then
   API_END_POINT="internal-prod-lb-pvt-1889763041.ap-southeast-1.elb.amazonaws.com"
 fi
 
+if [ ! -d "lib-$DOCKER_IMAGE" ]
+then
+  mkdir lib-$DOCKER_IMAGE
+fi
+
 if [ $DOCKER_IMAGE == "node" ]
 then
   BUILD_COMMAND="npm install --prefix .. lib"
@@ -46,8 +51,8 @@ cat Dockerfile.raw \
   | sed "s#\$BUILD_COMMAND#$BUILD_COMMAND#g" \
   > Dockerfile
 
-sudo docker build --tag $ECR_IMAGE .
-sudo $(aws ecr get-login)
-sudo docker push $ECR_IMAGE
+docker build --tag $ECR_IMAGE .
+$(aws ecr get-login)
+docker push $ECR_IMAGE
 
 rm Dockerfile

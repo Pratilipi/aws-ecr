@@ -1,23 +1,49 @@
-from $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
+FROM $DOCKER_REPO/node:8.0.0
 
-# Setting timezone to IST
-ENV TZ=Asia/Kolkata
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt-get update -y
 
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+# Install git
+RUN apt-get install -y git
 
-# Install app dependencies
-COPY lib-$DOCKER_IMAGE lib
-RUN $BUILD_COMMAND
+# Install jq
+RUN apt-get install -y jq
 
-# Copy GCP Service Account keyfile
-COPY keyfile-gcp-$STAGE.json /usr/src/app/keyfile.json
+# Install docker
+RUN apt-get install -y \
+   apt-transport-https \
+   ca-certificates \
+   curl \
+   gnupg2 \
+   software-properties-common
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+RUN add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/debian \
+   $(lsb_release -cs) \
+   stable"
+RUN apt-get update -y
+RUN apt-get install -y docker-ce
 
-# Setting environment variables
-ENV STAGE=$STAGE
-ENV AWS_PROJ_ID=$AWS_PROJ_ID
-ENV GCP_PROJ_ID=$GCP_PROJ_ID
-ENV API_END_POINT=$API_END_POINT
-ENV GOOGLE_APPLICATION_CREDENTIALS=/usr/src/app/keyfile.json
+# Install aws cli
+RUN apt-get install -y python2.7 python2.7-dev
+RUN apt-get install -y python-pip
+RUN pip install --upgrade --user awscli
+
+# Copy gcp & aws config & credentials
+COPY aws-$STAGE aws-$STAGE
+COPY gcp-$STAGE.json .
+
+# Installing node dependencies
+COPY package.json .
+RUN npm install
+
+# Bundle app source
+COPY base-image base-image
+COPY base-image.sh .
+COPY app.sh .
+COPY server.js .
+
+EXPOSE 80
+
+CMD export PATH=$PATH:/root/.local/bin/ && cp -r aws-$STAGE /root/.aws \
+    && bash base-image.sh $STAGE \
+    && npm start

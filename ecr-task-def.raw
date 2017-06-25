@@ -1,0 +1,43 @@
+{
+    "family": "$APP_NAME",
+    "networkMode": "bridge",
+    "containerDefinitions": [
+        {
+            "name": "$APP_NAME",
+            "image": "$DOCKER_REPO/$APP_NAME:$APP_VERSION",
+            "cpu": 128,
+            "memory": 512,
+            "memoryReservation": 256,
+            "portMappings": [
+                {
+                    "hostPort": 0,
+                    "containerPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "docker_sock",
+                    "containerPath": "/var/run/docker.sock",
+                    "readOnly": false
+                }
+            ],
+            "essential": true,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "$STAGE-$APP_NAME",
+                    "awslogs-region": "ap-southeast-1"
+                }
+            }
+        }
+    ],
+    "volumes": [
+        {
+            "name": "docker_sock",
+            "host": {
+                "sourcePath": "/var/run/docker.sock"
+            }
+        }
+    ]
+}
