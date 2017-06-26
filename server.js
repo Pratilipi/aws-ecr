@@ -23,7 +23,12 @@ app.post('/*', function (req, res) {
   if( (process.env.STAGE == 'devo' && req.body.ref != 'refs/heads/devo')
       || (process.env.STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma')
       || (process.env.STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
-    res.status(204).send(`No deployment in ${process.env.STAGE} for a commit in ${req.body.ref.substr(11)} branch.`);
+    res.status(400).send(`No deployment in ${process.env.STAGE} for commit in ${req.body.repository.name}/${req.body.ref.substr(11)} branch.`);
+    return;
+  }
+  
+  if(req.body.deleted) {
+    res.status(400).send(`No deployment in ${process.env.STAGE} for deleted ${req.body.repository.name}/${req.body.ref.substr(11)} branch.`);
     return;
   }
 
