@@ -11,6 +11,16 @@ fi
 
 
 
+if [ ! -f "Dockerfile.raw" ]; then
+  echo "Could not find Dockerfile.raw !"
+  exit 0
+fi
+
+WORK_DIR=$(pwd)
+cd ../ecs && git pull && cd $WORK_DIR
+
+
+
 if [ $STAGE == "devo" ]
 then
   AWS_PROJ_ID="381780986962"
