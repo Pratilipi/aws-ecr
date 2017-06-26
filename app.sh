@@ -95,8 +95,7 @@ then
     --task-definition $APP_NAME:$TASK_DEF_VER \
     --role ecsServiceRole \
     --load-balancers targetGroupArn=$TARGET_GRP_ARN,containerName=$APP_NAME,containerPort=80 \
-    --placement-strategy type="spread",field="attribute:ecs.availability-zone" type="binpack",field="cpu" \
-    --desired-count 1 >> /dev/null 2>&1
+    --placement-strategy type="spread",field="attribute:ecs.availability-zone" type="binpack",field="cpu" >> /dev/null 2>&1
   echo ... created service: $APP_NAME
 
   aws application-autoscaling register-scalable-target \
