@@ -15,10 +15,10 @@ app.post('/*', function (req, res) {
   console.log(req.body.repository.name);
   var appName = req.body.repository.name;
 
-  if( ($STAGE == 'devo' && req.body.ref != 'refs/heads/devo')
-      || ($STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma')
-      || ($STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
-    res.send(`No deployment in ${STAGE} for a commit in ${req.body.ref.substr(11)} branch.`);
+  if( (process.env.STAGE == 'devo' && req.body.ref != 'refs/heads/devo')
+      || (process.env.STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma')
+      || (process.env.STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
+    res.send(`No deployment in ${process.env.STAGE} for a commit in ${req.body.ref.substr(11)} branch.`);
     return;
   }
 
