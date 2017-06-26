@@ -11,9 +11,6 @@ app.get('/health', function (req, res) {
 });
 
 app.post('/*', function (req, res) {
-  console.log(`Request received on ${req.path}`);
-  console.log(req.body.repository.name);
-  var appName = req.body.repository.name;
 
   if( (process.env.STAGE == 'devo' && req.body.ref != 'refs/heads/devo')
       || (process.env.STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma')
@@ -22,14 +19,17 @@ app.post('/*', function (req, res) {
     return;
   }
 
+  var appName = req.body.repository.name;
   if(appName.startsWith('ecs-'))
     appName = appName.substr( 4 );
   var appVersion = Math.round(new Date().getTime() / 1000 / 60);
+
   var command = `bash app-deploy.sh update ${process.env.STAGE} ${appName} ${appVersion}`;
   console.log(`Running command: ${command}`)
   exec(command, function(error, stdout, stderr) {
-    res.send(`<html><body><pre>${stderr}${stdout}</pre></body></html>`);
+    res.send(`Deploying to ${appName}/${process.env.STAGE} from ${req.body.ref.substr(11)} branch. Deployment logs are here - https://${process.env.STAGE}.pratilipi.com/ecs/${appName}-${appVersion}.log`);
   });
+
 });
 
 app.listen(80);
