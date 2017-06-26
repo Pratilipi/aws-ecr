@@ -5,7 +5,7 @@ APP_VERSION=$4
 
 if [ "$COMMAND" != "create" -a "$COMMAND" != "build" -a "$COMMAND" != "run" -a "$COMMAND" != "push" -a "$COMMAND" != "update" -a "$COMMAND" != "delete" ] || [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$APP_NAME" == "" ] || [ "$APP_VERSION" == "" ]
 then
-  echo "syntax: bash build-app.sh <command> <stage> <app-name> <app-version>"
+  echo "syntax: bash app.sh <command> <stage> <app-name> <app-version>"
   exit 0
 fi
 

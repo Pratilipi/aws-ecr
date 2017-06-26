@@ -13,7 +13,9 @@ app.get('/health', function (req, res) {
 app.post('/*', function (req, res) {
   console.log(`Request received on ${req.path}`);
   console.log(req.body.repository.name);
-  var appName = req.body.repository.name.substr( 14 );
+  var appName = req.body.repository.name;
+  if(appName.startsWith('ecs-'))
+    appName = appName.substr( 4 );
   var appVersion = Math.round(new Date().getTime() / 1000 / 60);
   var command = `bash app-deploy.sh update ${process.env.STAGE} ${appName} ${appVersion}`;
   console.log(`Running command: ${command}`)
