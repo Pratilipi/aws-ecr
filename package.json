@@ -1,14 +1,15 @@
 {
-  "name": "cont-dep",
+  "name": "ecs",
   "version": "1.0.0",
-  "description": "Continuous Deployment in Gamma",
+  "description": "Continuous Deployment",
   "author": "Prashant Gupta <prashant@pratilipi.com>",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "4.13.3"
+    "express": "4.13.3",
+    "body-parser": "1.17.2"
   }
 }
 
