@@ -44,6 +44,7 @@ then
 
   cat Dockerfile.raw \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
+    | sed "s#\$STAGE#$STAGE#g" \
     > Dockerfile
   cat ecr-task-def.raw \
     | sed "s#\$STAGE#$STAGE#g" \
@@ -208,6 +209,7 @@ then
 
   cat Dockerfile.raw \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
+    | sed "s#\$STAGE#$STAGE#g" \
     > Dockerfile
   docker build --tag $ECR_IMAGE .
   rm Dockerfile
@@ -217,6 +219,7 @@ then
 
   cat Dockerfile.raw \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
+    | sed "s#\$STAGE#$STAGE#g" \
     > Dockerfile
   docker build --tag $ECR_IMAGE .
   rm Dockerfile
@@ -227,6 +230,7 @@ then
 
   cat Dockerfile.raw \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
+    | sed "s#\$STAGE#$STAGE#g" \
     > Dockerfile
   cat ecr-task-def.raw \
     | sed "s#\$STAGE#$STAGE#g" \
@@ -246,6 +250,7 @@ then
 
   cat Dockerfile.raw \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
+    | sed "s#\$STAGE#$STAGE#g" \
     > Dockerfile
   cat ecr-task-def.raw \
     | sed "s#\$STAGE#$STAGE#g" \
