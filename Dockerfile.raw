@@ -31,6 +31,7 @@ RUN pip install --upgrade --user awscli
 # Copy gcp & aws config & credentials
 COPY aws-$STAGE aws-$STAGE
 COPY gcp-$STAGE.json .
+COPY gitconfig /root/.gitconfig
 
 # Installing node dependencies
 COPY package.json .
@@ -46,5 +47,4 @@ COPY server.js .
 EXPOSE 80
 
 CMD export PATH=$PATH:/root/.local/bin/ && cp -r aws-$STAGE /root/.aws \
-    && bash base-image.sh $STAGE \
     && npm start

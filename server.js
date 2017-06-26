@@ -1,8 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const exec = require('child_process').exec;
-
 const app = express();
+
+
+var baseImageProcess = exec(`bash base-image.sh ${process.env.STAGE}`, function(error, stdout, stderr) {
+  if(error != null)
+    console.err('Failed to create base images !');
+});
+baseImageProcess.stdout.pipe(process.stdout);
+baseImageProcess.stderr.pipe(process.stdout);
+
 
 app.use(bodyParser.json());
 
@@ -15,7 +23,7 @@ app.post('/*', function (req, res) {
   if( (process.env.STAGE == 'devo' && req.body.ref != 'refs/heads/devo')
       || (process.env.STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma')
       || (process.env.STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
-    res.status(400).send(`No deployment in ${process.env.STAGE} for a commit in ${req.body.ref.substr(11)} branch.`);
+    res.status(204).send(`No deployment in ${process.env.STAGE} for a commit in ${req.body.ref.substr(11)} branch.`);
     return;
   }
 
@@ -24,11 +32,16 @@ app.post('/*', function (req, res) {
     appName = appName.substr( 4 );
   var appVersion = Math.round(new Date().getTime() / 1000 / 60);
 
-  var command = `bash app-deploy.sh update ${process.env.STAGE} ${appName} ${appVersion}`;
-  console.log(`Running command: ${command}`)
-  exec(command, function(error, stdout, stderr) {
-    res.send(`Deploying to ${appName}/${process.env.STAGE} from ${req.body.ref.substr(11)} branch. Deployment logs are here - https://${process.env.STAGE}.pratilipi.com/ecs/${appName}-${appVersion}.log`);
+  var appCmd = `bash app-deploy.sh update ${process.env.STAGE} ${appName} ${appVersion}`;
+  console.log(`Running command: ${appCmd}`);
+  var appProcess = exec(appCmd, function(error, stdout, stderr) {
+    if(error !== null)
+      console.log('exec error: ' + error);
   });
+  appProcess.stdout.pipe(process.stdout);
+  appProcess.stderr.pipe(process.stdout);
+
+    res.send(`Deploying to ${appName}/${process.env.STAGE} from ${req.body.ref.substr(11)} branch. Deployment logs are here - https://${process.env.STAGE}.pratilipi.com/ecs/${appName}-${appVersion}.log`);
 
 });
 
