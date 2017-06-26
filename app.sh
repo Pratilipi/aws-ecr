@@ -56,6 +56,9 @@ then
   aws ecr create-repository --repository-name $STAGE/$APP_NAME >> /dev/null 2>&1
   echo ... create ecr repository: $STAGE/$APP_NAME
 
+  echo ... started creating target group
+  echo AWS Response:
+  echo "****************************************************************"
   TARGET_GRP=$(aws elbv2 create-target-group \
     --name ecs-$STAGE-$APP_NAME-tg \
     --protocol HTTP \
@@ -63,19 +66,25 @@ then
     --vpc-id $VPC_ID \
     --health-check-protocol HTTP \
     --health-check-path /health \
-    --health-check-interval-seconds 15 \
+    --health-check-interval-seconds 30 \
     --health-check-timeout-seconds 5 \
     --healthy-threshold-count 5 \
-    --unhealthy-threshold-count 2 \
+    --unhealthy-threshold-count 5 \
     --matcher HttpCode=200)
+  echo $TARGET_GRP
+  echo "****************************************************************"
   TARGET_GRP_ARN=$(echo $TARGET_GRP | jq -r '.TargetGroups[0]["TargetGroupArn"]')
   echo ... created target group: $TARGET_GRP_ARN
 
+  echo ... started adding target group to the internal load balancer
+  echo AWS Response:
+  echo "****************************************************************"
   aws elbv2 create-rule \
     --listener-arn $LB_LISTNER \
     --priority $(date +%M)$(date +%H) \
     --conditions Field=path-pattern,Values=\'/$APP_NAME/*\' \
-    --actions Type=forward,TargetGroupArn=$TARGET_GRP_ARN >> /dev/null 2>&1
+    --actions Type=forward,TargetGroupArn=$TARGET_GRP_ARN
+  echo "****************************************************************"
   echo ... added target group to the internal load balancer
 
   docker build --tag $ECR_IMAGE .
@@ -89,13 +98,18 @@ then
   TASK_DEF_VER=$(echo $TASK_DEF | jq -r '.taskDefinition.revision')
   echo ... created task definition: $APP_NAME:$TASK_DEF_VER
 
+  echo ... started creating service
+  echo AWS response:
+  echo "****************************************************************"
   aws ecs create-service \
     --cluster $STAGE-ecs \
     --service-name $APP_NAME \
     --task-definition $APP_NAME:$TASK_DEF_VER \
     --role ecsServiceRole \
     --load-balancers targetGroupArn=$TARGET_GRP_ARN,containerName=$APP_NAME,containerPort=80 \
-    --placement-strategy type="spread",field="attribute:ecs.availability-zone" type="binpack",field="cpu" >> /dev/null 2>&1
+    --placement-strategy type="spread",field="attribute:ecs.availability-zone" type="binpack",field="cpu" \
+    --desired-count 2
+  echo "****************************************************************"
   echo ... created service: $APP_NAME
 
   aws application-autoscaling register-scalable-target \
