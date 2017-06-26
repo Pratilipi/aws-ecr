@@ -15,7 +15,7 @@ app.post('/*', function (req, res) {
   if( (process.env.STAGE == 'devo' && req.body.ref != 'refs/heads/devo')
       || (process.env.STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma')
       || (process.env.STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
-    res.send(`No deployment in ${process.env.STAGE} for a commit in ${req.body.ref.substr(11)} branch.`);
+    res.status(400).send(`No deployment in ${process.env.STAGE} for a commit in ${req.body.ref.substr(11)} branch.`);
     return;
   }
 
