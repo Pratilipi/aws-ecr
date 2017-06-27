@@ -469,6 +469,9 @@ function DbUtility ( config ) {
                   for( var i = 0; i < keysUpper.length; i++ ) {
                     dataEntity[ keysUpper[ i ] ] = newData[ keysUpper[ i ] ];
                   }
+                  dataEntity = makeSchema( dataEntity );
+                  //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
+                  delete dataEntity[ primaryKey ];
                   //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
                   if( checkSchema( dataEntity ) ) {
                     var task = {

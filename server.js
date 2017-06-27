@@ -39,7 +39,7 @@ app.post('/*', function (req, res) {
 
   var appCmd = `bash app-deploy.sh update ${process.env.STAGE} ${appName} ${appVersion}`;
   console.log(`Running command: ${appCmd}`);
-  var appProcess = exec(appCmd, function(error, stdout, stderr) {
+  var appProcess = exec(appCmd, {maxBuffer: 1024 * 1024}, function(error, stdout, stderr) {
     if(error !== null)
       console.log('exec error: ' + error);
   });
