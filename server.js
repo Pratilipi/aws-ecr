@@ -12,6 +12,14 @@ baseImageProcess.stdout.pipe(process.stdout);
 baseImageProcess.stderr.pipe(process.stdout);
 
 
+var customImageProcess = exec(`bash custom-image.sh ${process.env.STAGE}`, function(error, stdout, stderr) {
+  if(error != null)
+    console.err('Failed to create custom images !');
+});
+customImageProcess.stdout.pipe(process.stdout);
+customImageProcess.stderr.pipe(process.stdout);
+
+
 app.use(bodyParser.json());
 
 app.get('/health', function (req, res) {
