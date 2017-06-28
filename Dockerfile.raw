@@ -40,6 +40,8 @@ RUN npm install
 # Bundle app source
 COPY base-image base-image
 COPY base-image.sh .
+COPY custom-image custom-image
+COPY custom-image.sh .
 COPY app.sh .
 COPY app-deploy.sh .
 COPY server.js .
