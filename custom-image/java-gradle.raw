@@ -1,0 +1,12 @@
+FROM $DOCKER_REPO/java:8u111
+
+WORKDIR /usr/bin
+RUN wget https://services.gradle.org/distributions/gradle-2.2.1-all.zip && \
+    unzip gradle-2.2.1-all.zip && \
+    ln -s gradle-2.2.1 gradle && \
+    rm gradle-2.2.1-all.zip
+
+ENV GRADLE_HOME /usr/bin/gradle
+ENV PATH $PATH:$GRADLE_HOME/bin
+
+WORKDIR /usr/src/app
