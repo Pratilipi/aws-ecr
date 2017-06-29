@@ -5,16 +5,20 @@ const app = express();
 
 
 var baseImageProcess = exec(`bash base-image.sh ${process.env.STAGE}`, function(error, stdout, stderr) {
-  if(error != null)
+  if(error != null) {
     console.error('Failed to create base images !');
+    console.error(String(error));
+  }
 });
 baseImageProcess.stdout.pipe(process.stdout);
 baseImageProcess.stderr.pipe(process.stdout);
 
 
 var customImageProcess = exec(`bash custom-image.sh ${process.env.STAGE}`, function(error, stdout, stderr) {
-  if(error != null)
+  if(error != null) {
     console.error('Failed to create custom images !');
+    console.error(String(error));
+  }
 });
 customImageProcess.stdout.pipe(process.stdout);
 customImageProcess.stderr.pipe(process.stdout);
