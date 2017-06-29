@@ -42,7 +42,7 @@
     ],
     "placementConstraints": [
         {
-            "expression": "attribute:ecs.instance-type == t2.micro",
+            "expression": "attribute:ecs.instance-type =~ t2.*",
             "type": "memberOf"
         }
     ]
