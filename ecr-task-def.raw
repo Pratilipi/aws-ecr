@@ -39,5 +39,11 @@
                 "sourcePath": "/var/run/docker.sock"
             }
         }
+    ],
+    "placementConstraints": [
+        {
+            "expression": "attribute:ecs.instance-type == t2.micro",
+            "type": "memberOf"
+        }
     ]
 }
