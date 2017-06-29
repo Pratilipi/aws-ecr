@@ -23,7 +23,7 @@ then
   git clone -b $GIT_BRANCH https://github.com/Pratilipi/$GIT_REPO.git
     if [ $GIT_REPO == "ecs" ]
     then
-      cp gitconfig gitconfig
+      cp gitconfig $GIT_REPO
       cp -r aws-$STAGE $GIT_REPO/aws-$STAGE
       cp gcp-$STAGE.json $GIT_REPO
     fi

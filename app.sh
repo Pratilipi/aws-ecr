@@ -16,9 +16,6 @@ if [ ! -f "Dockerfile.raw" ]; then
   exit 0
 fi
 
-WORK_DIR=$(pwd)
-cd ../ecs && git pull && cd $WORK_DIR
-
 
 
 if [ $STAGE == "devo" ]
@@ -100,7 +97,7 @@ then
   docker build --tag $ECR_IMAGE .
   echo ... built docker image: $ECR_IMAGE
 
-  $(aws ecr get-login)
+  $(aws ecr get-login --no-include-email)
   docker push $ECR_IMAGE
   echo ... pushed docker image: $ECR_IMAGE
 
@@ -262,7 +259,7 @@ then
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
     > ecr-task-def.json
   docker build --tag $ECR_IMAGE .
-  $(aws ecr get-login)
+  $(aws ecr get-login --no-include-email)
   docker push $ECR_IMAGE
   aws ecs register-task-definition --cli-input-json file://ecr-task-def.json
   rm Dockerfile
@@ -282,7 +279,7 @@ then
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
     > ecr-task-def.json
   docker build --tag $ECR_IMAGE .
-  $(aws ecr get-login)
+  $(aws ecr get-login --no-include-email)
   docker push $ECR_IMAGE
   TASK_DEF_VER=$(aws ecs register-task-definition --cli-input-json file://ecr-task-def.json | jq -r '.taskDefinition.revision')
   aws ecs update-service \

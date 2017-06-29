@@ -52,7 +52,7 @@ cat Dockerfile.raw \
   > Dockerfile
 
 docker build --tag $ECR_IMAGE .
-$(aws ecr get-login)
+$(aws ecr get-login --no-include-email)
 docker push $ECR_IMAGE
 
 rm Dockerfile
