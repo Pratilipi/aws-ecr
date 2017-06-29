@@ -42,7 +42,7 @@
     ],
     "placementConstraints": [
         {
-            "expression": "attribute:ecs.instance-type =~ t2.*",
+            "expression": "attribute:instance-category-devops == true",
             "type": "memberOf"
         }
     ]
