@@ -14,7 +14,7 @@ baseImageProcess.stdout.pipe(process.stdout);
 baseImageProcess.stderr.pipe(process.stdout);
 
 
-var customImageProcess = exec(`bash custom-image.sh ${process.env.STAGE}`, {maxBuffer: 1024 * 1024}, function(error, stdout, stderr) {
+var customImageProcess = exec(`bash custom-image.sh ${process.env.STAGE}`, {maxBuffer: 2 * 1024 * 1024}, function(error, stdout, stderr) {
   if(error != null) {
     console.error('Failed to create custom images !');
     console.error(String(error));
