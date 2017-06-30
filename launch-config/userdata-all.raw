@@ -1,0 +1,3 @@
+#!/bin/bash
+echo ECS_CLUSTER=$STAGE-ecs >> /etc/ecs/ecs.config
+echo ECS_INSTANCE_ATTRIBUTES={\"instance-category-default\":\"true\"\,\"instance-category-devops\":\"true\"} >> /etc/ecs/ecs.config
