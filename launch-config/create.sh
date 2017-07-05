@@ -30,7 +30,7 @@ cat userdata-$TYPE.raw \
     > userdata-$TYPE.txt
 
 aws autoscaling create-launch-configuration \
-    --launch-configuration-name $STAGE-ecs-lc-$TYPE-$INSTANCE_TYPE \
+    --launch-configuration-name $STAGE-ecs-lc-$TYPE-$INSTANCE_TYPE-$(date +%Y%m%d) \
     --instance-type $INSTANCE_TYPE \
     --security-groups $SECURITY_GROUP \
     --image-id ami-19f7787a \
