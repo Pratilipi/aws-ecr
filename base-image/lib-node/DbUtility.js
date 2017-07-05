@@ -141,53 +141,101 @@ function DbUtility ( config ) {
   return {
 
     //PERFORMS QUERY ON TABLE WITH 'AND' OPERATION BETWEEN CONDITIONS WHERE CONDITIONS ARE EQUAL RELATIONS
-    query: function( filter ) {
+    query: function( filter, offset, cursor, limit, orderBy ) {
       try {
-        //FILTER SHOULD BE A MAP
-        if( !(Array.isArray( filter ) ) ) {
-          //SELECT * FROM KIND
-          var query = datastoreClient.createQuery( kind );
-          var keys = Object.keys( filter );
-          //IF FIELDNAMES ARE NOT SPECIFIED THEN SENDING ERROR INSTEAD OF COMPLETE TABLE
-          if( keys.length !== 0 ) {
-            //HANDLING CASE WHERE FIELDNAMES ARE IN LOWER CASE
-            var keysUpper = keys.map( toUpperCase );
-            //WHERE ( KEY = VALUE ) ( AND ) ( KEY = VALUE )...
-            for( var i = 0; i < keys.length; i++ ) {
-              //EXPLICIT CHECK FOR DATASTORE PRIMARY KEY NOTE: DATASTORE SPECIFIC
-              if( keysUpper[ i ] === primaryKey ) {
-                filter[ keys[ i ] ] = getKey( filter[ keys[ i ] ] );
-                keysUpper[ i ] = '__key__';
+        //SELECT * FROM KIND
+        var query = datastoreClient.createQuery( kind );
+
+        if( filter != null ) {
+          //Filter should be an array
+          if( Array.isArray( filter ) ) {
+            for( var i = 0; i < filter.length; i++ ) {
+              if(filter[i].length === 3) {
+                //HANDLING CASE WHERE FIELDNAMES ARE IN LOWER CASE
+                filter[ i ][ 0 ] = filter[ i ][ 0 ].toUpperCase();
+                //EXPLICIT CHECK FOR DATASTORE PRIMARY KEY NOTE: DATASTORE SPECIFIC
+                if( filter[ i ][ 0] === primaryKey ) {
+                  filter[ i ][ 0 ] = '__key__';
+                  filter[ i ][ 2 ] = getKey( filter[ i ][ 2 ] );
+                }
+                //WHERE ( KEY = VALUE ) ( AND ) ( KEY = VALUE )...
+                query.filter(
+                  filter[ i ][ 0 ], // property
+                  filter[ i ][ 1 ], // operator
+                  filter[ i ][ 2 ] ); // value
+                } else {
+                  throw new Error( 'Filter not having 3 fields' );
+                }
               }
-              //( KEY = VALUE )
-              query.filter(
-                keysUpper[ i ], // property
-                '=', // operator
-                filter[ keys[ i ] ] //value
-              );
+            }  else {
+              throw new Error( 'Wrong Type of filter' );
             }
-            //EXECUTE QUERY
-            return datastoreClient.runQuery( query )
-            .then( ( data ) => {
-              if ( data[ 0 ].length === 0 ) {
-                //NO DATA FOUND
-                return ( [ null ] );
-              } else {
-                //DATA FOUND AND BEING PROCESSED
-                return processEntities( data[ 0 ] );
-              }
-            } )
-            .catch( ( error ) => {
-              throw error;
-            } );
-          } else {
-            //NO FIELD IS PROVIDED
-            throw new Error( 'Empty Object' );
           }
-        } else {
-          //FILTER IS NOT A MAP
-          throw new Error( 'Wrong type of filter' );
-        }
+
+          if( orderBy != null ) {
+            if( Array.isArray( orderBy ) ) {
+              orderBy.forEach( ( order ) => {
+                order = order.toUpperCase();
+                if( order.startsWith( '-' ) ) {
+                  if(order === ('-'+primaryKey)){
+                    order = '-__key__';
+                  }
+                  query = query.order( order.substr( 1 ), { descending:true } );
+                } else {
+                  if(order === primaryKey ){
+                    order = '__key__';
+                  }
+                  query = query.order( order );
+                }
+              });
+            } else {
+              throw new Error( 'Wrong Type of order' );
+            }
+          }
+
+          if( cursor != null ) {
+            if( isNaN(cursor) || typeof cursor === 'object' ) {
+              throw new Error( 'Wrong Type of cursor' );
+            } else {
+              query.start( Number(cursor) );
+            }
+          }
+
+          if( offset != null ) {
+            if( isNaN(offset) || typeof offset === 'object' ) {
+              throw new Error( 'Wrong Type of offset' );
+            } else {
+              query.offset( Number(offset) );
+            }
+          }
+
+          if( limit != null ) {
+            if( isNaN(limit) || typeof limit === 'object' ) {
+              throw new Error( 'Wrong Type of limit' );
+            } else {
+              if( Number(limit)>1000 ) {
+                limit = 1000;
+              }
+              query.limit( Number(limit) );
+            }
+          } else {
+            query.limit( 20 );
+          }
+
+          //EXECUTE QUERY
+          return datastoreClient.runQuery( query )
+          .then( ( data ) => {
+            if ( data[ 0 ].length === 0 ) {
+              //NO DATA FOUND
+              return ( [ null ] );
+            } else {
+              //DATA FOUND AND BEING PROCESSED
+              return processEntities( data[ 0 ] );
+            }
+          } )
+          .catch( ( error ) => {
+            throw error;
+          } );
       } catch(error) {
         return new Promise( ( resolve, reject ) => {
           reject( error );
