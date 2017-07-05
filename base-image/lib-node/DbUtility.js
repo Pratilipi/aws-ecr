@@ -180,12 +180,12 @@ function DbUtility ( config ) {
                   if(order === ('-'+primaryKey)){
                     order = '-__key__';
                   }
-                  query = query.order( order.substr( 1 ), { descending:true } );
+                  query.order( order.substr( 1 ), { descending:true } );
                 } else {
                   if(order === primaryKey ){
                     order = '__key__';
                   }
-                  query = query.order( order );
+                  query.order( order );
                 }
               });
             } else {
@@ -194,10 +194,10 @@ function DbUtility ( config ) {
           }
 
           if( cursor != null ) {
-            if( isNaN(cursor) || typeof cursor === 'object' ) {
+            if( typeof cursor !== 'string' ) {
               throw new Error( 'Wrong Type of cursor' );
             } else {
-              query.start( Number(cursor) );
+              query.start( cursor );
             }
           }
 
@@ -214,24 +214,33 @@ function DbUtility ( config ) {
               throw new Error( 'Wrong Type of limit' );
             } else {
               if( Number(limit)>1000 ) {
-                limit = 1000;
+                throw new Error( 'Limit provided is greater than 1000');
               }
               query.limit( Number(limit) );
             }
           } else {
             query.limit( 20 );
           }
-
           //EXECUTE QUERY
           return datastoreClient.runQuery( query )
           .then( ( data ) => {
+            var object = {};
             if ( data[ 0 ].length === 0 ) {
               //NO DATA FOUND
-              return ( [ null ] );
+              object.data = [];
+              object.endCursor = data[1].endCursor;
+              object.moreResults = false;
             } else {
               //DATA FOUND AND BEING PROCESSED
-              return processEntities( data[ 0 ] );
+              object.endCursor = data[1].endCursor;
+              object.data = processEntities( data[ 0 ] );
+              if(data[1].moreResults !== datastoreModule.NO_MORE_RESULTS) {
+                object.moreResults = true;
+              } else {
+                object.moreResults = false;
+              }
             }
+            return object;
           } )
           .catch( ( error ) => {
             throw error;
