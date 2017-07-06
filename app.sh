@@ -241,6 +241,7 @@ then
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     | sed "s#\$STAGE#$STAGE#g" \
     > Dockerfile
+  $(aws ecr get-login --no-include-email)
   docker build --tag $ECR_IMAGE .
   rm Dockerfile
   docker run $ECR_IMAGE

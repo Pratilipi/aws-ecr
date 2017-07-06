@@ -13,17 +13,17 @@ if [ $STAGE == "devo" ]
 then
   AWS_PROJ_ID="381780986962"
   GCP_PROJ_ID="devo-pratilipi"
-  API_END_POINT="internal-devo-lb-pvt-1359086914.ap-southeast-1.elb.amazonaws.com"
+  API_END_POINT="http://internal-devo-lb-pvt-1359086914.ap-southeast-1.elb.amazonaws.com"
 elif [ $STAGE == "gamma" ]
 then
   AWS_PROJ_ID="370531249777"
   GCP_PROJ_ID="prod-pratilipi"
-  API_END_POINT="internal-gamma-lb-pvt-482748674.ap-southeast-1.elb.amazonaws.com"
+  API_END_POINT="http://internal-gamma-lb-pvt-482748674.ap-southeast-1.elb.amazonaws.com"
 elif [ $STAGE == "prod" ]
 then
   AWS_PROJ_ID="370531249777"
   GCP_PROJ_ID="prod-pratilipi"
-  API_END_POINT="internal-prod-lb-pvt-1889763041.ap-southeast-1.elb.amazonaws.com"
+  API_END_POINT="http://internal-prod-lb-pvt-1889763041.ap-southeast-1.elb.amazonaws.com"
 fi
 
 if [ ! -d "lib-$DOCKER_IMAGE" ]
