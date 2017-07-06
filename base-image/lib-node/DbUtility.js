@@ -218,9 +218,8 @@ function DbUtility ( config ) {
               }
               query.limit( Number(limit) );
             }
-          } else {
-            query.limit( 20 );
           }
+
           //EXECUTE QUERY
           return datastoreClient.runQuery( query )
           .then( ( data ) => {
