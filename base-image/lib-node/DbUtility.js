@@ -106,7 +106,7 @@ function DbUtility ( config ) {
       Object.keys( structure ).forEach( ( property ) => {
         if( entity[ property ] == null ) {
           //NOTE: TIMESTAMP SPECIFIC FOR CURRENT TIME
-          if( structure[ property ].default === 'Date()' && structure[ property ].type === 'TIMESTAMP' ) {
+          if( structure[ property ].default === 'new Date()' && structure[ property ].type === 'TIMESTAMP' ) {
             entity[ property ] = eval( structure[ property ].default ); //NOTE: eval() can be harmful.
           } else {
             entity[ property ] = structure[ property ].default;
