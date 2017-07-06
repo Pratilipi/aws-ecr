@@ -107,7 +107,7 @@ function DbUtility ( config ) {
         if( entity[ property ] == null ) {
           //NOTE: TIMESTAMP SPECIFIC FOR CURRENT TIME
           if( structure[ property ].default === 'Date()' && structure[ property ].type === 'TIMESTAMP' ) {
-            entity[ property ] = eval( structure[ property ].default );
+            entity[ property ] = eval( structure[ property ].default ); //NOTE: eval() can be harmful.
           } else {
             entity[ property ] = structure[ property ].default;
           }
@@ -146,11 +146,13 @@ function DbUtility ( config ) {
         //SELECT * FROM KIND
         var query = datastoreClient.createQuery( kind );
 
+        //Filter is provided
         if( filter != null ) {
           //Filter should be an array
           if( Array.isArray( filter ) ) {
             for( var i = 0; i < filter.length; i++ ) {
-              if(filter[i].length === 3) {
+              //Each filter should have three values
+              if(Array.isArray( filter[ i ] ) && filter[i].length === 3) {
                 //HANDLING CASE WHERE FIELDNAMES ARE IN LOWER CASE
                 filter[ i ][ 0 ] = filter[ i ][ 0 ].toUpperCase();
                 //EXPLICIT CHECK FOR DATASTORE PRIMARY KEY NOTE: DATASTORE SPECIFIC
@@ -164,58 +166,83 @@ function DbUtility ( config ) {
                   filter[ i ][ 1 ], // operator
                   filter[ i ][ 2 ] ); // value
                 } else {
-                  throw new Error( 'Filter not having 3 fields' );
+                  //Filter is not having 3 values
+                  throw new Error( 'Filter not having 3 fields or not having correct type' );
                 }
               }
             }  else {
+              //Filter is not an array
               throw new Error( 'Wrong Type of filter' );
             }
           }
 
+          //Sort by KEY
+          //Orderby is provided
           if( orderBy != null ) {
+            //Orderby should be an array
             if( Array.isArray( orderBy ) ) {
+              //Sort in sequence of orders provided
               orderBy.forEach( ( order ) => {
+                //Handling case where fieldnames are in lower case
                 order = order.toUpperCase();
+                //-KEY denotes descending order sort
                 if( order.startsWith( '-' ) ) {
+                  //Explicit check for datastore primary key NOTE: Datastore specific
                   if(order === ('-'+primaryKey)){
                     order = '-__key__';
                   }
+                  //Order by KEY
                   query.order( order.substr( 1 ), { descending:true } );
                 } else {
+                  //Explicit check for datastore primary key NOTE: Datastore specific
                   if(order === primaryKey ){
                     order = '__key__';
                   }
+                  //Order by KEY
                   query.order( order );
                 }
               });
             } else {
+              //Orderby is not an array
               throw new Error( 'Wrong Type of order' );
             }
           }
 
+          //Fetch from some position
           if( cursor != null ) {
+            //Cursor should be a string
             if( typeof cursor !== 'string' ) {
+              //Cursor is not a string
               throw new Error( 'Wrong Type of cursor' );
             } else {
+              //Point the cursor to the respective position
               query.start( cursor );
             }
           }
 
+          //Fetch after skipping some entities
           if( offset != null ) {
+            //Offset should be an Integer
             if( isNaN(offset) || typeof offset === 'object' ) {
               throw new Error( 'Wrong Type of offset' );
             } else {
+              //Set Offset
               query.offset( Number(offset) );
             }
           }
 
+          //Number of Entities in one query
           if( limit != null ) {
+            //Limit should be an Integer
             if( isNaN(limit) || typeof limit === 'object' ) {
               throw new Error( 'Wrong Type of limit' );
             } else {
+              //Limit is set till 1000
               if( Number(limit)>1000 ) {
+                //Limit can't be set greater than 1000
                 throw new Error( 'Limit provided is greater than 1000');
               }
+              //Set limit
               query.limit( Number(limit) );
             }
           }
@@ -227,12 +254,16 @@ function DbUtility ( config ) {
             if ( data[ 0 ].length === 0 ) {
               //NO DATA FOUND
               object.data = [];
+              //Cursor till which entities fetched
               object.endCursor = data[1].endCursor;
+              //Any more entities remaining for a particular query
               object.moreResults = false;
             } else {
-              //DATA FOUND AND BEING PROCESSED
+              //Cursor till which entities fetched
               object.endCursor = data[1].endCursor;
+              //DATA FOUND AND BEING PROCESSED
               object.data = processEntities( data[ 0 ] );
+              //Any more entities remaining for a particular query
               if(data[1].moreResults !== datastoreModule.NO_MORE_RESULTS) {
                 object.moreResults = true;
               } else {
