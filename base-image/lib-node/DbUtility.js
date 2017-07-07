@@ -245,6 +245,8 @@ function DbUtility ( config ) {
               //Set limit
               query.limit( Number(limit) );
             }
+          } else {
+            query.limit(1000);
           }
 
           //EXECUTE QUERY
