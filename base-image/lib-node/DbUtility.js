@@ -329,16 +329,35 @@ function DbUtility ( config ) {
     }
   }
 
+  function selectOnlyKeys( query, selectKeys ) {
+    try{
+      //selectOnlyKeys is provided
+      if(selectKeys != null) {
+        if( typeof selectKeys === 'boolean' ) {
+          if( selectKeys == true ) {
+            query.select('__key__');
+          }
+        } else {
+          throw new Error( 'Select is not having correct type.' );
+        }
+      }
+    } catch( error ) {
+      throw error;
+    }
+  }
+
   return {
 
     //PERFORMS QUERY ON TABLE WITH 'AND' OPERATION BETWEEN CONDITIONS WHERE CONDITIONS ARE EQUAL RELATIONS
-    query: function( filter, offset, cursor, limit, orderBy, select ) {
+    query: function( filter, offset, cursor, limit, orderBy, selectKeys/*,select*/ ) {
       try {
         //SELECT * FROM KIND
         var query = datastoreClient.createQuery( kind );
 
+        //SELECT primaryKey FROM KIND NOTE: DATASTORE SPECIFIC
+        selectOnlyKeys( query, selectKeys );
         //SELECT FIELDNAME FROM KIND
-        selectQuery( query, select );
+        // selectQuery( query, select );
         //WHERE FIELDNAME = VALUE AND ...
         filterQuery( query, filter );
         //SORT BY FIELDNAME AND ...
@@ -365,7 +384,7 @@ function DbUtility ( config ) {
               //Cursor till which entities fetched
               object.endCursor = data[1].endCursor;
               //DATA FOUND AND BEING PROCESSED
-              if( select != null ) {
+              if( selectKeys != null && selectKeys == true ) {
                 object.data = processOnlyPrimaryKeys( data[0] );
               } else {
                 object.data = processEntities( data[ 0 ] );
