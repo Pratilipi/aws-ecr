@@ -278,6 +278,7 @@ then
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
     | sed "s#\$APP_NAME#$APP_NAME#g" \
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
+    | sed "s#\$AWS_PROJ_ID#$AWS_PROJ_ID#g" \
     > ecr-task-def.json
   docker build --tag $ECR_IMAGE .
   $(aws ecr get-login --no-include-email)
