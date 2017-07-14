@@ -216,6 +216,7 @@ function DbUtility ( config ) {
           entity[ property ] = makeFunctions[structure[ property ].type](entity[property]);
         }
       });
+      checkSchema(entity);
       return entity;
     } catch( error ) {
       throw error;
