@@ -257,10 +257,10 @@ function DbUtility ( config ) {
         var property = keys[i];
         if( structure[ property ] == null ) {
           //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-          throw new Error( 'Wrong field provided for '+property+'. It is not in SCHEMA structure provided.');
+          throw new Error( 'Wrong field provided for '+property+' having value '+entity[property]+'. It is not in SCHEMA structure provided.');
         } else if(  !checkFunctions.NULL( entity[ property ] ) && !checkFunctions[ structure[ property ].type ]( entity[ property ] ) ) {
           //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-          throw new Error( 'Wrong field provided for '+property+'. It is not according to SCHEMA structure provided.');
+          throw new Error( 'Wrong field provided for '+property+' having value '+entity[property]+'. It is not according to SCHEMA structure provided.');
         }
       }
       return true;
