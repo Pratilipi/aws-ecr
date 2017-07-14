@@ -71,7 +71,7 @@ function DbUtility ( config ) {
       return value;
     },
     "STRING":function(value){
-      return string;
+      return value;
     }
   };
 
