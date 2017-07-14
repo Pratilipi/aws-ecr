@@ -199,30 +199,6 @@ function DbUtility ( config ) {
     }
   }
 
-  //MAKE ENTITY TO SPECIFIED SCHEMA STRUCTURE
-  function makeSchema( entity ) {
-    try {
-      //DELETE EXTRA KEYS FROM MAP WHICH ARE NOT IN SCHEMA STRUCTURE
-      Object.keys( entity ).forEach( ( property ) => {
-        if( structure[ property ] == null ) {
-          delete entity[ property ];
-        }
-      });
-      //ADD NON EXISTING KEYS WITH DEFAULT VALUE
-      Object.keys( structure ).forEach( ( property ) => {
-        if( entity[ property ] == null ) {
-          entity[ property ] = makeFunctions[structure[ property ].type](structure[ property ].default);
-        } else {
-          entity[ property ] = makeFunctions[structure[ property ].type](entity[property]);
-        }
-      });
-      checkSchema(entity);
-      return entity;
-    } catch( error ) {
-      throw error;
-    }
-  }
-
   //EXECUTE ON EACH ENTITY
   function processOnlyPrimaryKeys( entities ) {
     try {
@@ -244,6 +220,30 @@ function DbUtility ( config ) {
       } else {
         entity[ primaryKey ] = entity[ datastoreClient.KEY ].name;
       }
+      return entity;
+    } catch( error ) {
+      throw error;
+    }
+  }
+
+  //MAKE ENTITY TO SPECIFIED SCHEMA STRUCTURE
+  function makeSchema( entity ) {
+    try {
+      //DELETE EXTRA KEYS FROM MAP WHICH ARE NOT IN SCHEMA STRUCTURE
+      Object.keys( entity ).forEach( ( property ) => {
+        if( structure[ property ] == null ) {
+          delete entity[ property ];
+        }
+      });
+      //ADD NON EXISTING KEYS WITH DEFAULT VALUE
+      Object.keys( structure ).forEach( ( property ) => {
+        if( entity[ property ] == null ) {
+          entity[ property ] = makeFunctions[structure[ property ].type](structure[ property ].default);
+        } else {
+          entity[ property ] = makeFunctions[structure[ property ].type](entity[property]);
+        }
+      });
+      checkSchema(entity);
       return entity;
     } catch( error ) {
       throw error;
