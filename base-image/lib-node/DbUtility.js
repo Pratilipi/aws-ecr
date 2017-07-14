@@ -257,10 +257,10 @@ function DbUtility ( config ) {
         var property = keys[i];
         if( structure[ property ] == null ) {
           //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-          throw new Error( 'Wrong field provided for '+property+' having value '+entity[property]+'. It is not in SCHEMA structure provided.');
+          throw new Error( 'Wrong field provided for '+property+' having value '+entity[property]+' and datatype of value is '+typeof entity[property]+'. It is not in SCHEMA structure provided.');
         } else if(  !checkFunctions.NULL( entity[ property ] ) && !checkFunctions[ structure[ property ].type ]( entity[ property ] ) ) {
           //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-          throw new Error( 'Wrong field provided for '+property+' having value '+entity[property]+'. It is not according to SCHEMA structure provided.');
+          throw new Error( 'Wrong field provided for '+property+' having value '+entity[property]+' and datatype of value is '+typeof entity[property]+'. It is not according to SCHEMA structure provided.');
         }
       }
       return true;
@@ -503,7 +503,9 @@ function DbUtility ( config ) {
             return object;
           } )
           .catch( ( error ) => {
-            throw error;
+            return new Promise( ( resolve, reject ) => {
+              reject( error );
+            } );
           } );
       } catch(error) {
         return new Promise( ( resolve, reject ) => {
@@ -558,7 +560,9 @@ function DbUtility ( config ) {
                 return makeSchema( newData );
               } )
               .catch( ( error ) => {
-                throw error;
+                return new Promise( ( resolve, reject ) => {
+                  reject( error );
+                } );
               } );
             } else {
               //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
@@ -610,7 +614,9 @@ function DbUtility ( config ) {
                 //SORT THE IDS IN THE ORDER IDS ARE SENT AND ALSO APPEND NULL FOR IDS WHERE OBJECT IS NOT FOUND
                 return sortEntities( ids, entityMap );
               } ).catch( ( error ) => {
-                throw error;
+                return new Promise( ( resolve, reject ) => {
+                  reject( error );
+                } );
               } );
             } else {
               //IDS CONTAIN ALL INVALID VALUES SO SENDING NULL FOR EACH ID
@@ -661,7 +667,9 @@ function DbUtility ( config ) {
                 }
               } )
               .catch( ( error ) => {
-                throw error;
+                return new Promise( ( resolve, reject ) => {
+                  reject( error );
+                } );
               });
             } else {
               //PRIMARY KEY IS NOT PROVIDED
@@ -727,7 +735,9 @@ function DbUtility ( config ) {
                   return makeSchema( newData );
                 } )
                 .catch( ( error ) => {
-                  throw error;
+                  return new Promise( ( resolve, reject ) => {
+                    reject( error );
+                  } );
                 } );
 
               } else {
@@ -855,7 +865,9 @@ function DbUtility ( config ) {
               return processEntity( data );
             }
           } ).catch( ( error ) => {
-            throw error;
+            return new Promise( ( resolve, reject ) => {
+              reject( error );
+            } );
           } );
         } else {
           throw new Error( 'Wrong type of id' );
