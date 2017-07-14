@@ -243,6 +243,8 @@ function DbUtility ( config ) {
           entity[ property ] = makeFunctions[structure[ property ].type](entity[property]);
         }
       });
+      console.log("makeSchema");
+      console.log("entity"+JSON.stringify(entity,null,4));
       checkSchema(entity);
       return entity;
     } catch( error ) {
@@ -253,6 +255,8 @@ function DbUtility ( config ) {
   //CHECK IF ENTITY CONFORMS TO THE SCHEMA STRUCTURE
   function checkSchema( entity ) {
     try {
+      console.log("checkSchema");
+      console.log("entity"+JSON.stringify(entity,null,4));
       var keys = Object.keys(entity);
       for(var i = 0; i < keys.length; i++ ) {
         var property = keys[i];
@@ -799,6 +803,8 @@ function DbUtility ( config ) {
                   for( var i = 0; i < keysUpper.length; i++ ) {
                     dataEntity[ keysUpper[ i ] ] = newData[ keysUpper[ i ] ];
                   }
+                  console.log("patch");
+                  console.log(JSON.stringify(dataEntity,null,4));
                   dataEntity = makeSchema( dataEntity );
                   //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
                   delete dataEntity[ primaryKey ];
