@@ -732,7 +732,7 @@ function DbUtility ( config ) {
 
               } else {
                 //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-                throw new Error( 'Wrong field provided. It is not according to SCHEMA structure provided.');
+                throw new Error( 'Wrong fields provided. It is not according to SCHEMA structure provided.');
               }
             } else {
               throw new Error( 'Primary key provided in Data object or Primary key is not provided in ID object' );
@@ -806,16 +806,20 @@ function DbUtility ( config ) {
                       return makeSchema( dataEntity );
                     } )
                     .catch( ( error ) => {
-                      throw error;
+                      return new Promise( ( resolve, reject ) => {
+                        reject( error );
+                      } );
                     } );
                   } else {
                     //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-                    throw new Error( 'Wrong field provided. It is not according to SCHEMA structure provided.');
+                    throw new Error( 'Wrong fields provided. It is not according to SCHEMA structure provided.');
                   }
                 }
               } )
               .catch( (error) => {
-                throw error;
+                return new Promise( ( resolve, reject ) => {
+                  reject( error );
+                } );
               } );
             } else {
               throw new Error( 'Primary key provided in Data object or Primary key is not provided in ID object' );
