@@ -24,6 +24,112 @@ function DbUtility ( config ) {
 
   //HELPER UTILITY
 
+  const makeFunctions = {
+    "BOOLEAN":function(value){
+      return value;
+    },
+    "INTEGER":function(value){
+      if(value !== null) {
+        return datastoreClient.int(value);
+      } else {
+        return value;
+      }
+    },
+    "ARRAY":function(value){
+      return value;
+    },
+    "TIMESTAMP":function(value){
+      if(value !== null) {
+        if(typeof value === 'string' && value === "new Date()") {
+          return (new Date());
+        } else {
+          return value;
+        }
+      } else {
+        return value;
+      }
+    },
+    "FLOAT":function(value){
+      if(value !== null) {
+        return datastoreClient.double(value);
+      } else {
+        return value;
+      }
+
+    },
+    "GEOPOINT":function(value){
+      if(value !== null) {
+        return datastoreClient.geoPoint(value);
+      } else {
+        return value;
+      }
+    },
+    "NULL":function(value){
+      return value;
+    },
+    "OBJECT":function(value){
+      return value;
+    },
+    "STRING":function(value){
+      return string;
+    }
+  };
+
+  const checkFunctions = {
+    "BOOLEAN":function(value){
+      return (typeof value === 'boolean');
+    },
+    "INTEGER":function(value){
+      if (typeof value === 'number') {
+        if( value%1 !== 0) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return false;
+      }
+    },
+    "ARRAY":function(value){
+      return (Array.isArray(value));
+    },
+    "TIMESTAMP":function(value){
+      try{
+      if (typeof value === 'object') {
+        return (typeof value.getTime() === 'number');
+      } else {
+        return false;
+      }
+    } catch(error) {
+      return false;
+    }
+    },
+    "FLOAT":function(value){
+      return (typeof value === 'number');
+
+    },
+    "GEOPOINT":function(value){
+      if (typeof value === 'object' && Object.keys(value).length === 2 ) {
+        if(value.latitude !== undefined && value.longitude !== undefined) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    },
+    "NULL":function(value){
+      return (value === null);
+    },
+    "OBJECT":function(value){
+      return (typeof value === 'object');
+    },
+    "STRING":function(value){
+      return (typeof value === 'string');
+    }
+  };
+
   //MAKE A PRIMARY KEY FOR DATASTORE WITH PROVIDED ID NOTE: DATASTORE SPECIFIC
   function getKey( id ) {
     return datastoreClient.key([ kind, id ]);
@@ -105,12 +211,9 @@ function DbUtility ( config ) {
       //ADD NON EXISTING KEYS WITH DEFAULT VALUE
       Object.keys( structure ).forEach( ( property ) => {
         if( entity[ property ] == null ) {
-          //NOTE: TIMESTAMP SPECIFIC FOR CURRENT TIME
-          if( structure[ property ].default === 'new Date()' && structure[ property ].type === 'TIMESTAMP' ) {
-            entity[ property ] = eval( structure[ property ].default ); //NOTE: eval() can be harmful.
-          } else {
-            entity[ property ] = structure[ property ].default;
-          }
+          entity[ property ] = makeFunctions[structure[ property ].type](structure[ property ].default);
+        } else {
+          entity[ property ] = makeFunctions[structure[ property ].type](entity[property]);
         }
       });
       return entity;
@@ -149,17 +252,18 @@ function DbUtility ( config ) {
   //CHECK IF ENTITY CONFORMS TO THE SCHEMA STRUCTURE
   function checkSchema( entity ) {
     try {
-      var b = 1;
-      Object.keys( entity ).forEach( ( property ) => {
+      var keys = Object.keys(entity);
+      for(var i = 0; i < keys.length; i++ ) {
+        var property = keys[i];
         if( structure[ property ] == null ) {
-          b = 0;
+          //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
+          throw new Error( 'Wrong field provided for '+property+'. It is not in SCHEMA structure provided.');
+        } else if(  !checkFunctions.NULL( entity[ property ] ) && !checkFunctions[ structure[ property ].type ]( entity[ property ] ) ) {
+          //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
+          throw new Error( 'Wrong field provided for '+property+'. It is not according to SCHEMA structure provided.');
         }
-      });
-      if( b === 0 ) {
-        return false;
-      } else {
-        return true;
       }
+      return true;
     } catch( error ) {
       throw error;
     }
@@ -425,7 +529,8 @@ function DbUtility ( config ) {
               newData[ keysUpper[ i ] ] = data[ keys[ i ] ];
             }
             //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
-            if( checkSchema( newData ) ) {
+            var flag = checkSchema(newData);
+            if( flag ) {
 
               newData = makeSchema( newData );
               //NOTE: DATASTORE SPECIFIC
@@ -601,7 +706,8 @@ function DbUtility ( config ) {
             }
             if( newData[ primaryKey ] === undefined && newIdData[ primaryKey ] != null ) {
               //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
-              if( checkSchema( newData ) ) {
+              var flag = checkSchema( newData );
+              if( flag ) {
                 newData = makeSchema( newData );
                 //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
                 delete newData[ primaryKey ];
@@ -626,7 +732,7 @@ function DbUtility ( config ) {
 
               } else {
                 //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-                throw new Error( 'Wrong fields provided. It is not according to SCHEMA structure provided.');
+                throw new Error( 'Wrong field provided. It is not according to SCHEMA structure provided.');
               }
             } else {
               throw new Error( 'Primary key provided in Data object or Primary key is not provided in ID object' );
@@ -686,7 +792,8 @@ function DbUtility ( config ) {
                   //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
                   delete dataEntity[ primaryKey ];
                   //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
-                  if( checkSchema( dataEntity ) ) {
+                  var flag = checkSchema( dataEntity );
+                  if( flag ) {
                     var task = {
                       key: key,
                       data: dataEntity
@@ -703,7 +810,7 @@ function DbUtility ( config ) {
                     } );
                   } else {
                     //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-                    throw new Error( 'Wrong fields provided. It is not according to SCHEMA structure provided.');
+                    throw new Error( 'Wrong field provided. It is not according to SCHEMA structure provided.');
                   }
                 }
               } )
