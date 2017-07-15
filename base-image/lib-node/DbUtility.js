@@ -577,6 +577,8 @@ function DbUtility ( config ) {
               //CREATE KEY IF PROVIDED EXPLICITLY
               if( newData[ primaryKey ] === structure[ primaryKey ].default ) {
                 key = getNewKey();
+              } else if(newData[primaryKey].value == structure[primaryKey].default) {
+                key = getNewKey();
               } else {
                 var value = newData[ primaryKey ];
                 key = getKey( value );
