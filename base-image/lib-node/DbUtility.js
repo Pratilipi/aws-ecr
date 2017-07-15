@@ -29,7 +29,7 @@ function DbUtility ( config ) {
       return value;
     },
     "INTEGER":function(value){
-      if(value !== null) {
+      if(value !== null && value.constructor.name !== 'Int') {
         return datastoreClient.int(value);
       } else {
         return value;
@@ -50,7 +50,7 @@ function DbUtility ( config ) {
       }
     },
     "FLOAT":function(value){
-      if(value !== null) {
+      if(value !== null && value.constructor.name !== 'Double') {
         return datastoreClient.double(value);
       } else {
         return value;
@@ -58,7 +58,7 @@ function DbUtility ( config ) {
 
     },
     "GEOPOINT":function(value){
-      if(value !== null) {
+      if(value !== null && value.constructor.name !== 'GeoPoint') {
         return datastoreClient.geoPoint(value);
       } else {
         return value;
@@ -86,6 +86,12 @@ function DbUtility ( config ) {
         } else {
           return true;
         }
+      } else if( typeof value === 'object' && value.constructor.name === 'Int' ) {
+        if( Number(value.value)%1 !== 0) {
+          return false;
+        } else {
+          return true;
+        }
       } else {
         return false;
       }
@@ -105,8 +111,17 @@ function DbUtility ( config ) {
     }
     },
     "FLOAT":function(value){
-      return (typeof value === 'number');
-
+      if (typeof value === 'number') {
+        return true;
+      } else if( typeof value === 'object' && value.constructor.name === 'Double' ) {
+        if( typeof value.value === 'number') {
+            return true;
+          } else {
+            return false;
+        }
+      } else {
+        return false;
+      }
     },
     "GEOPOINT":function(value){
       if (typeof value === 'object' && Object.keys(value).length === 2 ) {
@@ -115,6 +130,12 @@ function DbUtility ( config ) {
         } else {
           return false;
         }
+      } else if (typeof value.value === 'object' && value.constructor.name === 'GeoPoint' && Object.keys(value.value).length === 2 ) {
+        if(value.value.latitude !== undefined && value.value.longitude !== undefined) {
+          return true;
+        } else {
+          return false;
+        } 
       } else {
         return false;
       }
@@ -187,6 +208,7 @@ function DbUtility ( config ) {
     try {
       //MAKE THE ENTITY TO SPECIFIED SCHEMA
       entity = makeSchema( entity );
+      entity = removeIntDoubleGeoObjects(entity);
       //EXPLICIT CHECK FOR PRIMARY KEY IN DATASTORE NOTE: DATASTORE SPECIFIC
       if( structure[ primaryKey ].type === 'INTEGER' ) {
         entity[ primaryKey ] = parseInt( entity[ datastoreClient.KEY ].id );
@@ -243,8 +265,6 @@ function DbUtility ( config ) {
           entity[ property ] = makeFunctions[structure[ property ].type](entity[property]);
         }
       });
-      console.log("makeSchema");
-      console.log("entity"+JSON.stringify(entity,null,4));
       checkSchema(entity);
       return entity;
     } catch( error ) {
@@ -255,8 +275,6 @@ function DbUtility ( config ) {
   //CHECK IF ENTITY CONFORMS TO THE SCHEMA STRUCTURE
   function checkSchema( entity ) {
     try {
-      console.log("checkSchema");
-      console.log("entity"+JSON.stringify(entity,null,4));
       var keys = Object.keys(entity);
       for(var i = 0; i < keys.length; i++ ) {
         var property = keys[i];
@@ -272,6 +290,20 @@ function DbUtility ( config ) {
     } catch( error ) {
       throw error;
     }
+  }
+
+  function removeIntDoubleGeoObjects(entity) {
+
+    var keys = Object.keys(entity);
+      for(var i = 0; i < keys.length; i++ ) {
+        var property = keys[i];
+  if(structure[ property ].type === 'INTEGER' || structure[property].type === 'FLOAT') {
+    entity[property] = Number(entity[property].value);
+  } else if( structure[property].type === 'GEOPOINT'  ) {
+    entity[property] = entity[property].value;
+  }
+      }
+    return entity; 
   }
 
   function filterQuery( query, filter ) {
@@ -562,7 +594,8 @@ function DbUtility ( config ) {
                 //NOTE: DATASTORE SPECIFIC
                 newData[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
                 //MAKE DATA IN SPECIFIED SCHEMA
-                return makeSchema( newData );
+                newData = makeSchema( newData );
+    return removeIntDoubleGeoObjects(newData);
               } )
               .catch( ( error ) => {
                 return new Promise( ( resolve, reject ) => {
@@ -737,7 +770,8 @@ function DbUtility ( config ) {
                 .then( () => {
                   newData[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
                   //MAKE DATA IN SPECIFIED SCHEMA
-                  return makeSchema( newData );
+                  newData =  makeSchema( newData );
+      return removeIntDoubleGeoObjects(newData);
                 } )
                 .catch( ( error ) => {
                   return new Promise( ( resolve, reject ) => {
@@ -803,8 +837,6 @@ function DbUtility ( config ) {
                   for( var i = 0; i < keysUpper.length; i++ ) {
                     dataEntity[ keysUpper[ i ] ] = newData[ keysUpper[ i ] ];
                   }
-                  console.log("patch");
-                  console.log(JSON.stringify(dataEntity,null,4));
                   dataEntity = makeSchema( dataEntity );
                   //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
                   delete dataEntity[ primaryKey ];
@@ -820,7 +852,8 @@ function DbUtility ( config ) {
                     .then( () => {
                       dataEntity[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
                       //MAKE DATA IN SPECIFIED SCHEMA
-                      return makeSchema( dataEntity );
+                      dataEntity =  makeSchema( dataEntity );
+          return removeIntDoubleGeoObjects(dataEntity);
                     } )
                     .catch( ( error ) => {
                       return new Promise( ( resolve, reject ) => {
