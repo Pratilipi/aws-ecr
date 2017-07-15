@@ -86,7 +86,7 @@ function DbUtility ( config ) {
         } else {
           return true;
         }
-      } else if( typeof value === 'object' && value.constructor.name === 'Int' ) {
+      } else if( value !== null && typeof value === 'object' && value.constructor.name === 'Int' ) {
         if( Number(value.value)%1 !== 0) {
           return false;
         } else {
@@ -101,7 +101,7 @@ function DbUtility ( config ) {
     },
     "TIMESTAMP":function(value){
       try{
-      if (typeof value === 'object') {
+      if (value !== null && typeof value === 'object') {
         return (typeof value.getTime() === 'number');
       } else {
         return false;
@@ -113,7 +113,7 @@ function DbUtility ( config ) {
     "FLOAT":function(value){
       if (typeof value === 'number') {
         return true;
-      } else if( typeof value === 'object' && value.constructor.name === 'Double' ) {
+      } else if(value !== null && typeof value === 'object' && value.constructor.name === 'Double' ) {
         if( typeof value.value === 'number') {
             return true;
           } else {
@@ -124,13 +124,13 @@ function DbUtility ( config ) {
       }
     },
     "GEOPOINT":function(value){
-      if (typeof value === 'object' && Object.keys(value).length === 2 ) {
+      if (value !== null && typeof value === 'object' && Object.keys(value).length === 2 ) {
         if(value.latitude !== undefined && value.longitude !== undefined) {
           return true;
         } else {
           return false;
         }
-      } else if (typeof value.value === 'object' && value.constructor.name === 'GeoPoint' && Object.keys(value.value).length === 2 ) {
+      } else if (value !== null && typeof value.value === 'object' && value.constructor.name === 'GeoPoint' && Object.keys(value.value).length === 2 ) {
         if(value.value.latitude !== undefined && value.value.longitude !== undefined) {
           return true;
         } else {
@@ -144,7 +144,7 @@ function DbUtility ( config ) {
       return (value === null);
     },
     "OBJECT":function(value){
-      return (typeof value === 'object');
+      return (value !== null && typeof value === 'object');
     },
     "STRING":function(value){
       return (typeof value === 'string');
