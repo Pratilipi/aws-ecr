@@ -297,9 +297,9 @@ function DbUtility ( config ) {
     var keys = Object.keys(entity);
       for(var i = 0; i < keys.length; i++ ) {
         var property = keys[i];
-  if(structure[ property ].type === 'INTEGER' || structure[property].type === 'FLOAT') {
+  if(entity[property] !== null && (structure[ property ].type === 'INTEGER' || structure[property].type === 'FLOAT')) {
     entity[property] = Number(entity[property].value);
-  } else if( structure[property].type === 'GEOPOINT'  ) {
+  } else if( entity[property] !== null && structure[property].type === 'GEOPOINT'  ) {
     entity[property] = entity[property].value;
   }
       }
