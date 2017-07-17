@@ -39,12 +39,8 @@ function DbUtility ( config ) {
       return value;
     },
     "TIMESTAMP":function(value){
-      if(value !== null) {
-        if(typeof value === 'string' && value === "new Date()") {
-          return (new Date());
-        } else {
-          return value;
-        }
+      if(typeof value === 'string' && value === "new Date()") {
+        return (new Date());
       } else {
         return value;
       }
@@ -101,7 +97,7 @@ function DbUtility ( config ) {
     },
     "TIMESTAMP":function(value){
       try{
-      if (value !== null && typeof value === 'object') {
+      if (value !== null && typeof value === 'object' && value.constructor.name === 'Date') {
         return (typeof value.getTime() === 'number');
       } else {
         return false;
