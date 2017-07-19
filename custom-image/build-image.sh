@@ -28,6 +28,7 @@ create_repo()
    then
     echo "...***==> repository: $PREFIX$STAGE/$DOCKER_IMAGE exists."
     REPO_CREATED=1
+    break
    fi
   done
 
