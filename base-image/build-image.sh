@@ -3,12 +3,61 @@ STAGE=$2
 DOCKER_IMAGE=$3
 DOCKER_IMAGE_VERSION=$4
 
-if [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$DOCKER_IMAGE" == "" ] || [ "$DOCKER_IMAGE_VERSION" == "" ] || [ "$REALM" != "product" -a "$REALM" != "growth" ]
+build_image()
+{
+  docker build --tag $ECR_IMAGE .
+  STATUS=$?
+  if [ $STATUS == 0 ]
+  then
+    echo "image: $ECR_IMAGE created"
+  else
+    echo "error while creating image: $ECR_IMAGE"
+    exit $STATUS
+  fi
+}
+
+create_repo()
+{
+  REPO_NAMES=$(aws ecr describe-repositories | jq  '.repositories[].repositoryName')
+
+  REPO_CREATED=0
+
+  for REPO_NAME in $REPO_NAMES
+  do
+   if [ $REPO_NAME == "\"$PREFIX$STAGE/$APP_NAME\"" ]
+   then
+    echo "repository: $PREFIX$STAGE/$APP_NAME exists."
+    REPO_CREATED=1
+   fi
+  done
+
+  if [ REPO_CREATED == 0 ]
+  then
+    echo "... creating ecr repository: $PREFIX$STAGE/$APP_NAME"
+    aws ecr create-repository --repository-name $PREFIX$STAGE/$APP_NAME >> /dev/null 2>&1
+    STATUS=$?
+    if [ $STATUS == 0 ]
+    then
+      echo "repository: $PREFIX$STAGE/$APP_NAME created."
+    else
+      echo "error while creating repository: $PREFIX$STAGE/$APP_NAME"
+      exit $STATUS
+    fi
+  fi
+}
+
+if [ "$REALM" != "product" -a "$REALM" != "growth" ] || [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$DOCKER_IMAGE" == "" ] || [ "$DOCKER_IMAGE_VERSION" == "" ]
 then
   echo "syntax: bash build-image.sh <realm> <stage> <docker-image> <docker-image-version>"
-  exit 0
+  exit 1
 fi
 
+if [ $REALM == "growth" ]
+then
+  PREFIX="gr-"
+else
+  PREFIX=""
+fi
 
 if [ $STAGE == "devo" ]
 then
@@ -25,13 +74,6 @@ then
   AWS_PROJ_ID="370531249777"
   GCP_PROJ_ID="prod-pratilipi"
   API_END_POINT="http://internal-prod-lb-pvt-1889763041.ap-southeast-1.elb.amazonaws.com"
-fi
-
-if [ $REALM == "growth" ]
-then
-  PREFIX="gr-"
-else
-  PREFIX=""
 fi
 
 if [ ! -d "lib-$DOCKER_IMAGE" ]
@@ -61,27 +103,11 @@ cat Dockerfile.raw \
   | sed "s#\$BUILD_COMMAND#$BUILD_COMMAND#g" \
   > Dockerfile
 
-docker build --tag $ECR_IMAGE .
+build_image
 
 $(aws ecr get-login --no-include-email)
 
-REPO_NAMES=$(aws ecr describe-repositories | jq  '.repositories[].repositoryName')
-
-REPO_CREATED=0
-
-for REPO_NAME in $REPO_NAMES
-do
- if [ $REPO_NAME == "\"$PREFIX$STAGE/$APP_NAME\"" ]
- then
-  REPO_CREATED=1
- fi
-done
-
-if [ REPO_CREATED == 0 ]
-then
-  echo ... creating ecr repository: $PREFIX$STAGE/$APP_NAME
-  aws ecr create-repository --repository-name $PREFIX$STAGE/$APP_NAME >> /dev/null 2>&1
-fi
+create_repo
 
 docker push $ECR_IMAGE
 
