@@ -109,5 +109,7 @@ create_repo
 
 $(aws ecr get-login --no-include-email)
 docker push $ECR_IMAGE
+echo "...***==> image: $ECR_IMAGE pushed."
+echo "...***==> build-image.sh $1 $2 $3 $4 SUCCESS"
 
 rm Dockerfile
