@@ -34,7 +34,7 @@ create_repo()
   if [ REPO_CREATED == 0 ]
   then
     echo "... creating ecr repository: $PREFIX$STAGE/$APP_NAME"
-    aws ecr create-repository --repository-name $PREFIX$STAGE/$APP_NAME >> /dev/null 2>&1
+    aws ecr create-repository --repository-name $PREFIX$STAGE/$APP_NAME >> /dev/null
     STATUS=$?
     if [ $STATUS == 0 ]
     then
