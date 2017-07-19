@@ -34,7 +34,7 @@ cd $GIT_REPO
 
 git fetch
 git reset --hard origin/$GIT_BRANCH
-bash ../app.sh $1 $2 $3 $4
+bash ../app.sh $1 $3 $4 $5
 git gc
 
 cd ..
