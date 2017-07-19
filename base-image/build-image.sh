@@ -9,9 +9,9 @@ build_image()
   STATUS=$?
   if [ $STATUS == 0 ]
   then
-    echo "image: $ECR_IMAGE created"
+    echo "...***==> image: $ECR_IMAGE built"
   else
-    echo "error while creating image: $ECR_IMAGE"
+    echo "...***==> error while builing image: $ECR_IMAGE"
     exit $STATUS
   fi
 }
@@ -24,23 +24,23 @@ create_repo()
 
   for REPO_NAME in $REPO_NAMES
   do
-   if [ $REPO_NAME == "\"$PREFIX$STAGE/$APP_NAME\"" ]
+   if [ $REPO_NAME == "\"$PREFIX$STAGE/$DOCKER_IMAGE\"" ]
    then
-    echo "repository: $PREFIX$STAGE/$APP_NAME exists."
+    echo "...***==> repository: $PREFIX$STAGE/$APP_NAME exists."
     REPO_CREATED=1
    fi
   done
 
-  if [ REPO_CREATED == 0 ]
+  if [ $REPO_CREATED == 0 ]
   then
-    echo "... creating ecr repository: $PREFIX$STAGE/$APP_NAME"
+    echo "...***==> creating ecr repository: $PREFIX$STAGE/$APP_NAME"
     aws ecr create-repository --repository-name $PREFIX$STAGE/$APP_NAME >> /dev/null
     STATUS=$?
     if [ $STATUS == 0 ]
     then
-      echo "repository: $PREFIX$STAGE/$APP_NAME created."
+      echo "...***==> repository: $PREFIX$STAGE/$APP_NAME created."
     else
-      echo "error while creating repository: $PREFIX$STAGE/$APP_NAME"
+      echo "...***==> error while creating repository: $PREFIX$STAGE/$APP_NAME"
       exit $STATUS
     fi
   fi
@@ -105,10 +105,9 @@ cat Dockerfile.raw \
 
 build_image
 
-$(aws ecr get-login --no-include-email)
-
 create_repo
 
+$(aws ecr get-login --no-include-email)
 docker push $ECR_IMAGE
 
 rm Dockerfile
