@@ -4,6 +4,7 @@ STAGE=$3
 APP_NAME=$4
 APP_VERSION=$5
 
+
 if [ $APP_NAME == "ecs" ]
 then
   GIT_REPO=$APP_NAME
@@ -34,7 +35,7 @@ cd $GIT_REPO
 
 git fetch
 git reset --hard origin/$GIT_BRANCH
-bash ../app.sh $1 $3 $4 $5
+bash ../app.sh COMMAND REALM STAGE APP_NAME APP_VERSION
 git gc
 
 cd ..

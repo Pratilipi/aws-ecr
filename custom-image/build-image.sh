@@ -3,6 +3,13 @@ STAGE=$2
 DOCKER_IMAGE=$3
 DOCKER_IMAGE_VERSION=$4
 
+if [ "$REALM" != "product" -a "$REALM" != "growth" ] || [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$DOCKER_IMAGE" == "" ] || [ "$DOCKER_IMAGE_VERSION" == "" ]
+then
+  echo "syntax: bash build-image.sh <realm> <stage> <docker-image> <docker-image-version>"
+  exit 1
+fi
+
+
 build_image()
 {
   docker build --tag $ECR_IMAGE .
@@ -47,11 +54,6 @@ create_repo()
   fi
 }
 
-if [ "$REALM" != "product" -a "$REALM" != "growth" ] || [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$DOCKER_IMAGE" == "" ] || [ "$DOCKER_IMAGE_VERSION" == "" ]
-then
-  echo "syntax: bash build-image.sh <realm> <stage> <docker-image> <docker-image-version>"
-  exit 1
-fi
 
 if [ $REALM == "growth" ]
 then

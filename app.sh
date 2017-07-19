@@ -1,7 +1,8 @@
 COMMAND=$1
-STAGE=$2
-APP_NAME=$3
-APP_VERSION=$4
+REALM=$2
+STAGE=$3
+APP_NAME=$4
+APP_VERSION=$5
 
 if [ "$COMMAND" != "create" -a "$COMMAND" != "build" -a "$COMMAND" != "run" -a "$COMMAND" != "push" -a "$COMMAND" != "update" -a "$COMMAND" != "delete" ] || [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$APP_NAME" == "" ] || [ "$APP_VERSION" == "" ]
 then
