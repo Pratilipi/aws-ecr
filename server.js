@@ -2,28 +2,39 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const exec = require('child_process').exec;
 const app = express();
+
+
 const REALM = process.env.REALM;
 const STAGE = process.env.STAGE;
 
+const commands = [
+  `bash base-image.sh ${REALM} ${STAGE}`,
+  `bash custom-image.sh ${REALM} ${STAGE}`
+];
 
-var baseImageProcess = exec(`bash base-image.sh ${REALM} ${STAGE}`, {maxBuffer: 1024 * 1024}, function(error, stdout, stderr) {
-  if(error != null) {
-    console.error('Failed to create base images !');
-    console.error(String(error));
+
+(function run() {
+
+  if(commands.length == 0 ) {
+    return setTimeout( run, 5 * 1000 );
   }
-});
-baseImageProcess.stdout.pipe(process.stdout);
-baseImageProcess.stderr.pipe(process.stdout);
 
+  commands.reverse();
+  var command = commands.pop();
+  commands.reverse();
 
-var customImageProcess = exec(`bash custom-image.sh ${REALM} ${STAGE}`, {maxBuffer: 2 * 1024 * 1024}, function(error, stdout, stderr) {
-  if(error != null) {
-    console.error('Failed to create custom images !');
-    console.error(String(error));
-  }
-});
-customImageProcess.stdout.pipe(process.stdout);
-customImageProcess.stderr.pipe(process.stdout);
+  console.log(`Running command: ${command}`);
+  var cmdProcess = exec(command, {maxBuffer: 2 * 1024 * 1024}, function(error, stdout, stderr) {
+    if(error != null) {
+      console.error(`Failed to execute command: ${command}`);
+      console.error(String(error));
+    }
+    run();
+  });
+  cmdProcess.stdout.pipe(process.stdout);
+  cmdProcess.stderr.pipe(process.stdout);
+
+})();
 
 
 app.use(bodyParser.json());
@@ -51,16 +62,9 @@ app.post('/*', function (req, res) {
     appName = appName.substr( 4 );
   var appVersion = Math.round(new Date().getTime() / 1000 / 60);
 
-  var appCmd = `bash app-deploy.sh update ${REALM} ${STAGE} ${appName} ${appVersion}`;
-  console.log(`Running command: ${appCmd}`);
-  var appProcess = exec(appCmd, {maxBuffer: 1024 * 1024}, function(error, stdout, stderr) {
-    if(error !== null)
-      console.log('exec error: ' + error);
-  });
-  appProcess.stdout.pipe(process.stdout);
-  appProcess.stderr.pipe(process.stdout);
+  commands.push(`bash app-deploy.sh update ${REALM} ${STAGE} ${appName} ${appVersion}`);
 
-    res.send(`Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch.`);
+  res.send(`Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch.`);
 
 });
 
