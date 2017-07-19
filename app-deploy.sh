@@ -35,6 +35,7 @@ cd $GIT_REPO
 
 git fetch
 git reset --hard origin/$GIT_BRANCH
+# TODO: create or update depending on ecs service exists or not
 bash ../app.sh $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION
 git gc
 

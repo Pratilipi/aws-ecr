@@ -4,6 +4,7 @@ STAGE=$3
 APP_NAME=$4
 APP_VERSION=$5
 
+# TODO: Validate REALM as well
 if [ "$COMMAND" != "create" -a "$COMMAND" != "build" -a "$COMMAND" != "run" -a "$COMMAND" != "push" -a "$COMMAND" != "update" -a "$COMMAND" != "delete" ] || [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$APP_NAME" == "" ] || [ "$APP_VERSION" == "" ]
 then
   echo "syntax: bash app.sh <command> <realm> <stage> <app-name> <app-version>"
@@ -11,14 +12,17 @@ then
 fi
 
 
-
+# TODO: Check for ecr-task-def.raw as well
 if [ ! -f "Dockerfile.raw" ]; then
   echo "Could not find Dockerfile.raw !"
   exit 0
 fi
 
 
-
+# LB_LISTNERs for Growth devo/gamma/prod
+# arn:aws:elasticloadbalancing:ap-southeast-1:381780986962:listener/app/devo-lb-pvt/9063c6c4e264ea17/b144bca497a9a1aa
+# arn:aws:elasticloadbalancing:ap-southeast-1:370531249777:listener/app/gamma-lb-pvt/98bfeb8d67ee2d26/e0d977e1084f2f2a
+# arn:aws:elasticloadbalancing:ap-southeast-1:370531249777:listener/app/prod-lb-pvt/bfbfa36e82445261/3e3a1b93ec7d49e1 
 if [ $STAGE == "devo" ]
 then
   AWS_PROJ_ID="381780986962"
@@ -42,10 +46,13 @@ then
   AUTO_SCALING_IAM_ROLE="arn:aws:iam::370531249777:role/ecsAutoscaleRole"
 fi
 
+# TODO: Error out if project id != $AWS_PROJ_ID
+
 ECR_REPO=$AWS_PROJ_ID.dkr.ecr.ap-southeast-1.amazonaws.com/$STAGE
 ECR_IMAGE=$ECR_REPO/$APP_NAME:$APP_VERSION
 
 
+# TODO: Do not create alarms and auto scaling for devo and gamma
 
 if [ $COMMAND == "create" ]
 then
