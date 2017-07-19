@@ -35,7 +35,7 @@ cd $GIT_REPO
 
 git fetch
 git reset --hard origin/$GIT_BRANCH
-bash ../app.sh COMMAND REALM STAGE APP_NAME APP_VERSION
+bash ../app.sh $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION
 git gc
 
 cd ..
