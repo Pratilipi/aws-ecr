@@ -16,6 +16,7 @@ RUN $BUILD_COMMAND
 COPY keyfile.json /usr/src/app/keyfile.json
 
 # Setting environment variables
+ENV REALM=$REALM
 ENV STAGE=$STAGE
 ENV AWS_PROJ_ID=$AWS_PROJ_ID
 ENV GCP_PROJ_ID=$GCP_PROJ_ID

@@ -1,7 +1,8 @@
 COMMAND=$1
-STAGE=$2
-APP_NAME=$3
-APP_VERSION=$4
+REALM=$2
+STAGE=$3
+APP_NAME=$4
+APP_VERSION=$5
 
 if [ $APP_NAME == "ecs" ]
 then

@@ -2,9 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const exec = require('child_process').exec;
 const app = express();
+const REALM = process.env.REALM;
+const STAGE = process.env.STAGE;
 
 
-var baseImageProcess = exec(`bash base-image.sh ${process.env.STAGE}`, {maxBuffer: 1024 * 1024}, function(error, stdout, stderr) {
+var baseImageProcess = exec(`bash base-image.sh ${REALM} ${STAGE}`, {maxBuffer: 1024 * 1024}, function(error, stdout, stderr) {
   if(error != null) {
     console.error('Failed to create base images !');
     console.error(String(error));
@@ -14,7 +16,7 @@ baseImageProcess.stdout.pipe(process.stdout);
 baseImageProcess.stderr.pipe(process.stdout);
 
 
-var customImageProcess = exec(`bash custom-image.sh ${process.env.STAGE}`, {maxBuffer: 2 * 1024 * 1024}, function(error, stdout, stderr) {
+var customImageProcess = exec(`bash custom-image.sh ${REALM} ${STAGE}`, {maxBuffer: 2 * 1024 * 1024}, function(error, stdout, stderr) {
   if(error != null) {
     console.error('Failed to create custom images !');
     console.error(String(error));
@@ -27,20 +29,20 @@ customImageProcess.stderr.pipe(process.stdout);
 app.use(bodyParser.json());
 
 app.get('/health', function (req, res) {
-  res.send('Stage:' + process.env.STAGE);
+  res.send('Realm:' + REALM + ', Stage:' + STAGE);
 });
 
 app.post('/*', function (req, res) {
 
-  if( (process.env.STAGE == 'devo' && req.body.ref != 'refs/heads/devo')
-      || (process.env.STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma')
-      || (process.env.STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
-    res.status(400).send(`No deployment in ${process.env.STAGE} for commit in ${req.body.repository.name}/${req.body.ref.substr(11)} branch.`);
+  if( (STAGE == 'devo' && req.body.ref != 'refs/heads/devo')
+      || (STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma')
+      || (STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
+    res.status(400).send(`No deployment in ${REALM}/${STAGE} for commit in ${req.body.repository.name}/${req.body.ref.substr(11)} branch.`);
     return;
   }
   
   if(req.body.deleted) {
-    res.status(400).send(`No deployment in ${process.env.STAGE} for deleted ${req.body.repository.name}/${req.body.ref.substr(11)} branch.`);
+    res.status(400).send(`No deployment in ${REALM}/${STAGE} for deleted ${req.body.repository.name}/${req.body.ref.substr(11)} branch.`);
     return;
   }
 
@@ -49,7 +51,7 @@ app.post('/*', function (req, res) {
     appName = appName.substr( 4 );
   var appVersion = Math.round(new Date().getTime() / 1000 / 60);
 
-  var appCmd = `bash app-deploy.sh update ${process.env.STAGE} ${appName} ${appVersion}`;
+  var appCmd = `bash app-deploy.sh update ${REALM} ${STAGE} ${appName} ${appVersion}`;
   console.log(`Running command: ${appCmd}`);
   var appProcess = exec(appCmd, {maxBuffer: 1024 * 1024}, function(error, stdout, stderr) {
     if(error !== null)
@@ -58,7 +60,7 @@ app.post('/*', function (req, res) {
   appProcess.stdout.pipe(process.stdout);
   appProcess.stderr.pipe(process.stdout);
 
-    res.send(`Deploying to ${appName}/${process.env.STAGE} from ${req.body.ref.substr(11)} branch. Deployment logs are here - https://${process.env.STAGE}.pratilipi.com/ecs/${appName}-${appVersion}.log`);
+    res.send(`Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch.`);
 
 });
 
