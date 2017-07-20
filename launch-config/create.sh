@@ -1,17 +1,22 @@
-STAGE=$1
-TYPE=$2
+REALM=$1
+STAGE=$2
+TYPE=$3
 
-if [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$TYPE" != "default" -a "$TYPE" != "devops" ]
+if [ "$REALM" != "product" -a "$REALM" != "growth" ] || [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$TYPE" != "default" -a "$TYPE" != "devops" ]
 then
-  echo "syntax: bash app.sh <stage> <type>"
+  echo "syntax: bash app.sh <realm> <stage> <type>"
   exit 0
 fi
 
-if [ $STAGE == "devo" ] || [ $TYPE == "devops" ]
+
+if [ $STAGE == "prod" -a $TYPE == "default" ]
 then
-  INSTANCE_TYPE="t2.micro"
-else
   INSTANCE_TYPE="m4.large"
+elif [ $STAGE == "prod" ] || [ $TYPE == "default" ]
+then
+  INSTANCE_TYPE="t2.medium"
+else
+  INSTANCE_TYPE="t2.micro"
 fi
 
 if [ $STAGE == "devo" ]
@@ -24,6 +29,12 @@ elif [ $STAGE == "prod" ]
 then
   SECURITY_GROUP="sg-5e1a1f39"
 fi
+
+if [ $REALM == "growth" ]
+then
+  STAGE=gr-$STAGE
+fi
+
 
 cat userdata-$TYPE.raw \
     | sed "s#\$STAGE#$STAGE#g" \
