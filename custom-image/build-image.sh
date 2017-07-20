@@ -33,7 +33,8 @@ build_image()
   STATUS=$?
   echo "...***==> Deleting Dockerfile"
   rm Dockerfile
-  echo "...***==> Successfully deleted Dockerfile"  if [ $STATUS == 0 ]
+  echo "...***==> Successfully deleted Dockerfile"  
+  if [ $STATUS == 0 ]
   then
     echo "...***==> image: $ECR_IMAGE built"
   else
