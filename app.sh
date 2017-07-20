@@ -74,9 +74,9 @@ create_repo()
 
   for REPO_NAME in $REPO_NAMES
   do
-   if [ $REPO_NAME == "\"$PREFIX$STAGE/$DOCKER_IMAGE\"" ]
+   if [ $REPO_NAME == "\"$PREFIX$STAGE/$APP_NAME\"" ]
    then
-    echo "...***==> repository: $PREFIX$STAGE/$DOCKER_IMAGE exists."
+    echo "...***==> repository: $PREFIX$STAGE/$APP_NAME exists."
     REPO_CREATED=1
     break
    fi
@@ -84,14 +84,14 @@ create_repo()
 
   if [ $REPO_CREATED == 0 ]
   then
-    echo "...***==> creating ecr repository: $PREFIX$STAGE/$DOCKER_IMAGE"
-    aws ecr create-repository --repository-name $PREFIX$STAGE/$DOCKER_IMAGE >> /dev/null
+    echo "...***==> creating ecr repository: $PREFIX$STAGE/$APP_NAME"
+    aws ecr create-repository --repository-name $PREFIX$STAGE/$APP_NAME >> /dev/null
     STATUS=$?
     if [ $STATUS == 0 ]
     then
-      echo "...***==> repository: $PREFIX$STAGE/$DOCKER_IMAGE created."
+      echo "...***==> repository: $PREFIX$STAGE/$APP_NAME created."
     else
-      echo "...***==> error while creating repository: $PREFIX$STAGE/$DOCKER_IMAGE"
+      echo "...***==> error while creating repository: $PREFIX$STAGE/$APP_NAME"
       exit $STATUS
     fi
   fi
