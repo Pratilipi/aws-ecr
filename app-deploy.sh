@@ -12,27 +12,25 @@ then
   exit 1
 fi
 
+
+PREFIX=""
+GIT_LINK="https://github.com/Pratilipi"
 if [ $REALM == "growth" ]
 then
   PREFIX="gr-"
-  GIT_LINK="https://github.com/Pratilipi-Growth"
-else
-  PREFIX=""
-  GIT_LINK="https://github.com/Pratilipi"
+  GIT_LINK=$GIT_LINK-Growth
 fi
 
 GIT_BRANCH=$STAGE
-
 if [ $STAGE == "prod" ]
 then
   GIT_BRANCH=master
 fi
 
+GIT_REPO=ecs-$APP_NAME
 if [ $APP_NAME == "ecs" ]
 then
   GIT_REPO=$APP_NAME
-else
-  GIT_REPO=ecs-$APP_NAME
 fi
 
 
@@ -61,5 +59,6 @@ bash ../app.sh $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION
 git gc
 
 cd ..
+
 
 echo "...***==> app-deploy.sh $1 $2 $3 $4 $5 SUCCESS"
