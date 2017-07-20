@@ -113,11 +113,15 @@ app.post( '/*', function ( req, res ) {
   var appVersion = Math.round( new Date().getTime() / 1000 / 60 );
 
   getServiceCommand( appName, function( error, command ) {
-    if( error != null && command != "" ) {
-      commands.push( `bash app-deploy.sh ${command} ${REALM} ${STAGE} ${appName} ${appVersion}` );
-      res.send( `Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch.` );
+    if( error == null ) {
+      res.status( 400 ).send( `Not Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch due to an error.` );
     } else {
-      res.status( 400 ).send( `Not Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch.` );
+      if( command === "" ) {
+        res.status( 400 ).send( `Not Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch due to service: ${appName} not being in whitelist.` );
+      } else {
+        commands.push( `bash app-deploy.sh ${command} ${REALM} ${STAGE} ${appName} ${appVersion}` );
+        res.send( `Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch.` );
+      }
     }
   } );
 } );
