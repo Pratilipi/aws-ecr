@@ -1,3 +1,4 @@
+echo "...***==> Running bash base-image.sh $1 $2"
 REALM=$1
 STAGE=$2
 
@@ -12,3 +13,5 @@ bash build-image.sh $REALM $STAGE golang 1.8.3
 bash build-image.sh $REALM $STAGE docker latest
 
 cd ..
+
+echo "...***==> base-image.sh $1 $2 SUCCESS"

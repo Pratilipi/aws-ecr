@@ -1,3 +1,4 @@
+echo "...***==> Running bash build-image.sh $1 $2 $3 $4"
 REALM=$1
 STAGE=$2
 DOCKER_IMAGE=$3
@@ -94,6 +95,11 @@ fi
 ECR_REPO=$AWS_PROJ_ID.dkr.ecr.ap-southeast-1.amazonaws.com/$PREFIX$STAGE
 ECR_IMAGE=$ECR_REPO/$DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
 
+if [ ! -f "Dockerfile.raw" ]
+then
+  echo "...***==> Could not find Dockerfile.raw !"
+  exit 1
+fi
 
 cat Dockerfile.raw \
   | sed "s#\$REALM#$REALM#g" \
@@ -106,13 +112,23 @@ cat Dockerfile.raw \
   | sed "s#\$BUILD_COMMAND#$BUILD_COMMAND#g" \
   > Dockerfile
 
+$(aws ecr get-login --no-include-email)
 build_image
 
 create_repo
 
-$(aws ecr get-login --no-include-email)
 docker push $ECR_IMAGE
-echo "...***==> image: $ECR_IMAGE pushed."
-echo "...***==> build-image.sh $1 $2 $3 $4 SUCCESS"
+
+STATUS=$?
+if [ $STATUS == 0 ]
+then
+  echo "...***==> image: $ECR_IMAGE pushed."
+else
+  echo "...***==> error while pushing image: $ECR_IMAGE"
+  exit $STATUS
+fi
 
 rm Dockerfile
+
+echo "...***==> build-image.sh $1 $2 $3 $4 SUCCESS"
+
