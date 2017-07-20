@@ -113,7 +113,7 @@ app.post( '/*', function ( req, res ) {
   var appVersion = Math.round( new Date().getTime() / 1000 / 60 );
 
   getServiceCommand( appName, function( error, command ) {
-    if( error == null ) {
+    if( error != null ) {
       res.status( 400 ).send( `Not Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch due to an error.` );
     } else {
       if( command === "" ) {
