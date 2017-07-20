@@ -9,14 +9,15 @@ function cacheUtility (config) {
   // private data
   var resource = config.resource;
   var db = config.db || 0;
-  var redisClient = redisModule.createClient(config.port, config.hostIp,{'db':db});
+  var redisClient = redisModule.createClient(config.port, config.hostIp, {'db':db, retry_strategy: function (options) {}
+  });
 
   redisClient.on('connect', () => {
     console.log('Redis Connected');
   });
 
   redisClient.on('error', function(err) {
-    throw('Error connecting to redis ' + err);
+    console.log('Error connecting to redis ' + err);
   });
 
   return {
@@ -33,7 +34,7 @@ function cacheUtility (config) {
             ;
           resolve(pr)
         }
-      }); 
+      });
     },
 
     list: function(ids) {
@@ -48,7 +49,7 @@ function cacheUtility (config) {
             ;
           resolve(pr)
         }
-      }); 
+      });
     },
 
     insert: function(id, entity) {
