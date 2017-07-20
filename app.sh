@@ -98,6 +98,9 @@ then
   aws ecr create-repository --repository-name $PREFIX$STAGE/$APP_NAME >> /dev/null 2>&1
   echo ... create ecr repository: $PREFIX$STAGE/$APP_NAME
 
+  echo ... creating log group
+  aws logs create-log-group --log-group-name $PREFIX$STAGE-$APP_NAME
+  
   echo ... started creating target group
   echo AWS Response:
   echo "****************************************************************"
