@@ -114,7 +114,7 @@ then
     --health-check-interval-seconds 30 \
     --health-check-timeout-seconds 5 \
     --healthy-threshold-count 5 \
-    --unhealthy-threshold-count 5 \
+    --unhealthy-threshold-count 2 \
     --matcher HttpCode=200)
   echo $TARGET_GRP
   echo "****************************************************************"
@@ -153,7 +153,7 @@ then
     --role ecsServiceRole \
     --load-balancers targetGroupArn=$TARGET_GRP_ARN,containerName=$APP_NAME,containerPort=80 \
     --placement-strategy type="spread",field="attribute:ecs.availability-zone" type="binpack",field="cpu" \
-    --desired-count 2
+    --desired-count 1
   echo "****************************************************************"
   echo ... created service: $APP_NAME
 
