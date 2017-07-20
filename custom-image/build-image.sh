@@ -10,12 +10,30 @@ then
   exit 1
 fi
 
+if [ ! -f "$DOCKER_IMAGE.raw" ]
+then
+  echo "...***==> Could not find $DOCKER_IMAGE.raw !"
+  exit 1
+fi
+
+replace_dockerfile()
+{
+  echo "...***==> replacing Dockerfile.raw and storing in Dockerfile"
+  cat $DOCKER_IMAGE.raw \
+    | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
+    > Dockerfile
+  echo "...***==> created Dockerfile with replaced contents from Dockerfile.raw"
+}
 
 build_image()
 {
+  echo "...***==> image: building $ECR_IMAGE"
+  $(aws ecr get-login --no-include-email)
   docker build --tag $ECR_IMAGE .
   STATUS=$?
-  if [ $STATUS == 0 ]
+  echo "...***==> Deleting Dockerfile"
+  rm Dockerfile
+  echo "...***==> Successfully deleted Dockerfile"  if [ $STATUS == 0 ]
   then
     echo "...***==> image: $ECR_IMAGE built"
   else
@@ -55,6 +73,22 @@ create_repo()
   fi
 }
 
+push_image()
+{
+  echo "...***==> image: pushing $ECR_IMAGE"
+  $(aws ecr get-login --no-include-email)
+  docker push $ECR_IMAGE
+
+  STATUS=$?
+  if [ $STATUS == 0 ]
+  then
+    echo "...***==> image: $ECR_IMAGE pushed."
+  else
+    echo "...***==> error while pushing image: $ECR_IMAGE"
+    exit $STATUS
+  fi
+}
+
 
 if [ $REALM == "growth" ]
 then
@@ -77,32 +111,12 @@ fi
 ECR_REPO=$AWS_PROJ_ID.dkr.ecr.ap-southeast-1.amazonaws.com/$PREFIX$STAGE
 ECR_IMAGE=$ECR_REPO/$DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
 
-if [ ! -f "$DOCKER_IMAGE.raw" ]
-then
-  echo "...***==> Could not find $DOCKER_IMAGE.raw !"
-  exit 1
-fi
+replace_dockerfile
 
-cat $DOCKER_IMAGE.raw \
-  | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
-  > Dockerfile
-
-$(aws ecr get-login --no-include-email)
 build_image
 
 create_repo
 
-docker push $ECR_IMAGE
-
-STATUS=$?
-if [ $STATUS == 0 ]
-then
-  echo "...***==> image: $ECR_IMAGE pushed."
-else
-  echo "...***==> error while pushing image: $ECR_IMAGE"
-  exit $STATUS
-fi
-
-rm Dockerfile
+push_image
 
 echo "...***==> build-image.sh $1 $2 $3 $4 SUCCESS"

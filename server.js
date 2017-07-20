@@ -65,6 +65,7 @@ function getServiceCommand( appName, callback )
 (function run() {
 
   if( commands.length == 0 ) {
+    console.log("...***==> ecs:sleeping for 5 seconds. TATA Good Night");
     return setTimeout( run, 5 * 1000 );
   }
 
