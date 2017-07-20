@@ -158,7 +158,7 @@ create_log()
   fi
 
   RETENTION_IN_DAYS=7
-  if [ $STAGE == "devo"]
+  if [ $STAGE == "devo" ]
   then
     RETENTION_IN_DAYS=1
   fi
@@ -168,7 +168,7 @@ create_log()
   STATUS=$?
   if [ $STATUS == 0 ]
   then
-    echo "...***==> logs: $PREFIX$STAGE-$APP_NAME retention-in-days set to 1."
+    echo "...***==> logs: $PREFIX$STAGE-$APP_NAME retention-in-days set to $RETENTION_IN_DAYS."
   else
     echo "...***==> error while setting retention-in-days for logs: $PREFIX$STAGE-$APP_NAME"
     exit $STATUS
