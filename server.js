@@ -19,15 +19,13 @@ function checkServiceWhitelist( appName )
   if( STAGE === "prod" ) {
     whitelist.push( "datastore-util" );
   }
-
-  
-    if( whitelist.indexOf( appName ) === -1 ) {
-      console.log( `...***==> service: ${appName} blacklisted.` );
-      return false;
-    } else {
-      console.log( `...***==> service: ${appName} whitelisted.` );
-      return true;
-    }
+  if( whitelist.indexOf( appName ) === -1 ) {
+    console.log( `...***==> service: ${appName} is not whitelisted.` );
+    return false;
+  } else {
+    console.log( `...***==> service: ${appName} whitelisted.` );
+    return true;
+  }
 }
 
 function getServiceCommand( appName, callback )
@@ -37,27 +35,27 @@ function getServiceCommand( appName, callback )
     var command = `aws ecs list-services --cluster ${PREFIX}${STAGE}-ecs | jq '.serviceArns[]' | jq 'split(":")[5]' | jq 'split("/")[1]'`;
     console.log( `Running command: ${command}` );
     var cmdProcess = exec( command, { maxBuffer: 2 * 1024 * 1024 }, function( error, stdout, stderr ) {
-    if( error != null ) {
-      console.error( `Failed to execute command: ${command}` );
-      console.error( String( error ) );
-      callback( error, null );
-    } else {
-      var services = stdout.split( "\n" );
-      services.pop();
-      if( services.indexOf( `\"${appName}\"` ) === -1 ) {
-        console.log( `...***==> service: ${appName} not exists.` );
-        console.log( `...***==> service: creating ${appName}.` );
-        state = "create";
+      if( error != null ) {
+        console.error( `Failed to execute command: ${command}` );
+        console.error( String( error ) );
+        callback( error, null );
       } else {
-        console.log( `...***==> service: ${appName} exists.` );
-        console.log( `...***==> service: updating ${appName}.` );
-        state = "update";
+        var services = stdout.split( "\n" );
+        services.pop();
+        if( services.indexOf( `\"${appName}\"` ) === -1 ) {
+          console.log( `...***==> service: ${appName} not exists.` );
+          console.log( `...***==> service: creating ${appName}.` );
+          state = "create";
+        } else {
+          console.log( `...***==> service: ${appName} exists.` );
+          console.log( `...***==> service: updating ${appName}.` );
+          state = "update";
+        }
+        callback( null, state );
       }
-     callback( null, state );
-    }
-  } );
-  cmdProcess.stdout.pipe( process.stdout );
-  cmdProcess.stderr.pipe( process.stdout );
+    } );
+    cmdProcess.stdout.pipe( process.stdout );
+    cmdProcess.stderr.pipe( process.stdout );
   } else {
     callback( null, state );
   }
@@ -81,7 +79,7 @@ function getServiceCommand( appName, callback )
       console.error( String( error ) );
     }
     run();
-  });
+  } );
   cmdProcess.stdout.pipe( process.stdout );
   cmdProcess.stderr.pipe( process.stdout );
 
@@ -109,8 +107,9 @@ app.post( '/*', function ( req, res ) {
   }
 
   var appName = req.body.repository.name;
-  if( appName.startsWith( 'ecs-' ) )
+  if( appName.startsWith( 'ecs-' ) ) {
     appName = appName.substr( 4 );
+  }
   var appVersion = Math.round( new Date().getTime() / 1000 / 60 );
 
   getServiceCommand( appName, function( error, command ) {
