@@ -84,6 +84,28 @@ function cacheUtility (config) {
           resolve(pr)
         }
       });
+    },
+
+    insertMultiple: function(ids, entities) {
+      return new Promise((resolve, reject) => {
+        if(arguments.length < 2 || typeof(entities) != 'object' || !Array.isArray(ids)){
+          var err = new Error('Bad Request');
+          err.status = 400;
+          reject(err);
+        } else {
+          var arrayCombined = ids.reduce( ( arr, v, i ) => {
+            //combine ids and entities alternative acc to redis syntax
+            return arr.concat( v, JSON.stringify( entities[ i ] ) );
+          }, [] );
+
+           var pr = redisClient.msetAsync( ...arrayCombined )
+           .then(reply => {
+             return reply === 'OK';
+           });
+
+          resolve(pr)
+        }
+      });
     }
   };
 

@@ -20,7 +20,7 @@ fi
 
 if [ ! -f "ecr-task-def.raw" ]
 then
-  echo "Could not find Dockerfile.raw !"
+  echo "Could not find ecr-task-def.raw !"
   exit 1
 fi
 
