@@ -108,6 +108,10 @@ app.post( '/*', function ( req, res ) {
   }
 
   var appName = req.body.repository.name;
+  if( appName === 'pratilipi' ) {
+    res.status( 400 ).send( `No deployment in ${REALM}/${STAGE} for repository: ${appName}.` );
+    return;
+  }
   if( appName.startsWith( 'ecs-' ) ) {
     appName = appName.substr( 4 );
   }
