@@ -1,4 +1,4 @@
-echo "...***==> Running bash build-image.sh $1 $2 $3 $4"
+echo "$3***** Running bash build-image.sh $1 $2 $3 $4"
 REALM=$1
 STAGE=$2
 DOCKER_IMAGE=$3
@@ -6,19 +6,19 @@ DOCKER_IMAGE_VERSION=$4
 
 if [ "$REALM" != "product" -a "$REALM" != "growth" ] || [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$DOCKER_IMAGE" == "" ] || [ "$DOCKER_IMAGE_VERSION" == "" ]
 then
-  echo "syntax: bash build-image.sh <realm> <stage> <docker-image> <docker-image-version>"
+  echo "$DOCKER_IMAGE***** syntax: bash build-image.sh <realm> <stage> <docker-image> <docker-image-version>"
   exit 1
 fi
 
 if [ ! -f "Dockerfile.raw" ]
 then
-  echo "...***==> Could not find Dockerfile.raw !"
+  echo "$DOCKER_IMAGE***** Could not find Dockerfile.raw !"
   exit 1
 fi
 
 replace_dockerfile()
 {
-  echo "...***==> replacing Dockerfile.raw and storing in Dockerfile"
+  echo "$DOCKER_IMAGE***** replacing Dockerfile.raw and storing in Dockerfile"
   cat Dockerfile.raw \
    | sed "s#\$REALM#$REALM#g" \
    | sed "s#\$STAGE#$STAGE#g" \
@@ -29,24 +29,24 @@ replace_dockerfile()
    | sed "s#\$API_END_POINT#$API_END_POINT#g" \
    | sed "s#\$BUILD_COMMAND#$BUILD_COMMAND#g" \
    > Dockerfile
-  echo "...***==> created Dockerfile with replaced contents from Dockerfile.raw"
+  echo "$DOCKER_IMAGE***** created Dockerfile with replaced contents from Dockerfile.raw"
 
 }
 
 build_image()
 {
-  echo "...***==> image: building $ECR_IMAGE"
+  echo "$DOCKER_IMAGE***** image: building $ECR_IMAGE"
   $(aws ecr get-login --no-include-email)
   docker build --tag $ECR_IMAGE .
   STATUS=$?
-  echo "...***==> Deleting Dockerfile"
+  echo "$DOCKER_IMAGE***** Deleting Dockerfile"
   rm Dockerfile
-  echo "...***==> Successfully deleted Dockerfile"  
+  echo "$DOCKER_IMAGE***** Successfully deleted Dockerfile"  
   if [ $STATUS == 0 ]
   then
-    echo "...***==> image: $ECR_IMAGE built"
+    echo "$DOCKER_IMAGE***** image: $ECR_IMAGE built"
   else
-    echo "...***==> error while builing image: $ECR_IMAGE"
+    echo "$DOCKER_IMAGE***** error while builing image: $ECR_IMAGE"
     exit $STATUS
   fi
 }
@@ -61,7 +61,7 @@ create_repo()
   do
    if [ $REPO_NAME == "\"$PREFIX$STAGE/$DOCKER_IMAGE\"" ]
    then
-    echo "...***==> repository: $PREFIX$STAGE/$DOCKER_IMAGE exists."
+    echo "$DOCKER_IMAGE***** repository: $PREFIX$STAGE/$DOCKER_IMAGE exists."
     REPO_CREATED=1
     break
    fi
@@ -69,14 +69,14 @@ create_repo()
 
   if [ $REPO_CREATED == 0 ]
   then
-    echo "...***==> creating ecr repository: $PREFIX$STAGE/$DOCKER_IMAGE"
+    echo "$DOCKER_IMAGE***** creating ecr repository: $PREFIX$STAGE/$DOCKER_IMAGE"
     aws ecr create-repository --repository-name $PREFIX$STAGE/$DOCKER_IMAGE >> /dev/null
     STATUS=$?
     if [ $STATUS == 0 ]
     then
-      echo "...***==> repository: $PREFIX$STAGE/$DOCKER_IMAGE created."
+      echo "$DOCKER_IMAGE***** repository: $PREFIX$STAGE/$DOCKER_IMAGE created."
     else
-      echo "...***==> error while creating repository: $PREFIX$STAGE/$DOCKER_IMAGE"
+      echo "$DOCKER_IMAGE***** error while creating repository: $PREFIX$STAGE/$DOCKER_IMAGE"
       exit $STATUS
     fi
   fi
@@ -84,16 +84,16 @@ create_repo()
 
 push_image()
 {
-  echo "...***==> image: pushing $ECR_IMAGE"
+  echo "$DOCKER_IMAGE***** image: pushing $ECR_IMAGE"
   $(aws ecr get-login --no-include-email)
   docker push $ECR_IMAGE
 
   STATUS=$?
   if [ $STATUS == 0 ]
   then
-    echo "...***==> image: $ECR_IMAGE pushed."
+    echo "$DOCKER_IMAGE***** image: $ECR_IMAGE pushed."
   else
-    echo "...***==> error while pushing image: $ECR_IMAGE"
+    echo "$DOCKER_IMAGE***** error while pushing image: $ECR_IMAGE"
     exit $STATUS
   fi
 }
@@ -146,5 +146,5 @@ create_repo
 
 push_image
 
-echo "...***==> build-image.sh $1 $2 $3 $4 SUCCESS"
+echo "$DOCKER_IMAGE***** build-image.sh $1 $2 $3 $4 SUCCESS"
 

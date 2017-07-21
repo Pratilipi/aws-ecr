@@ -1,4 +1,4 @@
-echo "...***==> Running bash app.sh $1 $2 $3 $4 $5"
+echo "$4***** Running bash app.sh $1 $2 $3 $4 $5"
 
 COMMAND=$1
 REALM=$2
@@ -8,60 +8,60 @@ APP_VERSION=$5
 
 if [ "$COMMAND" != "build" -a "$COMMAND" != "run" -a "$COMMAND" != "push" -a "$COMMAND" != "create" -a "$COMMAND" != "update" -a "$COMMAND" != "delete" ] || [ "$REALM" != "product" -a "$REALM" != "growth" ] || [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$APP_NAME" == "" ] || [ "$APP_VERSION" == "" ]
 then
-  echo "syntax: bash app.sh <command> <realm> <stage> <app-name> <app-version>"
+  echo "$APP_NAME***** syntax: bash app.sh <command> <realm> <stage> <app-name> <app-version>"
   exit 1
 fi
 
 if [ ! -f "Dockerfile.raw" ]
 then
-  echo "Could not find Dockerfile.raw !"
+  echo "$APP_NAME***** Could not find Dockerfile.raw !"
   exit 1
 fi
 
 if [ ! -f "ecr-task-def.raw" ]
 then
-  echo "Could not find ecr-task-def.raw !"
+  echo "$APP_NAME***** Could not find ecr-task-def.raw !"
   exit 1
 fi
 
 replace_dockerfile()
 {
-  echo "...***==> replacing Dockerfile.raw and storing in Dockerfile"
+  echo "$APP_NAME***** replacing Dockerfile.raw and storing in Dockerfile"
   cat Dockerfile.raw \
   | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
   | sed "s#\$STAGE#$STAGE#g" \
   > Dockerfile
-  echo "...***==> created Dockerfile with replaced contents of Dockerfile.raw"
+  echo "$APP_NAME***** created Dockerfile with replaced contents of Dockerfile.raw"
 }
 
 build_image()
 {
-  echo "...***==> image: building $ECR_IMAGE"
+  echo "$APP_NAME***** image: building $ECR_IMAGE"
   $(aws ecr get-login --no-include-email)
   docker build --tag $ECR_IMAGE .
   STATUS=$?
-  echo "...***==> Deleting Dockerfile"
+  echo "$APP_NAME***** Deleting Dockerfile"
   rm Dockerfile
-  echo "...***==> Successfully deleted Dockerfile"
+  echo "$APP_NAME***** Successfully deleted Dockerfile"
   if [ $STATUS == 0 ]
   then
-    echo "...***==> image: $ECR_IMAGE built"
+    echo "$APP_NAME***** image: $ECR_IMAGE built"
   else
-    echo "...***==> error while builing image: $ECR_IMAGE"
+    echo "$APP_NAME***** error while builing image: $ECR_IMAGE"
     exit $STATUS
   fi
 }
 
 run_image()
 {
-  echo "...***==> image: running $ECR_IMAGE"
+  echo "$APP_NAME***** image: running $ECR_IMAGE"
   docker run $ECR_IMAGE
   STATUS=$?
   if [ $STATUS == 0 ]
   then
-    echo "...***==> image: $ECR_IMAGE successfully ran"
+    echo "$APP_NAME***** image: $ECR_IMAGE successfully ran"
   else
-    echo "...***==> error while running image: $ECR_IMAGE"
+    echo "$APP_NAME***** error while running image: $ECR_IMAGE"
     exit $STATUS
   fi
 }
@@ -76,7 +76,7 @@ create_repo()
   do
    if [ $REPO_NAME == "\"$PREFIX$STAGE/$APP_NAME\"" ]
    then
-    echo "...***==> repository: $PREFIX$STAGE/$APP_NAME exists."
+    echo "$APP_NAME***** repository: $PREFIX$STAGE/$APP_NAME exists."
     REPO_CREATED=1
     break
    fi
@@ -84,14 +84,14 @@ create_repo()
 
   if [ $REPO_CREATED == 0 ]
   then
-    echo "...***==> creating ecr repository: $PREFIX$STAGE/$APP_NAME"
+    echo "$APP_NAME***** creating ecr repository: $PREFIX$STAGE/$APP_NAME"
     aws ecr create-repository --repository-name $PREFIX$STAGE/$APP_NAME >> /dev/null
     STATUS=$?
     if [ $STATUS == 0 ]
     then
-      echo "...***==> repository: $PREFIX$STAGE/$APP_NAME created."
+      echo "$APP_NAME***** repository: $PREFIX$STAGE/$APP_NAME created."
     else
-      echo "...***==> error while creating repository: $PREFIX$STAGE/$APP_NAME"
+      echo "$APP_NAME***** error while creating repository: $PREFIX$STAGE/$APP_NAME"
       exit $STATUS
     fi
   fi
@@ -99,23 +99,23 @@ create_repo()
 
 push_image()
 {
-  echo "...***==> image: pushing $ECR_IMAGE"
+  echo "$APP_NAME***** image: pushing $ECR_IMAGE"
   $(aws ecr get-login --no-include-email)
   docker push $ECR_IMAGE
 
   STATUS=$?
   if [ $STATUS == 0 ]
   then
-    echo "...***==> image: $ECR_IMAGE pushed."
+    echo "$APP_NAME***** image: $ECR_IMAGE pushed."
   else
-    echo "...***==> error while pushing image: $ECR_IMAGE"
+    echo "$APP_NAME***** error while pushing image: $ECR_IMAGE"
     exit $STATUS
   fi
 }
 
 replace_task_def()
 {
-  echo "...***==> replacing ecr-task-def.raw and storing in ecr-task-def.json"
+  echo "$APP_NAME***** replacing ecr-task-def.raw and storing in ecr-task-def.json"
   cat ecr-task-def.raw \
     | sed "s#\$STAGE#$STAGE#g" \
     | sed "s#\$PREFIX#$PREFIX#g" \
@@ -124,36 +124,36 @@ replace_task_def()
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
     | sed "s#\$AWS_PROJ_ID#$AWS_PROJ_ID#g" \
     > ecr-task-def.json
-  echo "...***==> created ecr-task-def.json with replaced contents of ecr-task-def.raw"
+  echo "$APP_NAME***** created ecr-task-def.json with replaced contents of ecr-task-def.raw"
 }
 
 register_task_def()
 {
-  echo "...***==> registering ecr-task-def.json"
+  echo "$APP_NAME***** registering ecr-task-def.json"
   TASK_DEF_VER=$(aws ecs register-task-definition --cli-input-json file://ecr-task-def.json | jq -r '.taskDefinition.revision')
   STATUS=$?
-  echo "...***==> Deleting ecr-task-def.json"
+  echo "$APP_NAME***** Deleting ecr-task-def.json"
   rm ecr-task-def.json
-  echo "...***==> Successfully deleted ecr-task-def.json"
+  echo "$APP_NAME***** Successfully deleted ecr-task-def.json"
   if [ $STATUS == 0 ]
   then
-    echo "...***==> task-def: $APP_NAME registered."
+    echo "$APP_NAME***** task-def: $APP_NAME registered."
   else
-    echo "...***==> error while registering task-def: $APP_NAME"
+    echo "$APP_NAME***** error while registering task-def: $APP_NAME"
     exit $STATUS
   fi
 }
 
 create_log()
 {
-  echo "...***==> logs: creating $PREFIX$STAGE-$APP_NAME"
+  echo "$APP_NAME***** logs: creating $PREFIX$STAGE-$APP_NAME"
   aws logs create-log-group --log-group-name $PREFIX$STAGE-$APP_NAME
   STATUS=$?
   if [ $STATUS == 0 ]
   then
-    echo "...***==> logs: $PREFIX$STAGE-$APP_NAME created."
+    echo "$APP_NAME***** logs: $PREFIX$STAGE-$APP_NAME created."
   else
-    echo "...***==> error while creating logs: $PREFIX$STAGE-$APP_NAME"
+    echo "$APP_NAME***** error while creating logs: $PREFIX$STAGE-$APP_NAME"
     exit $STATUS
   fi
 
@@ -163,14 +163,14 @@ create_log()
     RETENTION_IN_DAYS=1
   fi
   
-  echo "...***==> logs: setting retention-in-days as $RETENTION_IN_DAYS for $PREFIX$STAGE-$APP_NAME"
+  echo "$APP_NAME***** logs: setting retention-in-days as $RETENTION_IN_DAYS for $PREFIX$STAGE-$APP_NAME"
   aws logs put-retention-policy --log-group-name $PREFIX$STAGE-$APP_NAME --retention-in-days $RETENTION_IN_DAYS
   STATUS=$?
   if [ $STATUS == 0 ]
   then
-    echo "...***==> logs: $PREFIX$STAGE-$APP_NAME retention-in-days set to $RETENTION_IN_DAYS."
+    echo "$APP_NAME***** logs: $PREFIX$STAGE-$APP_NAME retention-in-days set to $RETENTION_IN_DAYS."
   else
-    echo "...***==> error while setting retention-in-days for logs: $PREFIX$STAGE-$APP_NAME"
+    echo "$APP_NAME***** error while setting retention-in-days for logs: $PREFIX$STAGE-$APP_NAME"
     exit $STATUS
   fi
 }
@@ -231,7 +231,7 @@ create_service()
 
 update_service()
 {
-  echo "...***==> service: updating $APP_NAME."
+  echo "$APP_NAME***** service: updating $APP_NAME."
   aws ecs update-service \
     --cluster $PREFIX$STAGE-ecs \
     --service $APP_NAME \
@@ -239,9 +239,9 @@ update_service()
   STATUS=$?
   if [ $STATUS == 0 ]
   then
-    echo "...***==> service: $APP_NAME updated."
+    echo "$APP_NAME***** service: $APP_NAME updated."
   else
-    echo "...***==> error while updating service: $APP_NAME"
+    echo "$APP_NAME***** error while updating service: $APP_NAME"
     exit $STATUS
   fi
 }
@@ -410,18 +410,18 @@ ECR_IMAGE=$ECR_REPO/$APP_NAME:$APP_VERSION
 
 if [ $COMMAND == "build" ]
 then
-  echo "...***==> executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
+  echo "$APP_NAME***** executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
   replace_dockerfile
   build_image
 elif [ $COMMAND == "run" ]
 then
-  echo "...***==> executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
+  echo "$APP_NAME***** executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
   replace_dockerfile
   build_image
   run_image
 elif [ $COMMAND == "push" ]
 then
-  echo "...***==> executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
+  echo "$APP_NAME***** executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
   replace_dockerfile
   build_image
   create_repo
@@ -430,7 +430,7 @@ then
   register_task_def
 elif [ $COMMAND == "create" ]
 then
-  echo "...***==> executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
+  echo "$APP_NAME***** executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
   replace_dockerfile
   build_image
   create_repo
@@ -444,7 +444,7 @@ then
   autoscaling_alarm
 elif [ $COMMAND == "update" ]
 then
-  echo "...***==> executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
+  echo "$APP_NAME***** executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
   replace_dockerfile
   build_image
   create_repo
@@ -454,13 +454,13 @@ then
   update_service
 elif [ $COMMAND == "delete" ]
 then
-  echo "...***==> executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
-  echo "...***==> service: updating $APP_NAME."
+  echo "$APP_NAME***** executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
+  echo "$APP_NAME***** service: updating $APP_NAME."
   aws ecs update-service --cluster $PREFIX$STAGE-ecs --service $APP_NAME --desired-count 0
-  echo "...***==> service: $APP_NAME updated."
-  echo "...***==> service: deleting $APP_NAME."
+  echo "$APP_NAME***** service: $APP_NAME updated."
+  echo "$APP_NAME***** service: deleting $APP_NAME."
   aws ecs delete-service --cluster $PREFIX$STAGE-ecs --service $APP_NAME
-  echo "...***==> service: $APP_NAME deleted."
+  echo "$APP_NAME***** service: $APP_NAME deleted."
 fi
 
-echo "...***==> app.sh $1 $2 $3 $4 $5 SUCCESS"
+echo "$APP_NAME***** app.sh $1 $2 $3 $4 $5 SUCCESS"
