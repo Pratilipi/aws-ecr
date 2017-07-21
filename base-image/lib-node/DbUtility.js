@@ -25,65 +25,64 @@ function DbUtility ( config ) {
   //HELPER UTILITY
 
   const makeFunctions = {
-    "BOOLEAN":function(value){
+    "BOOLEAN": function( value ) {
       return value;
     },
-    "INTEGER":function(value){
-      if(value !== null && value.constructor.name !== 'Int') {
-        return datastoreClient.int(value);
+    "INTEGER": function( value ) {
+      if( value !== null && value.constructor.name !== 'Int' ) {
+        return datastoreClient.int( value );
       } else {
         return value;
       }
     },
-    "ARRAY":function(value){
+    "ARRAY": function( value ) {
       return value;
     },
-    "TIMESTAMP":function(value){
-      if(typeof value === 'string' && value === "new Date()") {
-        return (new Date());
+    "TIMESTAMP": function( value ){
+      if( typeof value === 'string' && value === "new Date()" ) {
+        return ( new Date() );
       } else {
         return value;
       }
     },
-    "FLOAT":function(value){
-      if(value !== null && value.constructor.name !== 'Double') {
-        return datastoreClient.double(value);
-      } else {
-        return value;
-      }
-
-    },
-    "GEOPOINT":function(value){
-      if(value !== null && value.constructor.name !== 'GeoPoint') {
-        return datastoreClient.geoPoint(value);
+    "FLOAT": function( value ) {
+      if( value !== null && value.constructor.name !== 'Double' ) {
+        return datastoreClient.double( value );
       } else {
         return value;
       }
     },
-    "NULL":function(value){
+    "GEOPOINT": function( value ) {
+      if( value !== null && value.constructor.name !== 'GeoPoint' ) {
+        return datastoreClient.geoPoint( value );
+      } else {
+        return value;
+      }
+    },
+    "NULL": function( value ) {
       return value;
     },
-    "OBJECT":function(value){
+    "OBJECT": function( value ){
       return value;
     },
-    "STRING":function(value){
+    "STRING": function( value ){
       return value;
     }
   };
 
   const checkFunctions = {
-    "BOOLEAN":function(value){
-      return (typeof value === 'boolean');
+    "BOOLEAN": function( value ) {
+      return ( typeof value === 'boolean' );
     },
-    "INTEGER":function(value){
-      if (typeof value === 'number') {
-        if( value%1 !== 0) {
+    "INTEGER": function( value ) {
+      if ( typeof value === 'number' ) {
+        if( value%1 !== 0 ) {
           return false;
         } else {
           return true;
         }
       } else if( value !== null && typeof value === 'object' && value.constructor.name === 'Int' ) {
-        if( Number(value.value)%1 !== 0) {
+        if( Number( value.value )%1 !== 0 ) {
           return false;
         } else {
           return true;
@@ -92,25 +91,25 @@ function DbUtility ( config ) {
         return false;
       }
     },
-    "ARRAY":function(value){
-      return (Array.isArray(value));
+    "ARRAY": function( value ) {
+      return ( Array.isArray( value ) );
     },
-    "TIMESTAMP":function(value){
+    "TIMESTAMP": function( value ) {
       try{
-      if (value !== null && typeof value === 'object' && value.constructor.name === 'Date') {
-        return (typeof value.getTime() === 'number');
+      if ( value !== null && typeof value === 'object' && value.constructor.name === 'Date' ) {
+        return ( typeof value.getTime() === 'number' );
       } else {
         return false;
       }
-    } catch(error) {
+      } catch( error ) {
       return false;
-    }
+      }
     },
-    "FLOAT":function(value){
-      if (typeof value === 'number') {
+    "FLOAT": function( value ) {
+      if ( typeof value === 'number' ) {
         return true;
-      } else if(value !== null && typeof value === 'object' && value.constructor.name === 'Double' ) {
-        if( typeof value.value === 'number') {
+      } else if( value !== null && typeof value === 'object' && value.constructor.name === 'Double' ) {
+        if( typeof value.value === 'number' ) {
             return true;
           } else {
             return false;
@@ -119,15 +118,15 @@ function DbUtility ( config ) {
         return false;
       }
     },
-    "GEOPOINT":function(value){
-      if (value !== null && typeof value === 'object' && Object.keys(value).length === 2 ) {
-        if(value.latitude !== undefined && value.longitude !== undefined) {
+    "GEOPOINT": function( value ) {
+      if ( value !== null && typeof value === 'object' && Object.keys( value ).length === 2 ) {
+        if( value.latitude !== undefined && value.longitude !== undefined ) {
           return true;
         } else {
           return false;
         }
-      } else if (value !== null && typeof value.value === 'object' && value.constructor.name === 'GeoPoint' && Object.keys(value.value).length === 2 ) {
-        if(value.value.latitude !== undefined && value.value.longitude !== undefined) {
+      } else if ( value !== null && typeof value.value === 'object' && value.constructor.name === 'GeoPoint' && Object.keys( value.value ).length === 2 ) {
+        if( value.value.latitude !== undefined && value.value.longitude !== undefined ) {
           return true;
         } else {
           return false;
@@ -136,14 +135,14 @@ function DbUtility ( config ) {
         return false;
       }
     },
-    "NULL":function(value){
-      return (value === null);
+    "NULL": function( value ) {
+      return ( value === null );
     },
-    "OBJECT":function(value){
-      return (value !== null && typeof value === 'object');
+    "OBJECT": function( value ) {
+      return ( value !== null && typeof value === 'object' );
     },
-    "STRING":function(value){
-      return (typeof value === 'string');
+    "STRING": function( value ) {
+      return ( typeof value === 'string' );
     }
   };
 
@@ -204,7 +203,7 @@ function DbUtility ( config ) {
     try {
       //MAKE THE ENTITY TO SPECIFIED SCHEMA
       entity = makeSchema( entity );
-      entity = removeIntDoubleGeoObjects(entity);
+      entity = removeIntDoubleGeoObjects( entity );
       //EXPLICIT CHECK FOR PRIMARY KEY IN DATASTORE NOTE: DATASTORE SPECIFIC
       if( structure[ primaryKey ].type === 'INTEGER' ) {
         entity[ primaryKey ] = parseInt( entity[ datastoreClient.KEY ].id );
@@ -256,12 +255,12 @@ function DbUtility ( config ) {
       //ADD NON EXISTING KEYS WITH DEFAULT VALUE
       Object.keys( structure ).forEach( ( property ) => {
         if( entity[ property ] == null ) {
-          entity[ property ] = makeFunctions[structure[ property ].type](structure[ property ].default);
+          entity[ property ] = makeFunctions[ structure[ property ].type ]( structure[ property ].default );
         } else {
-          entity[ property ] = makeFunctions[structure[ property ].type](entity[property]);
+          entity[ property ] = makeFunctions[ structure[ property ].type ]( entity[ property ] );
         }
       });
-      checkSchema(entity);
+      checkSchema( entity );
       return entity;
     } catch( error ) {
       throw error;
@@ -271,15 +270,15 @@ function DbUtility ( config ) {
   //CHECK IF ENTITY CONFORMS TO THE SCHEMA STRUCTURE
   function checkSchema( entity ) {
     try {
-      var keys = Object.keys(entity);
+      var keys = Object.keys( entity );
       for(var i = 0; i < keys.length; i++ ) {
-        var property = keys[i];
+        var property = keys[ i ];
         if( structure[ property ] == null ) {
           //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-          throw new Error( 'Wrong field provided for '+property+' having value '+JSON.stringify(entity[property])+' and datatype of value is '+typeof entity[property]+'. It is not in SCHEMA structure provided.');
+          throw new Error( 'Wrong field provided for ' + property + ' having value ' + JSON.stringify( entity[ property ] ) + ' and datatype of value is ' + typeof entity[ property ] + '. It is not in SCHEMA structure provided.' );
         } else if(  !checkFunctions.NULL( entity[ property ] ) && !checkFunctions[ structure[ property ].type ]( entity[ property ] ) ) {
           //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-          throw new Error( 'Wrong field provided for '+property+' having value '+JSON.stringify(entity[property])+' and datatype of value is '+typeof entity[property]+'. It is not according to SCHEMA structure provided.');
+          throw new Error( 'Wrong field provided for ' + property + ' having value ' + JSON.stringify( entity[ property ] ) + ' and datatype of value is ' + typeof entity[ property ] + '. It is not according to SCHEMA structure provided.' );
         }
       }
       return true;
@@ -288,18 +287,21 @@ function DbUtility ( config ) {
     }
   }
 
-  function removeIntDoubleGeoObjects(entity) {
-
-    var keys = Object.keys(entity);
+  function removeIntDoubleGeoObjects( entity ) {
+    try {
+      var keys = Object.keys( entity );
       for(var i = 0; i < keys.length; i++ ) {
-        var property = keys[i];
-  if(entity[property] !== null && (structure[ property ].type === 'INTEGER' || structure[property].type === 'FLOAT')) {
-    entity[property] = Number(entity[property].value);
-  } else if( entity[property] !== null && structure[property].type === 'GEOPOINT'  ) {
-    entity[property] = entity[property].value;
-  }
+        var property = keys[ i ];
+        if( entity[ property ] !== null && ( structure[ property ].type === 'INTEGER' || structure[ property ].type === 'FLOAT' ) ) {
+          entity[ property ] = Number( entity[ property ].value );
+        } else if( entity[ property ] !== null && structure[ property ].type === 'GEOPOINT' ) {
+          entity[ property ] = entity[ property ].value;
+        }
       }
-    return entity; 
+      return entity;
+    } catch( error ) {
+      throw error;
+    }
   }
 
   function filterQuery( query, filter ) {
@@ -514,20 +516,20 @@ function DbUtility ( config ) {
               //NO DATA FOUND
               object.data = [];
               //Cursor till which entities fetched
-              object.endCursor = data[1].endCursor;
+              object.endCursor = data[ 1 ].endCursor;
               //Any more entities remaining for a particular query
               object.moreResults = false;
             } else {
               //Cursor till which entities fetched
-              object.endCursor = data[1].endCursor;
+              object.endCursor = data[ 1 ].endCursor;
               //DATA FOUND AND BEING PROCESSED
               if( selectKeys != null && selectKeys == true ) {
-                object.data = processOnlyPrimaryKeys( data[0] );
+                object.data = processOnlyPrimaryKeys( data[ 0 ] );
               } else {
                 object.data = processEntities( data[ 0 ] );
               }
               //Any more entities remaining for a particular query
-              if(data[1].moreResults !== datastoreModule.NO_MORE_RESULTS) {
+              if(data[ 1 ].moreResults !== datastoreModule.NO_MORE_RESULTS) {
                 object.moreResults = true;
               } else {
                 object.moreResults = false;
@@ -553,18 +555,18 @@ function DbUtility ( config ) {
         //DATA SHOULD BE A MAP
         if( !(Array.isArray( data ) ) ) {
           //KEY NAMES OF MAP
-          var keys = Object.keys(data);
+          var keys = Object.keys( data );
           //IF NO KEY NAMES
           if( keys.length !== 0 ) {
             //HANDLING CASE WHERE FIELDNAMES ARE IN LOWER CASE
-            var keysUpper = keys.map(toUpperCase);
-            var newData ={};
+            var keysUpper = keys.map( toUpperCase );
+            var newData = {};
             //CREATING NEW DATA WHERE KEYS ARE IN UPPERCASE
             for( var i = 0; i < keysUpper.length; i++  ) {
               newData[ keysUpper[ i ] ] = data[ keys[ i ] ];
             }
             //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
-            var flag = checkSchema(newData);
+            var flag = checkSchema( newData );
             if( flag ) {
 
               newData = makeSchema( newData );
@@ -593,7 +595,7 @@ function DbUtility ( config ) {
                 newData[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
                 //MAKE DATA IN SPECIFIED SCHEMA
                 newData = makeSchema( newData );
-    return removeIntDoubleGeoObjects(newData);
+                return removeIntDoubleGeoObjects( newData );
               } )
               .catch( ( error ) => {
                 return new Promise( ( resolve, reject ) => {
@@ -681,12 +683,12 @@ function DbUtility ( config ) {
       try{
         if( !(Array.isArray( id ) ) ) {
           //KEY NAMES OF MAP
-          var keys = Object.keys(id);
+          var keys = Object.keys( id );
           //ONLY ONE KEY NAME NOTE: DATASTORE SPECIFIC
           if( keys.length === 1 ) {
             //HANDLING CASE WHERE FIELDNAMES ARE IN LOWER CASE
-            var keysUpper = keys.map(toUpperCase);
-            var idData ={};
+            var keysUpper = keys.map( toUpperCase );
+            var idData = {};
             //CREATING NEW DATA WHERE KEYS ARE IN UPPERCASE
             for( var i = 0; i < keysUpper.length; i++  ) {
               idData[ keysUpper[ i ] ] = id[ keys[ i ] ];
@@ -737,9 +739,9 @@ function DbUtility ( config ) {
           //IF NO KEY NAMES
           if( keys.length !== 0 && keysId.length === 1 ) {
             //HANDLING CASE WHERE FIELDNAMES ARE IN LOWER CASE
-            var keysUpper = keys.map(toUpperCase);
-            var keysIdUpper = keysId.map(toUpperCase);
-            var newData ={};
+            var keysUpper = keys.map( toUpperCase );
+            var keysIdUpper = keysId.map( toUpperCase );
+            var newData = {};
             var newIdData = {};
             //CREATING NEW DATA WHERE KEYS ARE IN UPPERCASE
             for( var i = 0; i < keysUpper.length; i++  ) {
@@ -769,7 +771,7 @@ function DbUtility ( config ) {
                   newData[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
                   //MAKE DATA IN SPECIFIED SCHEMA
                   newData =  makeSchema( newData );
-      return removeIntDoubleGeoObjects(newData);
+                  return removeIntDoubleGeoObjects( newData );
                 } )
                 .catch( ( error ) => {
                   return new Promise( ( resolve, reject ) => {
@@ -803,16 +805,16 @@ function DbUtility ( config ) {
     patch: function( id, data ) {
       try {
         //DATA SHOULD BE A MAP
-        if( !(Array.isArray( id ) ) && !(Array.isArray( data ) ) ) {
+        if( !( Array.isArray( id ) ) && !( Array.isArray( data ) ) ) {
           //KEY NAMES OF MAP
           var keys = Object.keys( data );
           var keysId = Object.keys( id );
           //IF NO KEY NAMES
           if( keys.length !== 0 && keysId.length === 1 ) {
             //HANDLING CASE WHERE FIELDNAMES ARE IN LOWER CASE
-            var keysUpper = keys.map(toUpperCase);
-            var keysIdUpper = keysId.map(toUpperCase);
-            var newData ={};
+            var keysUpper = keys.map( toUpperCase );
+            var keysIdUpper = keysId.map( toUpperCase );
+            var newData = {};
             var newIdData = {};
             //CREATING NEW DATA WHERE KEYS ARE IN UPPERCASE
             for( var i = 0; i < keysUpper.length; i++  ) {
@@ -826,7 +828,7 @@ function DbUtility ( config ) {
               //CREATE KEY
               var value = newIdData[ primaryKey ];
               key = getKey( value );
-              return datastoreClient.get(key)
+              return datastoreClient.get( key )
               .then( ( dataArray ) => {
                 if( dataArray[ 0 ] === undefined ) {
                   throw new Error( 'id doesn\'t exist' );
@@ -851,7 +853,7 @@ function DbUtility ( config ) {
                       dataEntity[ primaryKey ] = key.id ? parseInt( key.id ) : key.name;
                       //MAKE DATA IN SPECIFIED SCHEMA
                       dataEntity =  makeSchema( dataEntity );
-          return removeIntDoubleGeoObjects(dataEntity);
+                      return removeIntDoubleGeoObjects( dataEntity );
                     } )
                     .catch( ( error ) => {
                       return new Promise( ( resolve, reject ) => {
@@ -895,7 +897,8 @@ function DbUtility ( config ) {
             resolve( null );
           } ) ;
         } else if( typeof id === 'number' || typeof id === 'string' ) {
-          return datastoreClient.get( getKey( id ) ).then( ( dataArray ) => {
+          return datastoreClient.get( getKey( id ) )
+          .then( ( dataArray ) => {
             var data = dataArray[ 0 ];
             if( data === undefined ) {
               return null;
