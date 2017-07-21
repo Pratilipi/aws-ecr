@@ -38,10 +38,16 @@ function DbUtility ( config ) {
     "ARRAY": function( value ) {
       return value;
     },
-    "TIMESTAMP": function( value ){
-      if( typeof value === 'string' && value === "new Date()" ) {
-        return ( new Date() );
-      } else {
+    "TIMESTAMP": function( value ) {
+      try {
+        if( typeof value === 'string' && value === "new Date()" ) {
+         return ( new Date() );
+        } else if( value === null ) {
+         return value;
+        } else {
+         return new Date( value );
+        }
+      } catch( error ) {
         return value;
       }
     },
