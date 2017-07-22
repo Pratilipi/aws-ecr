@@ -4,63 +4,128 @@ const exec = require('child_process').exec;
 const app = express();
 
 
-var baseImageProcess = exec(`bash base-image.sh ${process.env.STAGE}`, {maxBuffer: 1024 * 1024}, function(error, stdout, stderr) {
-  if(error != null) {
-    console.error('Failed to create base images !');
-    console.error(String(error));
+const REALM = process.env.REALM;
+const STAGE = process.env.STAGE;
+var PREFIX = ( REALM === "growth" ) ? "gr-" : "" ;
+
+const commands = [
+  `bash base-image.sh ${REALM} ${STAGE}`,
+  `bash custom-image.sh ${REALM} ${STAGE}`
+];
+
+function checkServiceWhitelist( appName )
+{
+  var whitelist = [ "ecs", "auth", "author", "image", "pag", "page", "pratilipi", "recommendation", "search", "user-activity", "web" ];
+  if( STAGE === "prod" && REALM === "product" ) {
+    whitelist.push( "datastore-util" );
   }
-});
-baseImageProcess.stdout.pipe(process.stdout);
-baseImageProcess.stderr.pipe(process.stdout);
-
-
-var customImageProcess = exec(`bash custom-image.sh ${process.env.STAGE}`, {maxBuffer: 2 * 1024 * 1024}, function(error, stdout, stderr) {
-  if(error != null) {
-    console.error('Failed to create custom images !');
-    console.error(String(error));
+  if( whitelist.indexOf( appName ) === -1 ) {
+    console.log( `...***==> service: ${appName} is not whitelisted.` );
+    return false;
+  } else {
+    console.log( `...***==> service: ${appName} whitelisted.` );
+    return true;
   }
-});
-customImageProcess.stdout.pipe(process.stdout);
-customImageProcess.stderr.pipe(process.stdout);
+}
+
+function getServiceCommand( appName, callback )
+{
+  var state = "";
+  if( checkServiceWhitelist( appName ) ) {
+    var command = `aws ecs list-services --cluster ${PREFIX}${STAGE}-ecs | jq '.serviceArns[]' | jq 'split(":")[5]' | jq 'split("/")[1]'`;
+    console.log( `Running command: ${command}` );
+    var cmdProcess = exec( command, { maxBuffer: 2 * 1024 * 1024 }, function( error, stdout, stderr ) {
+      if( error != null ) {
+        console.error( `Failed to execute command: ${command}` );
+        console.error( String( error ) );
+        callback( error, null );
+      } else {
+        var services = stdout.split( "\n" );
+        services.pop();
+        if( services.indexOf( `\"${appName}\"` ) === -1 ) {
+          console.log( `...***==> service: ${appName} not exists.` );
+          console.log( `...***==> service: creating ${appName}.` );
+          state = "create";
+        } else {
+          console.log( `...***==> service: ${appName} exists.` );
+          console.log( `...***==> service: updating ${appName}.` );
+          state = "update";
+        }
+        callback( null, state );
+      }
+    } );
+    cmdProcess.stdout.pipe( process.stdout );
+    cmdProcess.stderr.pipe( process.stdout );
+  } else {
+    callback( null, state );
+  }
+}
 
 
-app.use(bodyParser.json());
+(function run() {
 
-app.get('/health', function (req, res) {
-  res.send('Stage:' + process.env.STAGE);
-});
+  if( commands.length == 0 ) {
+    console.log("...***==> ecs:sleeping for 5 seconds. TATA Good Night");
+    return setTimeout( run, 5 * 1000 );
+  }
 
-app.post('/*', function (req, res) {
+  commands.reverse();
+  var command = commands.pop();
+  commands.reverse();
 
-  if( (process.env.STAGE == 'devo' && req.body.ref != 'refs/heads/devo')
-      || (process.env.STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma')
-      || (process.env.STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
-    res.status(400).send(`No deployment in ${process.env.STAGE} for commit in ${req.body.repository.name}/${req.body.ref.substr(11)} branch.`);
+  console.log( `Running command: ${command}` );
+  var cmdProcess = exec( command, { maxBuffer: 2 * 1024 * 1024 }, function( error, stdout, stderr ) {
+    if( error != null ) {
+      console.error( `Failed to execute command: ${command}` );
+      console.error( String( error ) );
+    }
+    run();
+  } );
+  cmdProcess.stdout.pipe( process.stdout );
+  cmdProcess.stderr.pipe( process.stdout );
+
+} )();
+
+
+app.use( bodyParser.json() );
+
+app.get( '/health', function ( req, res ) {
+  res.send( 'Realm:' + REALM + ', Stage:' + STAGE );
+} );
+
+app.post( '/*', function ( req, res ) {
+
+  if( ( STAGE == 'devo' && req.body.ref != 'refs/heads/devo' )
+      || ( STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma' )
+      || ( STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
+    res.status( 400 ).send( `No deployment in ${REALM}/${STAGE} for commit in ${req.body.repository.name}/${req.body.ref.substr(11)} branch.` );
     return;
   }
   
-  if(req.body.deleted) {
-    res.status(400).send(`No deployment in ${process.env.STAGE} for deleted ${req.body.repository.name}/${req.body.ref.substr(11)} branch.`);
+  if( req.body.deleted ) {
+    res.status( 400 ).send( `No deployment in ${REALM}/${STAGE} for deleted ${req.body.repository.name}/${req.body.ref.substr(11)} branch.` );
     return;
   }
 
   var appName = req.body.repository.name;
-  if(appName.startsWith('ecs-'))
+  if( appName.startsWith( 'ecs-' ) ) {
     appName = appName.substr( 4 );
-  var appVersion = Math.round(new Date().getTime() / 1000 / 60);
+  }
+  var appVersion = Math.round( new Date().getTime() / 1000 / 60 );
 
-  var appCmd = `bash app-deploy.sh update ${process.env.STAGE} ${appName} ${appVersion}`;
-  console.log(`Running command: ${appCmd}`);
-  var appProcess = exec(appCmd, {maxBuffer: 1024 * 1024}, function(error, stdout, stderr) {
-    if(error !== null)
-      console.log('exec error: ' + error);
-  });
-  appProcess.stdout.pipe(process.stdout);
-  appProcess.stderr.pipe(process.stdout);
+  getServiceCommand( appName, function( error, command ) {
+    if( error != null ) {
+      res.status( 400 ).send( `Not Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch due to an error.` );
+    } else {
+      if( command === "" ) {
+        res.status( 400 ).send( `Not Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch due to service: ${appName} not being in whitelist.` );
+      } else {
+        commands.push( `bash app-deploy.sh ${command} ${REALM} ${STAGE} ${appName} ${appVersion}` );
+        res.send( `Deploying to ${REALM}/${STAGE}/${appName} from ${req.body.ref.substr(11)} branch.` );
+      }
+    }
+  } );
+} );
 
-    res.send(`Deploying to ${appName}/${process.env.STAGE} from ${req.body.ref.substr(11)} branch. Deployment logs are here - https://${process.env.STAGE}.pratilipi.com/ecs/${appName}-${appVersion}.log`);
-
-});
-
-app.listen(80);
+app.listen( 80 );
 

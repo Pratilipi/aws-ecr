@@ -5,7 +5,7 @@ const Monitoring = require('@google-cloud/monitoring');
 var projectId;
 var service;
 
-//Instantiates a client
+//Instantiates a monitoring client
 var client = Monitoring.v3().metricServiceClient();
 
 //Create a class MetricGcp
@@ -14,6 +14,7 @@ class MetricGcp {
   //Constructor initialization of Instance Object
   constructor( unitType,metricType ) {
 
+    //Initialize a timeSeriesData variable to be pushed with metric
     this.timeSeriesData = {
         metric: {
           type: 'custom.googleapis.com/'+service+'/'+metricType,
@@ -21,11 +22,12 @@ class MetricGcp {
         resource: {
           type: 'global',
           labels: {
-            project_id: projectId
+            "project_id": projectId
           }
         },
         points: []
     };
+    //Initialize the type of metric data
     this.unitType=unitType+'Value';
 
   }
@@ -72,7 +74,5 @@ class MetricGcp {
 
   }
 }
-
-//[END monitoring_write_timeseries]
 
 module.exports = MetricGcp;

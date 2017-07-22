@@ -12,6 +12,6 @@ gcp-prod.json
 .settings/
 */lib/
 */npm-debug.log
+keyfile.json
 node_modules/
 */keyfile.json
-keyfile.json

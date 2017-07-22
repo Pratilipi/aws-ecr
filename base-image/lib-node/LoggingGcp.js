@@ -1,17 +1,19 @@
+//Imports the Google Api client library
 var google = require( 'googleapis' );
 
+//Your Google Cloud Platform project ID and service name
 var projectId;
 var service;
 var logging;
 
-
+//Authenticate the client with the credentials provided
 (function authenticate() {
   google.auth.getApplicationDefault( ( err, authClient ) => {
-    if (err) {
+    if(err) {
       console.log( 'Failed to get the default credentials: ' + String( err ) );
       setTimeout( authenticate, 15 * 1000 );
     }
-    if ( authClient.createScopedRequired && authClient.createScopedRequired() ) {
+    if( authClient.createScopedRequired && authClient.createScopedRequired() ) {
       authClient = authClient.createScoped( [ 'https://www.googleapis.com/auth/logging.write' ] );
     }
     logging = google.logging( { version: 'v2beta1', auth: authClient } );
@@ -22,6 +24,7 @@ var logging;
 
 class LoggingGcp {
 
+  //initialize the logEntry variable
   constructor( request ) {
 
     this.logEntry = {
@@ -49,22 +52,24 @@ class LoggingGcp {
 
   }
 
-
+  //initialize the projectId and service
   static init( config ) {
     projectId = config.projectId;
     service = config.service;
     return this;
   }
 
-
+  //add valid line
   info( message ) {
     this.addLine( 200, message );
   }
 
+  //add error line
   error( message ) {
     this.addLine( 500, message );
   }
 
+  //add lines in a log
   addLine( severity, logMessage ) {
     this.logEntry.entries[0].protoPayload.line.push({
       severity: severity,
@@ -73,15 +78,18 @@ class LoggingGcp {
     });
   }
 
+  //add resource
   setResource( resource ) {
     this.logEntry.entries[0].protoPayload.resource = resource;
   }
 
+  //Name of the agent calling
   setUserAgent( userAgent ) {
     this.logEntry.entries[0].protoPayload.userAgent = userAgent;
   }
 
 
+  //Submit the log to GCP
   submit( status, responseSize ) {
     if( logging ) {
       var entry = this.logEntry.entries[0];
@@ -106,10 +114,12 @@ class LoggingGcp {
   }
 
 
+  //Timestamp
   getDate() {
     return new Date().toISOString();
   }
 
+  //Max of each response for severity
   getSeverity( entry ) {
     var severityArray = entry.protoPayload.line.map( function( line ) {
       return line.severity;

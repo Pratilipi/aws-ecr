@@ -9,14 +9,15 @@ function cacheUtility (config) {
   // private data
   var resource = config.resource;
   var db = config.db || 0;
-  var redisClient = redisModule.createClient(config.port, config.hostIp,{'db':db});
+  var redisClient = redisModule.createClient(config.port, config.hostIp, {'db':db, retry_strategy: function (options) {}
+  });
 
   redisClient.on('connect', () => {
     console.log('Redis Connected');
   });
 
   redisClient.on('error', function(err) {
-    throw('Error connecting to redis ' + err);
+    console.log('Error connecting to redis ' + err);
   });
 
   return {
@@ -33,7 +34,7 @@ function cacheUtility (config) {
             ;
           resolve(pr)
         }
-      }); 
+      });
     },
 
     list: function(ids) {
@@ -48,7 +49,7 @@ function cacheUtility (config) {
             ;
           resolve(pr)
         }
-      }); 
+      });
     },
 
     insert: function(id, entity) {
@@ -80,6 +81,28 @@ function cacheUtility (config) {
               return reply === 1;
             })
             ;
+          resolve(pr)
+        }
+      });
+    },
+
+    insertMultiple: function(ids, entities) {
+      return new Promise((resolve, reject) => {
+        if(arguments.length < 2 || typeof(entities) != 'object' || !Array.isArray(ids)){
+          var err = new Error('Bad Request');
+          err.status = 400;
+          reject(err);
+        } else {
+          var arrayCombined = ids.reduce( ( arr, v, i ) => {
+            //combine ids and entities alternative acc to redis syntax
+            return arr.concat( v, JSON.stringify( entities[ i ] ) );
+          }, [] );
+
+           var pr = redisClient.msetAsync( ...arrayCombined )
+           .then(reply => {
+             return reply === 'OK';
+           });
+
           resolve(pr)
         }
       });

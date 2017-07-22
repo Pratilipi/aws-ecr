@@ -1,12 +1,26 @@
 var schema = { structure   : {
-  'ID'         : { 'type' : 'INTEGER'   , 'default' : 0     },
-  'NAME'       : { 'type' : 'STRING'    , 'default' : null  },
-  'DOB'        : { 'type' : 'DATE'      , 'default' : null  },
-  'UPDATED_TS' : { 'type' : 'TIMESTAMP' , 'default' : null  },
-  'IS_ALIVE'   : { 'type' : 'BOOLEAN'   , 'default' : false },
-  'HEIGHT'     : { 'type' : 'FLOAT'     , 'default' : 0.0   }
+  'TEST_ID'    : { 'type' : 'INTEGER'   , 'default' : 0     },
+  'INTEGER_WITH_NULL' : { 'type' : 'INTEGER'   , 'default' : null     },
+  'INTEGER_WITH_ZERO' : { 'type' : 'INTEGER'   , 'default' : 0     },
+  'FLOAT_WITH_NULL' : { 'type' : 'FLOAT'   , 'default' : null     },
+  'FLOAT_WITH_ZERO_INT' : { 'type' : 'FLOAT'   , 'default' : 0     },
+  'FLOAT_WITH_ZERO_FLOAT' : { 'type' : 'FLOAT'   , 'default' : 0.5     },
+  'BOOLEAN_WITH_NULL': { 'type' : 'BOOLEAN'   , 'default' : null },
+  'BOOLEAN_WITH_FALSE': { 'type' : 'BOOLEAN'   , 'default' : false },
+  'ARRAY_WITH_NULL': { 'type' : 'ARRAY'   , 'default' : null },
+  'ARRAY_WITH_ARRAY': { 'type' : 'ARRAY'   , 'default' : [] },
+  'STRING_WITH_BLANK'       : { 'type' : 'STRING'    , 'default' : ""  },
+  'STRING_WITH_NULL'       : { 'type' : 'STRING'    , 'default' : null  },
+  'TIMESTAMP_WITH_NULL'        : { 'type' : 'TIMESTAMP' , 'default' : null  },
+  'TIMESTAMP_WITH_NEW_DATE' : { 'type' : 'TIMESTAMP' , 'default' : new Date()  },
+  'TIMESTAMP_WITH_STRING' : { 'type' : 'TIMESTAMP' , 'default' : 'new Date()'  },
+  'GEOPOINT_WITH_NULL': { 'type' : 'GEOPOINT' , 'default' : null  },
+  'GEOPOINT_WITH_OBJECT': { 'type' : 'GEOPOINT' , 'default' : {latitude:0,longitude:0}  },
+  'NULL': { 'type' : 'NULL' , 'default' : null  },
+  'OBJECT_WITH_NULL'   : { 'type' : 'OBJECT'   , 'default' : null },
+  'OBJECT_WITH_OBJECT'     : { 'type' : 'OBJECT'     , 'default' : {}   }
 },
-primaryKey  : 'ID'};
+primaryKey  : 'TEST_ID'};
 
 
 
