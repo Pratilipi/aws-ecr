@@ -7,9 +7,9 @@ var service;
 var logging;
 
 //Authenticate the client with the credentials provided
-(function authenticate() {
+( function authenticate() {
   google.auth.getApplicationDefault( ( err, authClient ) => {
-    if(err) {
+    if( err ) {
       console.log( 'Failed to get the default credentials: ' + String( err ) );
       setTimeout( authenticate, 15 * 1000 );
     }
@@ -17,8 +17,8 @@ var logging;
       authClient = authClient.createScoped( [ 'https://www.googleapis.com/auth/logging.write' ] );
     }
     logging = google.logging( { version: 'v2beta1', auth: authClient } );
-  });
-})();
+  } );
+} )();
 
 
 
@@ -30,17 +30,17 @@ class LoggingGcp {
     this.logEntry = {
       logName: `projects/${ projectId }/logs/${ service }`,
       resource: { type: 'container' },
-      entries: [{
+      entries: [ {
         timestamp: this.getDate(),
         protoPayload: {
           '@type': 'type.googleapis.com/google.appengine.logging.v1.RequestLog',
           line: []
         }
-      }]
+      } ]
     };
 
     if( typeof request === 'object' ) {
-      var payload = this.logEntry.entries[0].protoPayload;
+      var payload = this.logEntry.entries[ 0 ].protoPayload;
       payload.method = request.method;
       payload.resource = request.url;
       payload.userAgent = request.headers[ 'user-agent' ];
@@ -71,28 +71,28 @@ class LoggingGcp {
 
   //add lines in a log
   addLine( severity, logMessage ) {
-    this.logEntry.entries[0].protoPayload.line.push({
+    this.logEntry.entries[ 0 ].protoPayload.line.push( {
       severity: severity,
       logMessage: logMessage,
       time: this.getDate()
-    });
+    } );
   }
 
   //add resource
   setResource( resource ) {
-    this.logEntry.entries[0].protoPayload.resource = resource;
+    this.logEntry.entries[ 0 ].protoPayload.resource = resource;
   }
 
   //Name of the agent calling
   setUserAgent( userAgent ) {
-    this.logEntry.entries[0].protoPayload.userAgent = userAgent;
+    this.logEntry.entries[ 0 ].protoPayload.userAgent = userAgent;
   }
 
 
   //Submit the log to GCP
   submit( status, responseSize ) {
     if( logging ) {
-      var entry = this.logEntry.entries[0];
+      var entry = this.logEntry.entries[ 0 ];
       var payload = entry.protoPayload;
       payload.status = status;
       payload.responseSize = responseSize;
@@ -100,11 +100,11 @@ class LoggingGcp {
 
       entry.severity = this.getSeverity( entry );
 
-      logging.entries.write({ resource: this.logEntry }, ( err, result ) => {
+      logging.entries.write( { resource: this.logEntry }, ( err, result ) => {
         if( err ) {
           console.error( String( err ) );
         }
-      });
+      } );
     } else {
       var self = this;
       setTimeout( () => {
@@ -123,7 +123,7 @@ class LoggingGcp {
   getSeverity( entry ) {
     var severityArray = entry.protoPayload.line.map( function( line ) {
       return line.severity;
-    });
+    } );
     return Math.max( ...severityArray );
   }
 

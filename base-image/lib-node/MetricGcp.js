@@ -1,5 +1,5 @@
 //Imports the Google Cloud client library
-const Monitoring = require('@google-cloud/monitoring');
+const Monitoring = require( '@google-cloud/monitoring' );
 
 //Your Google Cloud Platform project ID and service name
 var projectId;
@@ -12,7 +12,7 @@ var client = Monitoring.v3().metricServiceClient();
 class MetricGcp {
 
   //Constructor initialization of Instance Object
-  constructor( unitType,metricType ) {
+  constructor( unitType, metricType ) {
 
     //Initialize a timeSeriesData variable to be pushed with metric
     this.timeSeriesData = {
@@ -28,7 +28,7 @@ class MetricGcp {
         points: []
     };
     //Initialize the type of metric data
-    this.unitType=unitType+'Value';
+    this.unitType = unitType + 'Value';
 
   }
 
@@ -42,7 +42,7 @@ class MetricGcp {
   }
 
   //Writing a Time Series Data to the particular metricType
-  write (value) {
+  write ( value ) {
     var dataPoint = {
         interval: {
           endTime: {
@@ -54,23 +54,23 @@ class MetricGcp {
     };
 
     var valueKey = dataPoint.value;
-    valueKey[this.unitType]=value;
+    valueKey[ this.unitType ] = value;
     this.timeSeriesData.points[ 0 ] = dataPoint;
 
     //Creating a request for timeSeries.create
     const request = {
-        name: client.projectPath(projectId),
+        name: client.projectPath( projectId ),
         timeSeries: [
           this.timeSeriesData
           ]
     };
 
     // Writes time series data
-    client.createTimeSeries(request,function(err, result) {
-      if (err) {
+    client.createTimeSeries( request, function( err, result ) {
+      if ( err ) {
         console.error( String( err ) );
       }
-    });
+    } );
 
   }
 }
