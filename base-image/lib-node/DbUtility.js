@@ -7,7 +7,7 @@ module.exports = DbUtility;
 const datastoreModule = require( '@google-cloud/datastore' );
 
 //GETTING THE LODASH LIBRARY TO PERFORM OBJECT AND ARRAY OPERATIONS
-const _ = require('lodash');
+const _ = require( 'lodash' );
 
 //THE FUNCTION TO BE EXPORTED
 function DbUtility ( config ) {
@@ -38,10 +38,16 @@ function DbUtility ( config ) {
     "ARRAY": function( value ) {
       return value;
     },
-    "TIMESTAMP": function( value ){
-      if( typeof value === 'string' && value === "new Date()" ) {
-        return ( new Date() );
-      } else {
+    "TIMESTAMP": function( value ) {
+      try {
+        if( typeof value === 'string' && value === "new Date()" ) {
+         return ( new Date() );
+        } else if( value === null ) {
+         return value;
+        } else {
+         return new Date( value );
+        }
+      } catch( error ) {
         return value;
       }
     },
@@ -76,13 +82,13 @@ function DbUtility ( config ) {
     },
     "INTEGER": function( value ) {
       if ( typeof value === 'number' ) {
-        if( value%1 !== 0 ) {
+        if( value % 1 !== 0 ) {
           return false;
         } else {
           return true;
         }
       } else if( value !== null && typeof value === 'object' && value.constructor.name === 'Int' ) {
-        if( Number( value.value )%1 !== 0 ) {
+        if( Number( value.value ) % 1 !== 0 ) {
           return false;
         } else {
           return true;
@@ -110,9 +116,9 @@ function DbUtility ( config ) {
         return true;
       } else if( value !== null && typeof value === 'object' && value.constructor.name === 'Double' ) {
         if( typeof value.value === 'number' ) {
-            return true;
-          } else {
-            return false;
+          return true;
+        } else {
+          return false;
         }
       } else {
         return false;
@@ -148,12 +154,12 @@ function DbUtility ( config ) {
 
   //MAKE A PRIMARY KEY FOR DATASTORE WITH PROVIDED ID NOTE: DATASTORE SPECIFIC
   function getKey( id ) {
-    return datastoreClient.key([ kind, id ]);
+    return datastoreClient.key( [ kind, id ] );
   }
 
   //MAKE A PRIMARY KEY FOR DATASTORE WITHOUT ANY ID NOTE: DATASTORE SPECIFIC
   function getNewKey() {
-    return datastoreClient.key([ kind ]);
+    return datastoreClient.key( [ kind ] );
   }
 
   //CONVERT THE STRING TO UPPERCASE
@@ -313,7 +319,7 @@ function DbUtility ( config ) {
         if( Array.isArray( filter ) ) {
           for( var i = 0; i < filter.length; i++ ) {
             //Each filter should have three values
-            if(Array.isArray( filter[ i ] ) && filter[i].length === 3) {
+            if( Array.isArray( filter[ i ] ) && filter[i].length === 3 ) {
               //HANDLING CASE WHERE FIELDNAMES ARE IN LOWER CASE
               filter[ i ][ 0 ] = filter[ i ][ 0 ].toUpperCase();
               //EXPLICIT CHECK FOR DATASTORE PRIMARY KEY NOTE: DATASTORE SPECIFIC
@@ -387,19 +393,19 @@ function DbUtility ( config ) {
       //Number of Entities in one query
       if( limit != null ) {
         //Limit should be an Integer
-        if( isNaN(limit) || typeof limit === 'object' ) {
+        if( isNaN( limit ) || typeof limit === 'object' ) {
           throw new Error( 'Wrong Type of limit' );
         } else {
           //Limit is set till 1000
-          if( Number(limit)>1000 ) {
+          if( Number( limit )>1000 ) {
             //Limit can't be set greater than 1000
-            throw new Error( 'Limit provided is greater than 1000');
+            throw new Error( 'Limit provided is greater than 1000' );
           }
           //Set limit
-          query.limit( Number(limit) );
+          query.limit( Number( limit ) );
         }
       } else {
-        query.limit(1000);
+        query.limit( 1000 );
       }
 
     } catch ( error ) {
@@ -453,12 +459,12 @@ function DbUtility ( config ) {
       if(select != null) {
         if( Array.isArray( select ) ) {
           for( var q = 0; q < select.length; q++ ) {
-            select[q] = select[q].toUpperCase();
-            if( select[q] === primaryKey ) {
-              select[q] = '__key__';
+            select[ q ] = select[ q ].toUpperCase();
+            if( select[ q ] === primaryKey ) {
+              select[ q ] = '__key__';
             }
           }
-          query.select(select);
+          query.select( select );
         } else {
           throw new Error( 'Select is not having correct type.' );
         }
@@ -471,7 +477,7 @@ function DbUtility ( config ) {
   function selectOnlyKeys( query, selectKeys ) {
     try{
       //selectOnlyKeys is provided
-      if(selectKeys != null) {
+      if( selectKeys != null ) {
         if( typeof selectKeys === 'boolean' ) {
           if( selectKeys == true ) {
             query.select('__key__');
@@ -529,7 +535,7 @@ function DbUtility ( config ) {
                 object.data = processEntities( data[ 0 ] );
               }
               //Any more entities remaining for a particular query
-              if(data[ 1 ].moreResults !== datastoreModule.NO_MORE_RESULTS) {
+              if( data[ 1 ].moreResults !== datastoreModule.NO_MORE_RESULTS ) {
                 object.moreResults = true;
               } else {
                 object.moreResults = false;
@@ -732,7 +738,7 @@ function DbUtility ( config ) {
     update: function( id, data ) {
       try {
         //DATA SHOULD BE A MAP
-        if( !(Array.isArray( id ) ) && !(Array.isArray( data ) ) ) {
+        if( !( Array.isArray( id ) ) && !( Array.isArray( data ) ) ) {
           //KEY NAMES OF MAP
           var keys = Object.keys( data );
           var keysId = Object.keys( id );

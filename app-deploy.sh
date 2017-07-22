@@ -1,4 +1,4 @@
-echo "...***==> Running bash app-deploy.sh $1 $2 $3 $4 $5"
+echo "$4***** Running bash app-deploy.sh $1 $2 $3 $4 $5"
 
 COMMAND=$1
 REALM=$2
@@ -15,7 +15,7 @@ git_clone()
     then
       if [ ! -d "gitconfig" -a ! -d "aws-$STAGE" -a ! -f "gcp-$STAGE.json" ]
       then
-        echo "...***==> error:either gitconfig aws-$STAGE gcp-$STAGE.json do not exist."
+        echo "$APP_NAME***** error:either gitconfig aws-$STAGE gcp-$STAGE.json do not exist."
         exit 1
       fi
       cp gitconfig $GIT_REPO
@@ -32,7 +32,7 @@ git_clone()
 
 if [ "$COMMAND" != "update" -a "$COMMAND" != "create" ] || [ "$REALM" != "product" -a "$REALM" != "growth" ] || [ "$STAGE" != "devo" -a "$STAGE" != "gamma" -a "$STAGE" != "prod" ] || [ "$APP_NAME" == "" ] || [ "$APP_VERSION" == "" ]
 then
-  echo "syntax: bash app-deploy.sh <command> <realm> <stage> <app-name> <app-version>"
+  echo "$APP_NAME***** syntax: bash app-deploy.sh <command> <realm> <stage> <app-name> <app-version>"
   exit 1
 fi
 
@@ -65,4 +65,4 @@ git gc
 cd ..
 
 
-echo "...***==> app-deploy.sh $1 $2 $3 $4 $5 SUCCESS"
+echo "$APP_NAME***** app-deploy.sh $1 $2 $3 $4 $5 SUCCESS"

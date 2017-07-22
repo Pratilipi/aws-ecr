@@ -20,10 +20,10 @@ function checkServiceWhitelist( appName )
     whitelist.push( "datastore-util" );
   }
   if( whitelist.indexOf( appName ) === -1 ) {
-    console.log( `...***==> service: ${appName} is not whitelisted.` );
+    console.log( `${appName}***** service: ${appName} is not whitelisted.` );
     return false;
   } else {
-    console.log( `...***==> service: ${appName} whitelisted.` );
+    console.log( `${appName}***** service: ${appName} whitelisted.` );
     return true;
   }
 }
@@ -33,22 +33,22 @@ function getServiceCommand( appName, callback )
   var state = "";
   if( checkServiceWhitelist( appName ) ) {
     var command = `aws ecs list-services --cluster ${PREFIX}${STAGE}-ecs | jq '.serviceArns[]' | jq 'split(":")[5]' | jq 'split("/")[1]'`;
-    console.log( `Running command: ${command}` );
+    console.log( `${appName}***** Running command: ${command}` );
     var cmdProcess = exec( command, { maxBuffer: 2 * 1024 * 1024 }, function( error, stdout, stderr ) {
       if( error != null ) {
-        console.error( `Failed to execute command: ${command}` );
+        console.error( `${appName}***** Failed to execute command: ${command}` );
         console.error( String( error ) );
         callback( error, null );
       } else {
         var services = stdout.split( "\n" );
         services.pop();
         if( services.indexOf( `\"${appName}\"` ) === -1 ) {
-          console.log( `...***==> service: ${appName} not exists.` );
-          console.log( `...***==> service: creating ${appName}.` );
+          console.log( `${appName}***** service: ${appName} not exists.` );
+          console.log( `${appName}***** service: creating ${appName}.` );
           state = "create";
         } else {
-          console.log( `...***==> service: ${appName} exists.` );
-          console.log( `...***==> service: updating ${appName}.` );
+          console.log( `${appName}***** service: ${appName} exists.` );
+          console.log( `${appName}***** service: updating ${appName}.` );
           state = "update";
         }
         callback( null, state );
@@ -65,7 +65,7 @@ function getServiceCommand( appName, callback )
 (function run() {
 
   if( commands.length == 0 ) {
-    console.log("...***==> ecs:sleeping for 5 seconds. TATA Good Night");
+    console.log("***** ecs:sleeping for 5 seconds. TATA Good Night");
     return setTimeout( run, 5 * 1000 );
   }
 
@@ -73,7 +73,7 @@ function getServiceCommand( appName, callback )
   var command = commands.pop();
   commands.reverse();
 
-  console.log( `Running command: ${command}` );
+  console.log( `***** Running command: ${command}` );
   var cmdProcess = exec( command, { maxBuffer: 2 * 1024 * 1024 }, function( error, stdout, stderr ) {
     if( error != null ) {
       console.error( `Failed to execute command: ${command}` );
@@ -108,6 +108,10 @@ app.post( '/*', function ( req, res ) {
   }
 
   var appName = req.body.repository.name;
+  if( appName === 'pratilipi' ) {
+    res.status( 400 ).send( `No deployment in ${REALM}/${STAGE} for repository: ${appName}.` );
+    return;
+  }
   if( appName.startsWith( 'ecs-' ) ) {
     appName = appName.substr( 4 );
   }
