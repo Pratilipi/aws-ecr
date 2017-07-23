@@ -579,11 +579,13 @@ function DbUtility ( config ) {
               //NOTE: DATASTORE SPECIFIC
               var key;
               //CREATE KEY IF PROVIDED EXPLICITLY
-              if( newData[ primaryKey ] === structure[ primaryKey ].default ) {
+              if( newData[ primaryKey ] === structure[ primaryKey ].default && structure[ primaryKey ].type === 'STRING' ) {
                 var value = new Date().getTime();
                 value = value + "";
                 key = getKey( value );
-              } else if(newData[ primaryKey ].value == structure[ primaryKey ].default) {
+              } else if( newData[ primaryKey ] === structure[ primaryKey ].default ) {
+                key = getNewKey();
+              } else if( newData[ primaryKey ].value == structure[ primaryKey ].default ) {
                 key = getNewKey();
               } else {
                 var value = newData[ primaryKey ];
