@@ -559,7 +559,7 @@ function DbUtility ( config ) {
     insert: function( data ) {
       try {
         //DATA SHOULD BE A MAP
-        if( !(Array.isArray( data ) ) ) {
+        if( !(Array.isArray( data ) ) && typeof data === 'object' ) {
           //KEY NAMES OF MAP
           var keys = Object.keys( data );
           //IF NO KEY NAMES
@@ -691,7 +691,7 @@ function DbUtility ( config ) {
     //DELETE KEYS FOR ONLY PRIMARY KEYS PROVIDED
     delete: function( id ) {
       try{
-        if( !(Array.isArray( id ) ) ) {
+        if( !(Array.isArray( id ) ) && typeof id === 'object' ) {
           //KEY NAMES OF MAP
           var keys = Object.keys( id );
           //ONLY ONE KEY NAME NOTE: DATASTORE SPECIFIC
@@ -705,20 +705,23 @@ function DbUtility ( config ) {
             }
             //IF PRIMARY KEY IS NOT GIVEN THEN ERROR
             if( idData[ primaryKey ] != null ) {
-              //DELETE ID IF IT EXISTS
-              return datastoreClient.delete( getKey( idData[ primaryKey ] ) )
-              .then( (data) => {
-                if( data[ 0 ].indexUpdates === 0 ){
-                  throw new Error( 'Id doesn\'t exist' );
-                } else {
-                  return 1;
-                }
-              } )
-              .catch( ( error ) => {
-                return new Promise( ( resolve, reject ) => {
-                  reject( error );
+              var flag = checkSchema( idData );
+              if( flag ) {
+                //DELETE ID IF IT EXISTS
+                return datastoreClient.delete( getKey( idData[ primaryKey ] ) )
+                .then( (data) => {
+                  if( data[ 0 ].indexUpdates === 0 ){
+                    throw new Error( 'Id doesn\'t exist' );
+                  } else {
+                    return 1;
+                  }
+                } )
+                .catch( ( error ) => {
+                  return new Promise( ( resolve, reject ) => {
+                    reject( error );
+                  } );
                 } );
-              });
+              }
             } else {
               //PRIMARY KEY IS NOT PROVIDED
               throw new Error( 'Primary key not provided.');
@@ -742,7 +745,7 @@ function DbUtility ( config ) {
     update: function( id, data ) {
       try {
         //DATA SHOULD BE A MAP
-        if( !( Array.isArray( id ) ) && !( Array.isArray( data ) ) ) {
+        if( !( Array.isArray( id ) ) && !( Array.isArray( data ) ) && typeof id === 'object' && typeof data === 'object' ) {
           //KEY NAMES OF MAP
           var keys = Object.keys( data );
           var keysId = Object.keys( id );
@@ -815,7 +818,7 @@ function DbUtility ( config ) {
     patch: function( id, data ) {
       try {
         //DATA SHOULD BE A MAP
-        if( !( Array.isArray( id ) ) && !( Array.isArray( data ) ) ) {
+        if( !( Array.isArray( id ) ) && !( Array.isArray( data ) ) && typeof id === 'object' && typeof data === 'object' ) {
           //KEY NAMES OF MAP
           var keys = Object.keys( data );
           var keysId = Object.keys( id );
