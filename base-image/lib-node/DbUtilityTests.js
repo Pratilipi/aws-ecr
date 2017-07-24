@@ -1,1600 +1,7316 @@
-var schema = { structure   : {
-  'TEST_ID'    : { 'type' : 'INTEGER'   , 'default' : 0     },
+var schema1 = { structure   : {
+  'TEST1_ID'    : { 'type' : 'INTEGER'   , 'default' : 0     },
+  'INTEGER' : { 'type' : 'INTEGER'   , 'default' : 0     },
   'INTEGER_WITH_NULL' : { 'type' : 'INTEGER'   , 'default' : null     },
   'INTEGER_WITH_ZERO' : { 'type' : 'INTEGER'   , 'default' : 0     },
+  'FLOAT' : { 'type' : 'FLOAT'   , 'default' : 0.0     },
   'FLOAT_WITH_NULL' : { 'type' : 'FLOAT'   , 'default' : null     },
   'FLOAT_WITH_ZERO_INT' : { 'type' : 'FLOAT'   , 'default' : 0     },
-  'FLOAT_WITH_ZERO_FLOAT' : { 'type' : 'FLOAT'   , 'default' : 0.5     },
+  'FLOAT_WITH_ZERO_FLOAT' : { 'type' : 'FLOAT'   , 'default' : 0.0     },
+  'BOOLEAN': { 'type' : 'BOOLEAN'   , 'default' : false },
   'BOOLEAN_WITH_NULL': { 'type' : 'BOOLEAN'   , 'default' : null },
   'BOOLEAN_WITH_FALSE': { 'type' : 'BOOLEAN'   , 'default' : false },
+  'ARRAY': { 'type' : 'ARRAY'   , 'default' : [] },
   'ARRAY_WITH_NULL': { 'type' : 'ARRAY'   , 'default' : null },
   'ARRAY_WITH_ARRAY': { 'type' : 'ARRAY'   , 'default' : [] },
+  'STRING'       : { 'type' : 'STRING'    , 'default' : ""  },
   'STRING_WITH_BLANK'       : { 'type' : 'STRING'    , 'default' : ""  },
   'STRING_WITH_NULL'       : { 'type' : 'STRING'    , 'default' : null  },
+  'TIMESTAMP'        : { 'type' : 'TIMESTAMP' , 'default' : 'new Date()'  },
   'TIMESTAMP_WITH_NULL'        : { 'type' : 'TIMESTAMP' , 'default' : null  },
   'TIMESTAMP_WITH_NEW_DATE' : { 'type' : 'TIMESTAMP' , 'default' : new Date()  },
   'TIMESTAMP_WITH_STRING' : { 'type' : 'TIMESTAMP' , 'default' : 'new Date()'  },
+  'GEOPOINT': { 'type' : 'GEOPOINT' , 'default' : {latitude:0,longitude:0}  },
   'GEOPOINT_WITH_NULL': { 'type' : 'GEOPOINT' , 'default' : null  },
   'GEOPOINT_WITH_OBJECT': { 'type' : 'GEOPOINT' , 'default' : {latitude:0,longitude:0}  },
   'NULL': { 'type' : 'NULL' , 'default' : null  },
+  'OBJECT'   : { 'type' : 'OBJECT'   , 'default' : {} },
   'OBJECT_WITH_NULL'   : { 'type' : 'OBJECT'   , 'default' : null },
   'OBJECT_WITH_OBJECT'     : { 'type' : 'OBJECT'     , 'default' : {}   }
 },
-primaryKey  : 'TEST_ID'};
+primaryKey  : 'TEST1_ID'};
+
+var schema2 = { structure   : {
+  'TEST2_ID'    : { 'type' : 'STRING'   , 'default' : ""     },
+  'INTEGER' : { 'type' : 'INTEGER'   , 'default' : 0     },
+  'INTEGER_WITH_NULL' : { 'type' : 'INTEGER'   , 'default' : null     },
+  'INTEGER_WITH_ZERO' : { 'type' : 'INTEGER'   , 'default' : 0     },
+  'FLOAT' : { 'type' : 'FLOAT'   , 'default' : 0.0     },
+  'FLOAT_WITH_NULL' : { 'type' : 'FLOAT'   , 'default' : null     },
+  'FLOAT_WITH_ZERO_INT' : { 'type' : 'FLOAT'   , 'default' : 0     },
+  'FLOAT_WITH_ZERO_FLOAT' : { 'type' : 'FLOAT'   , 'default' : 0.0     },
+  'BOOLEAN': { 'type' : 'BOOLEAN'   , 'default' : false },
+  'BOOLEAN_WITH_NULL': { 'type' : 'BOOLEAN'   , 'default' : null },
+  'BOOLEAN_WITH_FALSE': { 'type' : 'BOOLEAN'   , 'default' : false },
+  'ARRAY': { 'type' : 'ARRAY'   , 'default' : [] },
+  'ARRAY_WITH_NULL': { 'type' : 'ARRAY'   , 'default' : null },
+  'ARRAY_WITH_ARRAY': { 'type' : 'ARRAY'   , 'default' : [] },
+  'STRING'       : { 'type' : 'STRING'    , 'default' : ""  },
+  'STRING_WITH_BLANK'       : { 'type' : 'STRING'    , 'default' : ""  },
+  'STRING_WITH_NULL'       : { 'type' : 'STRING'    , 'default' : null  },
+  'TIMESTAMP'        : { 'type' : 'TIMESTAMP' , 'default' : 'new Date()'  },
+  'TIMESTAMP_WITH_NULL'        : { 'type' : 'TIMESTAMP' , 'default' : null  },
+  'TIMESTAMP_WITH_NEW_DATE' : { 'type' : 'TIMESTAMP' , 'default' : new Date()  },
+  'TIMESTAMP_WITH_STRING' : { 'type' : 'TIMESTAMP' , 'default' : 'new Date()'  },
+  'GEOPOINT': { 'type' : 'GEOPOINT' , 'default' : {latitude:0,longitude:0}  },
+  'GEOPOINT_WITH_NULL': { 'type' : 'GEOPOINT' , 'default' : null  },
+  'GEOPOINT_WITH_OBJECT': { 'type' : 'GEOPOINT' , 'default' : {latitude:0,longitude:0}  },
+  'NULL': { 'type' : 'NULL' , 'default' : null  },
+  'OBJECT'   : { 'type' : 'OBJECT'   , 'default' : {} },
+  'OBJECT_WITH_NULL'   : { 'type' : 'OBJECT'   , 'default' : null },
+  'OBJECT_WITH_OBJECT'     : { 'type' : 'OBJECT'     , 'default' : {}   }
+},
+primaryKey  : 'TEST2_ID'};
 
 
-
-var dbUtility = require( './DbUtility.js' ) ( {
+var dbUtility1 = require( './DbUtility.js' ) ( {
   'projectId' : 'devo-pratilipi',
-  'kind' : 'Test',
-  'schema' : schema
+  'kind' : 'TEST1',
+  'schema' : schema1
+} );
+
+var dbUtility2 = require( './DbUtility.js' ) ( {
+  'projectId' : 'devo-pratilipi',
+  'kind' : 'TEST2',
+  'schema' : schema2
 } );
 
 
 var chai = require( 'chai' );
 var expect = require( 'chai' ).expect;
 
-describe('dbUtility Tests',function() {
-  this.timeout( 3000 );
-  describe('insert', function() {
-    it('with undefined',function() {
-      return dbUtility.insert()
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with blank object',function() {
-      return dbUtility.insert({})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with no primary key',function() {
-      return dbUtility.insert({"name":"micheal", "dob":"2000-01-01", "updated_ts":"2000-01-01 12:56:56", "is_alive": true, "height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'micheal' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( true );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with primary key',function() {
-      return dbUtility.insert({"id":1234512345123451, "name":"micheal", "dob":"2000-01-01", "updated_ts":"2000-01-01 12:56:56", "is_alive": true, "height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'micheal' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( true );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with same primary key',function() {
-      return dbUtility.insert({"id":1234512345123451, "name":"micheal", "dob":"2000-01-01", "updated_ts":"2000-01-01 12:56:56", "is_alive": true, "height":5.9})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with no primary key same data',function() {
-      return dbUtility.insert({"name":"micheal", "dob":"2000-01-01", "updated_ts":"2000-01-01 12:56:56", "is_alive": true, "height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'micheal' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( true );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with no primary key and just name',function() {
-      return dbUtility.insert({"name":"sarah"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'sarah' );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with no primary key and just dob',function() {
-      return dbUtility.insert({"dob":"2000-01-01"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with no primary key and just updated_ts',function() {
-      return dbUtility.insert({"updated_ts":"2000-01-01 12:56:56"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with no primary key and just is_alive',function() {
-      return dbUtility.insert({"is_alive": true})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( true );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with no primary key and just height',function() {
-      return dbUtility.insert({"height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with primary key and just name',function() {
-      return dbUtility.insert({"id":1234512345123452, "name":"sarah"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'sarah' );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with primary key and just dob',function() {
-      return dbUtility.insert({"id":1234512345123453, "dob":"2000-01-01"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123453 );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with primary key and just updated_ts',function() {
-      return dbUtility.insert({"id":1234512345123454, "updated_ts":"2000-01-01 12:56:56"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123454 );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with primary key and just is_alive',function() {
-      return dbUtility.insert({"id":1234512345123455, "is_alive": true})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123455 );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( true );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with primary key and just height',function() {
-      return dbUtility.insert({"id":1234512345123456, "height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123456 );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with primary key and same data jumbled up',function() {
-      return dbUtility.insert({"updated_ts":"2000-01-01 12:56:56", "name":"micheal", "height":5.9, "dob":"2000-01-01", "id":1234512345123457, "is_alive": true})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123457 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'micheal' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( true );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with no primary key and same data in upper case',function() {
-      return dbUtility.insert({"NAME":"micheal", "DOB":"2000-01-01", "UPDATED_TS":"2000-01-01 12:56:56", "IS_ALIVE": true, "HEIGHT":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'micheal' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( true );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with no primary key and data not conforming to schema',function() {
-      return dbUtility.insert({"abba":"dabba", "jaaba":"oppa"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key and data not conforming to schema',function() {
-      return dbUtility.insert({"id":1234512345123452, "name":"sarah", "abba":"dabba"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-  } );
-  describe('query', function() {
-    it('with undefined',function() {
-      return dbUtility.query()
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with blank object',function() {
-      return dbUtility.query({})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key',function() {
-      return dbUtility.query({"id":1234512345123451})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 1 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123451 );
-      });
-    });
-    it('with duplicate id',function() {
-      return dbUtility.query({"id":1234512345123451, "id":1234512345123451})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 1 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123451 );
-      });
-    });
-    it('with name and wrong dob',function() {
-      return dbUtility.query({"name":"micheal", "dob":"200-01-01"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data[ 0 ] ).to.be.a( 'null' );
-        expect( data[ 0 ] ).to.be.deep.equal( null );
+var generateNewKey = function() {
+  return new Date().getTime();
+};
 
-      });
-    });
-    it('with wrong key name',function() {
-      return dbUtility.query({"abba":"dabba", "jaaba":"200-01-01"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data[ 0 ] ).to.be.a( 'null' );
-        expect( data[ 0 ] ).to.be.deep.equal( null );
-      });
-    });
-    it('with duplicate name and duplicate dob where last keys are wrong',function() {
-      return dbUtility.query({"name":"micheal", "dob":"2000-01-01", "name":"micheal", "dob":"200-01-01"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data[ 0 ] ).to.be.a( 'null' );
-        expect( data[ 0 ] ).to.be.deep.equal( null );
-      });
-    });
-    it('with uppercase name and uppercase dob',function() {
-      return dbUtility.query({"NAME":"micheal", "DOB":"2000-01-01"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].NAME ).to.be.a( 'string' );
-          expect( data[ i ].NAME ).to.be.deep.equal( 'micheal' );
-          expect( data[ i ].DOB ).to.be.a( 'string' );
-          expect( data[ i ].DOB ).to.be.deep.equal( '2000-01-01' );
-        }
-      });
-    });
-    it('with name, dob, updated_ts, is_alive, height',function() {
-      return dbUtility.query({"name":"micheal", "dob":"2000-01-01", "updated_ts":"2000-01-01 12:56:56", "is_alive": true, "height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].NAME ).to.be.a( 'string' );
-          expect( data[ i ].NAME ).to.be.deep.equal( 'micheal' );
-          expect( data[ i ].DOB ).to.be.a( 'string' );
-          expect( data[ i ].DOB ).to.be.deep.equal( '2000-01-01' );
-          expect( data[ i ].UPDATED_TS ).to.be.a( 'string' );
-          expect( data[ i ].UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-          expect( data[ i ].IS_ALIVE ).to.be.a( 'boolean' );
-          expect( data[ i ].IS_ALIVE ).to.be.deep.equal( true );
-          expect( data[ i ].HEIGHT ).to.be.a( 'number' );
-          expect( data[ i ].HEIGHT ).to.be.deep.equal( 5.9 );
-        }
-      });
-    });
-    it('with id, name, dob, updated_ts, is_alive, height',function() {
-      return dbUtility.query({"id":1234512345123451, "name":"micheal", "dob":"2000-01-01", "updated_ts":"2000-01-01 12:56:56", "is_alive": true, "height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 1 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data[ 0 ].NAME ).to.be.a( 'string' );
-        expect( data[ 0 ].NAME ).to.be.deep.equal( 'micheal' );
-        expect( data[ 0 ].DOB ).to.be.a( 'string' );
-        expect( data[ 0 ].DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data[ 0 ].UPDATED_TS ).to.be.a( 'string' );
-        expect( data[ 0 ].UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data[ 0 ].IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data[ 0 ].IS_ALIVE ).to.be.deep.equal( true );
-        expect( data[ 0 ].HEIGHT ).to.be.a( 'number' );
-        expect( data[ 0 ].HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with name',function() {
-      return dbUtility.query({"name":"sarah"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].NAME ).to.be.a( 'string' );
-          expect( data[ i ].NAME ).to.be.deep.equal( 'sarah' );
-        }
-      });
-    });
-    it('with dob',function() {
-      return dbUtility.query({"dob":"2000-01-01"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].DOB ).to.be.a( 'string' );
-          expect( data[ i ].DOB ).to.be.deep.equal( '2000-01-01' );
-        }
-      });
-    });
-    it('with updated_ts',function() {
-      return dbUtility.query({"updated_ts":"2000-01-01 12:56:56"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].UPDATED_TS ).to.be.a( 'string' );
-          expect( data[ i ].UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        }
-      });
-    });
-    it('with is_alive',function() {
-      return dbUtility.query({"is_alive": true})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].IS_ALIVE ).to.be.a( 'boolean' );
-          expect( data[ i ].IS_ALIVE ).to.be.deep.equal( true );
-        }
-      });
-    });
-    it('with height',function() {
-      return dbUtility.query({"height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].HEIGHT ).to.be.a( 'number' );
-          expect( data[ i ].HEIGHT ).to.be.deep.equal( 5.9 );
-        }
-      });
-    });
-    it('with id and name',function() {
-      return dbUtility.query({"id":1234512345123452, "name":"sarah"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 1 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data[ 0 ].NAME ).to.be.a( 'string' );
-        expect( data[ 0 ].NAME ).to.be.deep.equal( 'sarah' );
+var typeConversion = {
+  INTEGER : 'number',
+  FLOAT : 'number',
+  BOOLEAN : 'boolean',
+  ARRAY : 'array',
+  STRING : 'string',
+  TIMESTAMP : 'date',
+  GEOPOINT : 'object',
+  NULL : 'null',
+  OBJECT : 'object'
+};
 
-      });
-    });
-    it('with id and dob',function() {
-      return dbUtility.query({"id":1234512345123453, "dob":"2000-01-01"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 1 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123453 );
-        expect( data[ 0 ].DOB ).to.be.a( 'string' );
-        expect( data[ 0 ].DOB ).to.be.deep.equal( '2000-01-01' );
+describe( 'DbUtility Tests', function() {
 
-      });
-    });
-    it('with id and updated_ts',function() {
-      return dbUtility.query({"id":1234512345123454, "updated_ts":"2000-01-01 12:56:56"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 1 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123454 );
-        expect( data[ 0 ].UPDATED_TS ).to.be.a( 'string' );
-        expect( data[ 0 ].UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
+  this.timeout( 5000 );
 
-      });
-    });
-    it('with id and is_alive',function() {
-      return dbUtility.query({"id":1234512345123455, "is_alive": true})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 1 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123455 );
-        expect( data[ 0 ].IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data[ 0 ].IS_ALIVE ).to.be.deep.equal( true );
+  describe( 'dbUtility1 Tests', function() {
+    var withPrimaryKey = {
+    [ schema1.primaryKey ] : generateNewKey(),
+    'INTEGER' : 2,
+    'FLOAT' : 23.5,
+    'BOOLEAN' : true,
+    'ARRAY' : [ 123, 456 ],
+    'STRING' : 'test1',
+    'TIMESTAMP' : new Date(),
+    'GEOPOINT' : { latitude: 12.1234, longitude: 34.5678 },
+    'OBJECT' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() }
+    };
+    var withoutPrimaryKey = {
+    'INTEGER' : 2,
+    'FLOAT' : 23.5,
+    'BOOLEAN' : true,
+    'ARRAY' : [ 123, 456 ],
+    'STRING' : 'test1',
+    'TIMESTAMP' : new Date(),
+    'GEOPOINT' : { latitude: 12.1234, longitude: 34.5678 },
+    'OBJECT' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() }
+    };
 
-      });
-    });
-    it('with id and height',function() {
-      return dbUtility.query({"id":1234512345123456, "height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 1 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123456 );
-        expect( data[ 0 ].HEIGHT ).to.be.a( 'number' );
-        expect( data[ 0 ].HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with keys jumbled up',function() {
-      return dbUtility.query({"updated_ts":"2000-01-01 12:56:56", "name":"micheal", "height":5.9, "dob":"2000-01-01", "id":1234512345123457, "is_alive": true})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 1 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123457 );
-        expect( data[ 0 ].NAME ).to.be.a( 'string' );
-        expect( data[ 0 ].NAME ).to.be.deep.equal( 'micheal' );
-        expect( data[ 0 ].DOB ).to.be.a( 'string' );
-        expect( data[ 0 ].DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data[ 0 ].UPDATED_TS ).to.be.a( 'string' );
-        expect( data[ 0 ].UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data[ 0 ].IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data[ 0 ].IS_ALIVE ).to.be.deep.equal( true );
-        expect( data[ 0 ].HEIGHT ).to.be.a( 'number' );
-        expect( data[ 0 ].HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with no id and uppercase keys',function() {
-      return dbUtility.query({"NAME":"micheal", "DOB":"2000-01-01", "UPDATED_TS":"2000-01-01 12:56:56", "IS_ALIVE": true, "HEIGHT":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].NAME ).to.be.a( 'string' );
-          expect( data[ i ].NAME ).to.be.deep.equal( 'micheal' );
-          expect( data[ i ].DOB ).to.be.a( 'string' );
-          expect( data[ i ].DOB ).to.be.deep.equal( '2000-01-01' );
-          expect( data[ i ].UPDATED_TS ).to.be.a( 'string' );
-          expect( data[ i ].UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-          expect( data[ i ].IS_ALIVE ).to.be.a( 'boolean' );
-          expect( data[ i ].IS_ALIVE ).to.be.deep.equal( true );
-          expect( data[ i ].HEIGHT ).to.be.a( 'number' );
-          expect( data[ i ].HEIGHT ).to.be.deep.equal( 5.9 );
+    var structureKeys = Object.keys( schema1.structure );
+
+    // INSERT
+    describe( 'insert', function() {
+      var testId;
+      afterEach( function() {
+        if( testId != null ) {
+          return dbUtility1.delete( { [ schema1.primaryKey ]: testId } )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
         }
-      });
-    });
-    it('with wrong keys',function() {
-      return dbUtility.query({"abba":"dabba", "jaaba":"oppa"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data[ 0 ] ).to.be.a( 'null' );
-        expect( data[ 0 ] ).to.be.deep.equal( null );
-      });
-    });
-    it('with uppercase keys and wrong keys',function() {
-      return dbUtility.query({"NAME":"micheal", "DOB":"2000-01-01", "UPDATED_TS":"2000-01-01 12:56:56", "IS_ALIVE": true, "HEIGHT":5.9, "abba":"dabba", "jaaba":"oppa"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data[ 0 ] ).to.be.a( 'null' );
-        expect( data[ 0 ] ).to.be.deep.equal( null );
-      });
-    });
-    it('with duplicate name',function() {
-      return dbUtility.query({"name":"sarah", "name":"micheal"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].NAME ).to.be.a( 'string' );
-          expect( data[ i ].NAME ).to.be.deep.equal( 'micheal' );
-        }
-      });
-    });
-  } );
-  describe('list', function() {
-    it('with undefined',function() {
-      return dbUtility.list()
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with blank object',function() {
-      return dbUtility.list([])
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with single primary key',function() {
-      return dbUtility.list([1234512345123451])
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 1 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123451 );
-      });
-    });
-    it('with multiple primary key',function() {
-      return dbUtility.list([1234512345123451, 1234512345123452, 1234512345123453, 1234512345123454])
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 4 );
-        expect( data[ 0 ].ID ).to.be.a( 'number' );
-        expect( data[ 0 ].ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data[ 1 ].ID ).to.be.a( 'number' );
-        expect( data[ 1 ].ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data[ 2 ].ID ).to.be.a( 'number' );
-        expect( data[ 2 ].ID ).to.be.deep.equal( 1234512345123453 );
-        expect( data[ 3 ].ID ).to.be.a( 'number' );
-        expect( data[ 3 ].ID ).to.be.deep.equal( 1234512345123454 );
-      });
-    });
-    it('with duplicate primary key',function() {
-      return dbUtility.list([1234512345123451, 1234512345123451])
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 2 );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].ID ).to.be.deep.equal( 1234512345123451 );
-        }
-      });
-    });
-    it('with multiple same primary key',function() {
-      return dbUtility.list([1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, 1234512345123451, ])
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 20 );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ].ID ).to.be.a( 'number' );
-          expect( data[ i ].ID ).to.be.deep.equal( 1234512345123451 );
-        }
-      });
-    });
-    it('with wrong primary key number',function() {
-      return dbUtility.list([-1234512345123451, -0.0])
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 2 );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ] ).to.be.a( 'null' );
-          expect( data[ i ] ).to.be.deep.equal( null );
-        }
-      });
-    });
-    it('with wrong primary key string',function() {
-      return dbUtility.list(["micheal", "200-01-01", "hello", "abba", "dabba"])
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 5 );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ] ).to.be.a( 'null' );
-          expect( data[ i ] ).to.be.deep.equal( null );
-        }
-      });
-    });
-    it('with wrong primary key but same field',function() {
-      return dbUtility.list(["2001-01-01", "2000-01-01", "2010-01-01"])
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 3 );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ] ).to.be.a( 'null' );
-          expect( data[ i ] ).to.be.deep.equal( null );
-        }
-      });
-    });
-    it('with wrong primary key but different types',function() {
-      return dbUtility.list(["2001-01-01", 1234, true])
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 3 );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ] ).to.be.a( 'null' );
-          expect( data[ i ] ).to.be.deep.equal( null );
-        }
-      });
-    });
-    it('with same wrong primary key',function() {
-      return dbUtility.list([0,0,0,0])
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 4 );
-        for( var i = 0; i < data.length; i++ ) {
-          expect( data[ i ] ).to.be.a( 'null' );
-          expect( data[ i ] ).to.be.deep.equal( null );
-        }
-      });
-    });
-    it('with duplicate primary key and duplicate wrong key in specific order',function() {
-      return dbUtility.list([0,1234512345123451,1234512345123451,0])
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'array' );
-        expect( data.length ).to.be.deep.equal( 4 );
-        expect( data[ 0 ] ).to.be.a( 'null' );
-        expect( data[ 0 ] ).to.be.deep.equal( null );
-        expect( data[ 1 ].ID ).to.be.a( 'number' );
-        expect( data[ 1 ].ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data[ 2 ].ID ).to.be.a( 'number' );
-        expect( data[ 2 ].ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data[ 3 ] ).to.be.a( 'null' );
-        expect( data[ 3 ] ).to.be.deep.equal( null );
-      });
-    });
-  } );
-  describe('get', function() {
-    it('with undefined',function() {
-      return dbUtility.get()
-      .then( ( data ) => {
-        expect(data).to.be.a('null');
-        expect(data).to.be.deep.equal(null);
       } );
-    });
-    it('with blank object',function() {
-      return dbUtility.get([])
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with blank object',function() {
-      return dbUtility.get({})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with single primary key',function() {
-      return dbUtility.get(1234512345123451)
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' );
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
-      });
-    });
-    it('with wrong primary key number',function() {
-      return dbUtility.get( -0.0 )
-      .then( ( data ) => {
-        expect( data ).to.be.a( 'null' );
-        expect( data ).to.be.deep.equal( null );
-      });
-    });
-    it('with wrong primary key string',function() {
-      return dbUtility.get("micheal")
-      .then( ( data ) => {
-        expect( data ).to.be.a( 'null' );
-        expect( data ).to.be.deep.equal( null );
-      });
-    });
-    it('with wrong primary key',function() {
-      return dbUtility.get(0)
-      .then( ( data ) => {
-        expect( data ).to.be.a( 'null' );
-        expect( data ).to.be.deep.equal( null );
-      });
-    });
-    it('with wrong primary key null',function() {
-      return dbUtility.get(null)
-      .then( ( data ) => {
-        expect( data ).to.be.a( 'null' );
-        expect( data ).to.be.deep.equal( null );
-      });
-    });
-    it('with wrong primary key empty string',function() {
-      return dbUtility.get('')
-      .then( ( data ) => {
-        expect( data ).to.be.a( 'null' );
-        expect( data ).to.be.deep.equal( null );
-      });
-    });
-  } );
-  describe('update', function() {
-    it('with undefined',function() {
-      return dbUtility.update()
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with one blank object and other undefined',function() {
-      return dbUtility.update({})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with both blank object',function() {
-      return dbUtility.update({}, {})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with just primary key',function() {
-      return dbUtility.update({"id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key and data is_alive false',function() {
-      return dbUtility.update({"id":1234512345123451}, {"is_alive":false})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with primary key and name and data',function() {
-      return dbUtility.update({"id":1234512345123451, "name":"micheal"}, {"is_alive":false, "dob":"2017-01-10"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with blank object and data',function() {
-      return dbUtility.update({}, {"is_alive":false, "dob":"2017-01-10"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key and name and blank data',function() {
-      return dbUtility.update({"id":1234512345123451, "name":"micheal"}, {})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with name and data',function() {
-      return dbUtility.update({"name":"micheal"}, {"is_alive":false})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with uppercase name and uppercase data',function() {
-      return dbUtility.update({"NAME":"micheal"}, {"IS_ALIVE":false})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with wrong key and wrong data',function() {
-      return dbUtility.update({"abba":"dabba"}, {"jaaba":"oppa"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with is_alive and data',function() {
-      return dbUtility.update({"is_alive":true}, {"is_alive":false})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with id and data',function() {
-      return dbUtility.update({"id":1234512345123451}, {"name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'michealX' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2018-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2018-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
-      });
-    });
-    it('with id and data name',function() {
-      return dbUtility.update({"id":1234512345123451}, {"name":"sarah"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'sarah' );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with id and data dob',function() {
-      return dbUtility.update({"id":1234512345123451}, {"dob":"2000-01-01"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with id and updated_ts',function() {
-      return dbUtility.update({"id":1234512345123451}, {"updated_ts":"2000-01-01 12:56:56"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with id and data is_alive',function() {
-      return dbUtility.update({"id":1234512345123451}, {"is_alive": true})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( true );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with id and data height',function() {
-      return dbUtility.update({"id":1234512345123451}, {"height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with name and data id',function() {
-      return dbUtility.update({"name":"sarah"}, {"id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with dob and data id',function() {
-      return dbUtility.update({"dob":"2000-01-01"}, {"id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with updated_ts and data id',function() {
-      return dbUtility.update({"updated_ts":"2000-01-01 12:56:56"}, {"id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with is_alive and data id',function() {
-      return dbUtility.update({"is_alive": true}, {"id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with height and data id',function() {
-      return dbUtility.update({"height":5.9}, {"id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with height and name and data id',function() {
-      return dbUtility.update({"height":5.9, "name":"micheal"}, {"id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with id and wrong data',function() {
-      return dbUtility.update({"id":1234512345123451}, {"abba":"dabba", "jaaba":"oppa", "name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with id and uppercase data',function() {
-      return dbUtility.update({"id":1234512345123451}, {"is_alive":false, "DOB":"2017-01-10"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123451 );
-        expect( data.NAME ).to.be.an( 'null' );
-        expect( data.NAME ).to.be.deep.equal( null );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2017-01-10' );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with id and data having id',function() {
-      return dbUtility.update({"id":1234512345123451}, {"name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5, "id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-  } );
-  describe('patch', function() {
-    it('with undefined',function() {
-      return dbUtility.patch()
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with one blank object and other undefined',function() {
-      return dbUtility.patch({})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with both blank object',function() {
-      return dbUtility.patch({}, {})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with just primary key',function() {
-      return dbUtility.patch({"id":1234512345123452})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key and data is_alive false',function() {
-      return dbUtility.patch({"id":1234512345123452}, {"is_alive":false})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data.NAME ).to.be.an( 'string' );
-        expect( data.NAME ).to.be.deep.equal( "sarah" );
-        expect( data.DOB ).to.be.a( 'null' );
-        expect( data.DOB ).to.be.deep.equal( null );
-        expect( data.UPDATED_TS ).to.be.a( 'null' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( null );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 0 );
-      });
-    });
-    it('with primary key and name and data',function() {
-      return dbUtility.patch({"id":1234512345123452, "name":"micheal"}, {"is_alive":false, "dob":"2017-01-10"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with blank object and data',function() {
-      return dbUtility.patch({}, {"is_alive":false, "dob":"2017-01-10"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key and name and blank data',function() {
-      return dbUtility.patch({"id":1234512345123452, "name":"micheal"}, {})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with name and data',function() {
-      return dbUtility.patch({"name":"micheal"}, {"is_alive":false})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with uppercase name and uppercase data',function() {
-      return dbUtility.patch({"NAME":"micheal"}, {"IS_ALIVE":false})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with wrong key and wrong data',function() {
-      return dbUtility.patch({"abba":"dabba"}, {"jaaba":"oppa"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with is_alive and data',function() {
-      return dbUtility.patch({"is_alive":true}, {"is_alive":false})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with id and data',function() {
-      return dbUtility.patch({"id":1234512345123452}, {"name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'michealX' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2018-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2018-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
-      });
-    });
-    it('with id and data name',function() {
-      return dbUtility.patch({"id":1234512345123452}, {"name":"sarah"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'sarah' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2018-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2018-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
-      });
-    });
-    it('with id and data dob',function() {
-      return dbUtility.patch({"id":1234512345123452}, {"dob":"2000-01-01"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'sarah' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2018-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
-      });
-    });
-    it('with id and updated_ts',function() {
-      return dbUtility.patch({"id":1234512345123452}, {"updated_ts":"2000-01-01 12:56:56"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'sarah' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
-      });
-    });
-    it('with id and data is_alive',function() {
-      return dbUtility.patch({"id":1234512345123452}, {"is_alive": true})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'sarah' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( true );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.5 );
-      });
-    });
-    it('with id and data height',function() {
-      return dbUtility.patch({"id":1234512345123452}, {"height":5.9})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'sarah' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2000-01-01' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( true );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with name and data id',function() {
-      return dbUtility.patch({"name":"sarah"}, {"id":1234512345123452})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with dob and data id',function() {
-      return dbUtility.patch({"dob":"2000-01-01"}, {"id":1234512345123452})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with updated_ts and data id',function() {
-      return dbUtility.patch({"updated_ts":"2000-01-01 12:56:56"}, {"id":1234512345123452})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with is_alive and data id',function() {
-      return dbUtility.patch({"is_alive": true}, {"id":1234512345123452})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with height and data id',function() {
-      return dbUtility.patch({"height":5.9}, {"id":1234512345123452})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with height and name and data id',function() {
-      return dbUtility.patch({"height":5.9, "name":"micheal"}, {"id":1234512345123452})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with id and wrong data',function() {
-      return dbUtility.patch({"id":1234512345123452}, {"abba":"dabba", "jaaba":"oppa", "name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with id and uppercase data',function() {
-      return dbUtility.patch({"id":1234512345123452}, {"is_alive":false, "DOB":"2017-01-10"})
-      .then( ( data ) => {
-        expect( data ).to.be.an( 'object' ).to.have.property('ID');
-        expect( data ).to.be.an( 'object' ).to.have.property('NAME');
-        expect( data ).to.be.an( 'object' ).to.have.property('DOB');
-        expect( data ).to.be.an( 'object' ).to.have.property('UPDATED_TS');
-        expect( data ).to.be.an( 'object' ).to.have.property('IS_ALIVE');
-        expect( data ).to.be.an( 'object' ).to.have.property('HEIGHT');
-        expect( data.ID ).to.be.a( 'number' );
-        expect( data.ID ).to.be.deep.equal( 1234512345123452 );
-        expect( data.NAME ).to.be.a( 'string' );
-        expect( data.NAME ).to.be.deep.equal( 'sarah' );
-        expect( data.DOB ).to.be.a( 'string' );
-        expect( data.DOB ).to.be.deep.equal( '2017-01-10' );
-        expect( data.UPDATED_TS ).to.be.a( 'string' );
-        expect( data.UPDATED_TS ).to.be.deep.equal( '2000-01-01 12:56:56' );
-        expect( data.IS_ALIVE ).to.be.a( 'boolean' );
-        expect( data.IS_ALIVE ).to.be.deep.equal( false );
-        expect( data.HEIGHT ).to.be.a( 'number' );
-        expect( data.HEIGHT ).to.be.deep.equal( 5.9 );
-      });
-    });
-    it('with id and data having id',function() {
-      return dbUtility.patch({"id":1234512345123452}, {"name":"michealX", "dob":"2018-01-01", "updated_ts":"2018-01-01 12:56:56", "is_alive": false, "height":5.5, "id":1234512345123452})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-  } );
-  describe('delete', function() {
-    it('with undefined',function() {
-      return dbUtility.delete()
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with blank object',function() {
-      return dbUtility.delete({})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with wrong type',function() {
-      return dbUtility.delete(0)
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with wrong primary key',function() {
-      return dbUtility.delete({"id":100})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key',function() {
-      return dbUtility.delete({"id":1234512345123451})
-      .then( ( data ) => {
-        expect(data).to.be.a('number');
-        expect(data).to.be.deep.equal(1);
+      it( 'with undefined', function() {
+        return dbUtility1.insert()
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          testId = null;
+        } );
       } );
-    });
-    it('with primary key as string enclosed',function() {
-      return dbUtility.delete({"id":"1234512345123452"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with just primary key',function() {
-      return dbUtility.delete(1234512345123451)
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with another keyname',function() {
-      return dbUtility.delete({"name":"micheal"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key string',function() {
-      return dbUtility.delete({"id":"2018-01-01"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key negative number',function() {
-      return dbUtility.delete({"id":-100})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key float number',function() {
-      return dbUtility.delete({"id":100.12})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key negative float number',function() {
-      return dbUtility.delete({"id":-100.12})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with primary key boolean',function() {
-      return dbUtility.delete({"id":true})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with wrong keyname',function() {
-      return dbUtility.delete({"abba":"dabba"})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with wrong and correct key name',function() {
-      return dbUtility.delete({"abba":"dabba", "id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with extra fieldname and primary key',function() {
-      return dbUtility.delete({"name":"micheal", "id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with uppercase id and uppercase extra fieldname',function() {
-      return dbUtility.delete({"NAME":"micheal", "ID":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
-    it('with uppercase extra fieldname and id',function() {
-      return dbUtility.delete({"NAME":"micheal", "id":1234512345123451})
-      .catch((error) => {
-        expect(error).to.be.an('error');
-      });
-    });
+      it( 'with blank object', function() {
+        return dbUtility1.insert( {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          testId = null;
+        } );
+      } );
+      it( 'with no primary key', function() {
+        return dbUtility1.insert( withoutPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withoutPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withoutPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it('with primary key',function() {
+        return dbUtility1.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with same primary key', function() {
+        return dbUtility1.insert( withPrimaryKey )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          testId = null;
+        } );
+      } );
+      it( 'with no primary key same data', function() {
+        return dbUtility1.insert( withoutPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withoutPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withoutPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just STRING', function() {
+        var testData = { "STRING": "test2" };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just TIMESTAMP', function() {
+        var testData = { "TIMESTAMP": new Date( 0 ) };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just INTEGER', function() {
+        var testData = { "INTEGER": 987 };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just FLOAT', function() {
+        var testData = { "FLOAT": 987.654 };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just GEOPOINT', function() {
+        var testData = { "GEOPOINT": { latitude:18.76, longitude: -18.76 } };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just OBJECT', function() {
+        var testData = { "OBJECT": { "test":"teststring", "test2": 123 } };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just ARRAY', function() {
+        var testData = { "ARRAY": [ 123, 456, "qwerty" ] };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just NULL', function() {
+        var testData = { "NULL": null };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+              
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just BOOLEAN', function() {
+        var testData = { "BOOLEAN": true };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+              
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just string', function() {
+        var testData = { "string": "test2" };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just timestamp', function() {
+        var testData = { "timestamp": new Date( 0 ) };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just integer', function() {
+        var testData = { "integer": 987 };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just float', function() {
+        var testData = { "float": 987.654 };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just geopoint', function() {
+        var testData = { "geopoint": { latitude:18.76, longitude: -18.76 } };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just object', function() {
+        var testData = { "object": { "test":"teststring", "test2": 123 } };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just array', function() {
+        var testData = { "array": [ 123, 456, "qwerty" ] };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just null', function() {
+        var testData = { "null": null };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just boolean', function() {
+        var testData = { "boolean": true };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just STRING', function() {
+        var testData = { [ schema1.primaryKey ]: generateNewKey(), "STRING": "test2" };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just TIMESTAMP', function() {
+        var testData = { [ schema1.primaryKey ]: generateNewKey(), "TIMESTAMP": new Date( 0 ) };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just INTEGER', function() {
+        var testData = { [ schema1.primaryKey ]: generateNewKey(), "INTEGER": 987 };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just FLOAT', function() {
+        var testData = { [ schema1.primaryKey ]: generateNewKey(), "FLOAT": 987.654 };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just GEOPOINT', function() {
+        var testData = { [ schema1.primaryKey ]: generateNewKey(), "GEOPOINT": { latitude:18.76, longitude: -18.76 } };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just OBJECT', function() {
+        var testData = { [ schema1.primaryKey ]: generateNewKey(), "OBJECT": { "test":"teststring", "test2": 123 } };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just ARRAY', function() {
+        var testData = { [ schema1.primaryKey ]: generateNewKey(), "ARRAY": [ 123, 456, "qwerty" ] };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just NULL', function() {
+        var testData = { [ schema1.primaryKey ]: generateNewKey(), "NULL": null };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just BOOLEAN', function() {
+        var testData = { [ schema1.primaryKey ]: generateNewKey(), "BOOLEAN": true };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just string', function() {
+        var testData = { [ schema1.primaryKey.toLowerCase() ]: generateNewKey(), "string": "test2" };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just timestamp', function() {
+        var testData = { [ schema1.primaryKey.toLowerCase() ]: generateNewKey(), "timestamp": new Date( 0 ) };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just integer', function() {
+        var testData = { [ schema1.primaryKey.toLowerCase() ]: generateNewKey(), "integer": 987 };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just float', function() {
+        var testData = { [ schema1.primaryKey.toLowerCase() ]: generateNewKey(), "float": 987.654 };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just geopoint', function() {
+        var testData = { [ schema1.primaryKey.toLowerCase() ]: generateNewKey(), "geopoint": { latitude:18.76, longitude: -18.76 } };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just object', function() {
+        var testData = { [ schema1.primaryKey.toLowerCase() ]: generateNewKey(), "object": { "test":"teststring", "test2": 123 } };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just array', function() {
+        var testData = { [ schema1.primaryKey.toLowerCase() ]: generateNewKey(), "array": [ 123, 456, "qwerty" ] };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just null', function() {
+        var testData = { [ schema1.primaryKey.toLowerCase() ]: generateNewKey(), "null": null };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just boolean', function() {
+        var testData = { [ schema1.primaryKey.toLowerCase() ]: generateNewKey(), "boolean": true };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and same small data jumbled up lowercase', function() {        
+        var testData = {
+        'geopoint' : { latitude: 12.1234, longitude: 34.5678 },
+        'integer' : 2,
+        'float' : 23.5,
+        'string' : 'test1',
+        'timestamp' : new Date(),
+        'array' : [ 123, 456 ],
+        'boolean' : true,
+        'object' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() }
+        };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and same data jumbled up lowercase', function() {
+        var testData = {
+        'float' : 23.5,
+        'boolean' : true,
+        'integer' : 2,
+        'geopoint' : { latitude: 12.1234, longitude: 34.5678 },
+        'array' : [ 123, 456 ],
+        'object' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() },
+        [ schema1.primaryKey.toLowerCase() ]: generateNewKey(),
+        'string' : 'test1',
+        'timestamp' : new Date()
+        };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and same data jumbled up', function() {        
+        var testData = {
+        'GEOPOINT' : { latitude: 12.1234, longitude: 34.5678 },
+        'INTEGER' : 2,
+        'FLOAT' : 23.5,
+        'STRING' : 'test1',
+        'TIMESTAMP' : new Date(),
+        'ARRAY' : [ 123, 456 ],
+        'BOOLEAN' : true,
+        'OBJECT' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() }
+        };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and same data jumbled up', function() {
+        var testData = {
+        'FLOAT' : 23.5,
+        'BOOLEAN' : true,
+        'INTEGER' : 2,
+        'GEOPOINT' : { latitude: 12.1234, longitude: 34.5678 },
+        'ARRAY' : [ 123, 456 ],
+        'OBJECT' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() },
+        [ schema1.primaryKey ]: generateNewKey(),
+        'STRING' : 'test1',
+        'TIMESTAMP' : new Date()
+        };
+        return dbUtility1.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema1.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and data not conforming to schema', function() {
+        return dbUtility1.insert( { "abba":"dabba", "jaaba":"oppa" } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          testId = null;
+        } );
+      } );
+      it( 'with primary key and data not conforming to schema', function() {
+        return dbUtility1.insert( { [ schema1.primaryKey.toLowerCase() ]: generateNewKey(), "name":"sarah", "abba":"dabba" } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          testId = null;
+        } );
+      } );
+    } );
+
+    // QUERY
+    describe( 'query', function() {
+      var testData;
+      var testId;
+      beforeEach( function() {
+        return dbUtility1.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = {};
+          testId[ schema1.primaryKey ] = data[ schema1.primaryKey ];
+          testData = {};
+          testData = data;
+        } );
+      } );
+      afterEach( function() {
+        testId = {};
+        testId[ schema1.primaryKey ] = testData[ schema1.primaryKey ];
+        return dbUtility1.delete( testId )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+    } );
+
+    // LIST
+    describe( 'list', function() {
+      var testData=[];
+      var testId=[];
+      beforeEach( function() {
+        testId = [];
+        testData = [];
+        return new Promise( function( resolve, reject ) {
+          var insertMultiple = [];
+          for( var i = 0; i < 10; i++ ) {
+            insertMultiple.push(
+              dbUtility1.insert( withoutPrimaryKey )
+              .then( function( data ) {
+                expect( data ).to.be.an( 'object' );
+                expect( data ).to.have.deep.property( schema1.primaryKey );
+                // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+                expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+                expect( data ).to.have.deep.property( 'TIMESTAMP' );
+                expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+                expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+                expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+                for( var i = 0; i < structureKeys.length; i++ ) {
+                  if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                    continue;
+                  }
+                  if( withoutPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+                    expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+                  } else {
+                    expect( data ).to.have.deep.property( structureKeys[i], withoutPrimaryKey[ structureKeys[ i ] ] );
+                  }
+                  if ( data[ structureKeys[ i ] ] === null ) {
+                    expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+                  } else {
+                    expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+                  }
+                }
+                testData[ data[ schema1.primaryKey ] ] = data;
+                testId.push( data[ schema1.primaryKey ] );
+                return data;
+              } )
+            );
+          }
+          Promise.all( insertMultiple )
+          .then( function( dataArray ) {
+            var testDataKeys = Object.keys( testData );
+            expect( dataArray.length ).to.be.deep.equal( testDataKeys.length );
+            resolve();
+          } );
+        } );
+      } );
+      afterEach( function() {
+        return new Promise( function( resolve, reject ) {
+          var deleteMultiple = [];
+          var testDataKeys = Object.keys( testData );
+          for( var i = 0; i < 10; i++ ) {
+            testId = {};
+            testId[ schema1.primaryKey ] = testData[ testDataKeys[ i ] ][ schema1.primaryKey ];
+            deleteMultiple.push(
+              dbUtility1.delete( testId )
+              .then( function( data ) {
+                expect(data).to.be.a('number');
+                expect(data).to.be.deep.equal(1);
+                return data;
+              } )
+            );
+          }
+          Promise.all( deleteMultiple )
+          .then( function( dataArray ) {
+            var testDataKeys = Object.keys( testData );
+            expect( dataArray.length ).to.be.deep.equal( testDataKeys.length );
+            resolve();
+          } );
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility1.list()
+        .catch( function( error ) {
+         expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with blank object', function() {
+      return dbUtility1.list( [] )
+        .catch( function( error ) {
+          expect(error).to.be.an('error');
+        } );
+      } );
+      it( 'with single primary key', function() {
+        var getId = testId[ 0 ];
+        return dbUtility1.list( getId )
+        .catch( function( error ) {
+          expect(error).to.be.an('error');
+        } );
+      } );
+      it( 'with single primary key in array', function() {
+        var getId = [ testId[ 0 ] ];
+        var getData = [ testData[ getId[ 0 ] ] ];
+        return dbUtility1.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          data = data[ 0 ];
+          getData = getData[ 0 ];
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( getData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], getData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with multiple primary key', function() {
+        var getId = [];
+        var getData = [];
+        for( var i = 0; i < 10; i++ ) {
+          getId.push( testId[ i ] );
+          getData.push( testData[ getId[ i ] ] );
+        }
+        return dbUtility1.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 10; i++ ) {
+            var dataTemp = data[ i ];
+            var getDataTemp = getData[ i ];
+            expect( dataTemp ).to.be.an( 'object' );
+            expect( dataTemp ).to.have.deep.property( schema1.primaryKey );
+            expect( dataTemp[ schema1.primaryKey ] ).to.be.deep.equal( getDataTemp[ schema1.primaryKey ] );
+            expect( dataTemp[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP' );
+            expect( dataTemp[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+            expect( dataTemp[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+            for( var i = 0; i < structureKeys.length; i++ ) {
+              if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                continue;
+              }
+              expect( dataTemp ).to.have.deep.property( structureKeys[i], getDataTemp[ structureKeys[ i ] ] );
+              if ( dataTemp[ structureKeys[ i ] ] === null ) {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( 'null' );
+              } else {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+              }
+            }
+          }
+        } );
+      } );
+      it( 'with duplicate primary key', function() {
+        var getId = [];
+        var getData = [];
+        for( var i = 0; i < 5; i++ ) {
+          getId.push( testId[ i ] );
+          getData.push( testData[ getId[ i ] ] );
+        }
+        for( var i = 0; i < 5; i++ ) {
+          getId.push( testId[ i ] );
+          getData.push( testData[ getId[ i + 5 ] ] );
+        }
+        return dbUtility1.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 10; i++ ) {
+            var dataTemp = data[ i ];
+            var getDataTemp = getData[ i ];
+            expect( dataTemp ).to.be.an( 'object' );
+            expect( dataTemp ).to.have.deep.property( schema1.primaryKey );
+            expect( dataTemp[ schema1.primaryKey ] ).to.be.deep.equal( getDataTemp[ schema1.primaryKey ] );
+            expect( dataTemp[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP' );
+            expect( dataTemp[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+            expect( dataTemp[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+            for( var i = 0; i < structureKeys.length; i++ ) {
+              if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                continue;
+              }
+              expect( dataTemp ).to.have.deep.property( structureKeys[i], getDataTemp[ structureKeys[ i ] ] );
+              if ( dataTemp[ structureKeys[ i ] ] === null ) {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( 'null' );
+              } else {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+              }
+            }
+          }
+        } );
+      } );
+      it( 'with multiple same primary key', function() {
+        var getId = [];
+        var getData = [];
+        for( var i = 0; i < 10; i++ ) {
+          getId.push( testId[ 0 ] );
+          getData.push( testData[ getId[ 0 ] ] );
+        }
+        return dbUtility1.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 10; i++ ) {
+            var dataTemp = data[ i ];
+            var getDataTemp = getData[ i ];
+            expect( dataTemp ).to.be.an( 'object' );
+            expect( dataTemp ).to.have.deep.property( schema1.primaryKey );
+            expect( dataTemp[ schema1.primaryKey ] ).to.be.deep.equal( getDataTemp[ schema1.primaryKey ] );
+            expect( dataTemp[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP' );
+            expect( dataTemp[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+            expect( dataTemp[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+            for( var i = 0; i < structureKeys.length; i++ ) {
+              if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                continue;
+              }
+              expect( dataTemp ).to.have.deep.property( structureKeys[i], getDataTemp[ structureKeys[ i ] ] );
+              if ( dataTemp[ structureKeys[ i ] ] === null ) {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( 'null' );
+              } else {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+              }
+            }
+          }
+        } );
+      } );
+      it( 'with wrong primary key number', function() {
+        var getId = [ -123,-0.0 ];
+        var getData = [ null, null ];
+        return dbUtility1.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 2; i++ ) {
+           expect( data[ i ] ).to.be.a( 'null' );
+           expect( data[ i ] ).to.be.deep.equal( getData[ i ] );
+          }          
+        } );
+      } );
+      it( 'with wrong primary key string', function() {
+        var getId = [ "-123,-0.0","test1_id" ];
+        var getData = [ null, null ];
+        return dbUtility1.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 2; i++ ) {
+           expect( data[ i ] ).to.be.a( 'null' );
+           expect( data[ i ] ).to.be.deep.equal( getData[ i ] );
+          }          
+        } );
+      } );
+      it( 'with wrong primary key but same field', function() {
+        var getId = [ "new Date()","2345-asd" ];
+        var getData = [ null, null ];
+        return dbUtility1.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 2; i++ ) {
+           expect( data[ i ] ).to.be.a( 'null' );
+           expect( data[ i ] ).to.be.deep.equal( getData[ i ] );
+          }          
+        } );
+      } );
+      it( 'with wrong primary key but different types', function() {
+        var getId = ["2001-01-01", 1234, true];
+        var getData = [ null, null, null ];
+        return dbUtility1.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 3; i++ ) {
+           expect( data[ i ] ).to.be.a( 'null' );
+           expect( data[ i ] ).to.be.deep.equal( getData[ i ] );
+          }          
+        } );
+      } );
+      it( 'with same wrong primary key', function() {
+        var getId = [ 0, 0, 0, 0 ];
+        var getData = [ null, null, null, null ]
+        return dbUtility1.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 4; i++ ) {
+           expect( data[ i ] ).to.be.a( 'null' );
+           expect( data[ i ] ).to.be.deep.equal( getData[ i ] );
+          }          
+        } );
+      } );
+      it( 'with duplicate primary key and duplicate wrong key in specific order', function() {
+        var getId = [ 0, testId[0], testId[1], 0 ];
+        var getData = [ null, testData[testId[0]], testData[testId[1]], null ];
+        return dbUtility1.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          expect( data[ 0 ] ).to.be.a( 'null' );
+          expect( data[ 0 ] ).to.be.deep.equal( getData[ 0 ] );
+          expect( data[ 3 ] ).to.be.a( 'null' );
+          expect( data[ 3 ] ).to.be.deep.equal( getData[ 3 ] );
+          for( var i = 1; i < 3; i++ ) {
+            var dataTemp = data[ i ];
+            var getDataTemp = getData[ i ];
+            expect( dataTemp ).to.be.an( 'object' );
+            expect( dataTemp ).to.have.deep.property( schema1.primaryKey );
+            expect( dataTemp[ schema1.primaryKey ] ).to.be.deep.equal( getDataTemp[ schema1.primaryKey ] );
+            expect( dataTemp[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP' );
+            expect( dataTemp[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+            expect( dataTemp[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+            for( var i = 0; i < structureKeys.length; i++ ) {
+              if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                continue;
+              }
+              expect( dataTemp ).to.have.deep.property( structureKeys[i], getDataTemp[ structureKeys[ i ] ] );
+              if ( dataTemp[ structureKeys[ i ] ] === null ) {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( 'null' );
+              } else {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+              }
+            }
+          }
+        } );
+      } );
+    } );
+
+    // GET
+    describe( 'get', function() {
+      var testData;
+      var testId;
+      beforeEach( function() {
+        return dbUtility1.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = {};
+          testId = data[ schema1.primaryKey ];
+          testData = {};
+          testData = data;
+        } );
+      } );
+      afterEach( function() {
+        testId = {};
+        testId[ schema1.primaryKey ] = testData[ schema1.primaryKey ];
+        return dbUtility1.delete( testId )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility1.get()
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with wrong type array', function() {
+        return dbUtility1.get( [] )
+        .catch( function(error) {
+          expect(error).to.be.an('error');
+        } );
+      } );
+      it( 'with wrong type object', function() {
+        return dbUtility1.get( {} )
+        .catch( function(error) {
+          expect(error).to.be.an('error');
+        } );
+      } );
+      it( 'with single primary key', function() {
+        return dbUtility1.get( testId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with wrong primary key number', function() {
+        return dbUtility1.get( -0.0 )
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with wrong primary key string', function() {
+        return dbUtility1.get( "test1_id" )
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with wrong primary key zero', function() {
+        return dbUtility1.get( 0 )
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with wrong primary key null', function() {
+        return dbUtility1.get( null )
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with wrong primary key empty string', function() {
+        return dbUtility1.get( "" )
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with multiple primary keys', function() {
+        return dbUtility1.get( testId, testId)
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+    } );
+
+    // UPDATE
+    describe( 'update', function() {
+      var testData;
+      var testId;
+      beforeEach( function() {
+        return dbUtility1.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = {};
+          testId[ schema1.primaryKey ] = data[ schema1.primaryKey ];
+          testData = {};
+          testData = data;
+        } );
+      } );
+      afterEach( function() {
+        testId = {};
+        testId[ schema1.primaryKey ] = testData[ schema1.primaryKey ];
+        return dbUtility1.delete( testId )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility1.update()
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with one blank object and other undefined', function() {
+        return dbUtility1.update( {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with both blank object', function() {
+        return dbUtility1.update( {}, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with just primary key', function() {
+        return dbUtility1.update( testId )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and data STRING', function() {
+        var updateData = { STRING: "changed" };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data TIMESTAMP', function() {
+        var updateData = { TIMESTAMP: new Date( 1500899999990 ) };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data INTEGER', function() {
+        var updateData = { INTEGER: 1500899999990 };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data FLOAT', function() {
+        var updateData = { FLOAT: 1500899.9990 };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data GEOPOINT', function() {
+        var updateData = { GEOPOINT: { longitude: 43.43, latitude: 76.43 } };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data OBJECT', function() {
+        var updateData = { OBJECT: { "test": "pratilipi" } };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data ARRAY', function() {
+        var updateData = { ARRAY: [ "pratilipi", "test" ] };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data NULL', function() {
+        var updateData = { NULL: null };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data BOOLEAN', function() {
+        var updateData = { BOOLEAN: true };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data string', function() {
+        var updateData = { string: "changed" };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data timestamp', function() {
+        var updateData = { timestamp: new Date( 1500899999990 ) };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data integer', function() {
+        var updateData = { integer: 1500899999990 };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data float', function() {
+        var updateData = { float: 1500899.9990 };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data geopoint', function() {
+        var updateData = { geopoint: { longitude: 43.43, latitude: 76.43 } };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey.toLowerCase().toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase().toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data object', function() {
+        var updateData = { object: { "test": "pratilipi" } };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data array', function() {
+        var updateData = { array: [ "pratilipi", "test" ] };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data null', function() {
+        var updateData = { null: null };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey.toLowerCase().toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data boolean', function() {
+        var updateData = { boolean: true };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey.toLowerCase().toLowerCase().toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data', function() {
+        var updateData = {
+        'INTEGER' : 2,
+        'FLOAT' : 23.5,
+        'TIMESTAMP' : new Date(),
+        'GEOPOINT' : {latitude:12.1234,longitude:34.5678},
+        'OBJECT' : { ["test "+new Date().getTime()]: "test1 " + new Date().getTime()}
+        };
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data lowercase', function() {
+        var updateData = {
+        'integer' : 2,
+        'float' : 23.5,
+        'timestamp' : new Date(),
+        'geopoint' : {latitude:12.1234,longitude:34.5678},
+        'object' : { ["test "+new Date().getTime()]: "test1 " + new Date().getTime()}
+        };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testId[ schema1.primaryKey.toLowerCase() ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and extra fields and data', function() {
+        testId.STRING = "fail";
+        var updateData = { BOOLEAN: false };
+        return dbUtility1.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with blank object and data', function() {
+        var updateData = { BOOLEAN: false };
+        return dbUtility1.update( {}, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and blank data', function() {
+        return dbUtility1.update( testId, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and extra fields and blank data', function() {
+        testId.STRING = "fail";
+        return dbUtility1.update( testId, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and data BOOLEAN', function() {
+        testId = { STRING: "test" };
+        var updateData = { BOOLEAN: false };
+        return dbUtility1.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with string and data boolean', function() {
+        testId = { string: "test" };
+        var updateData = { boolean: false };
+        return dbUtility1.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with wrong key and wrong data', function() {
+        testId = { abba: "dabba" };
+        var updateData = { jabba: "oppa" };
+        return dbUtility1.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and data primary key', function() {
+        var updateData = { [ schema1.primaryKey ]: testId[ schema1.primaryKey ] };
+        testId = { STRING: "test" };
+        return dbUtility1.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and FLOAT and data primary key', function() {
+        var updateData = { [ schema1.primaryKey ]: testId[ schema1.primaryKey ] };
+        testId = { STRING: "test", FLOAT:12.34 };
+        return dbUtility1.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and wrong data', function() {
+        var updateData = { jabba: "oppa" };
+        return dbUtility1.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and data having primary key', function() {
+        var updateData = { BOOLEAN: false, [ schema1.primaryKey ]: testId[ schema1.primaryKey ] };
+        return dbUtility1.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+    } );
+
+    // PATCH
+    describe( 'patch', function() {
+      var testData;
+      var testId;
+      beforeEach( function() {
+        return dbUtility1.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = {};
+          testId[ schema1.primaryKey ] = data[ schema1.primaryKey ];
+          testData = {};
+          testData = data;
+        } );
+      } );
+      afterEach( function() {
+        testId = {};
+        testId[ schema1.primaryKey ] = testData[ schema1.primaryKey ];
+        return dbUtility1.delete( testId )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility1.patch()
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with one blank object and other undefined', function() {
+        return dbUtility1.patch( {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with both blank object', function() {
+        return dbUtility1.patch( {}, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with just primary key', function() {
+        return dbUtility1.patch( testId )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and data STRING', function() {
+        var patchData = { STRING: "changed" };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data TIMESTAMP', function() {
+        var patchData = { TIMESTAMP: new Date( 1500899999990 ) };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data INTEGER', function() {
+        var patchData = { INTEGER: 1500899999990 };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data FLOAT', function() {
+        var patchData = { FLOAT: 1500899.9990 };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data GEOPOINT', function() {
+        var patchData = { GEOPOINT: { longitude: 43.43, latitude: 76.43 } };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data OBJECT', function() {
+        var patchData = { OBJECT: { "test": "pratilipi" } };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data ARRAY', function() {
+        var patchData = { ARRAY: [ "pratilipi", "test" ] };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data NULL', function() {
+        var patchData = { NULL: null };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data BOOLEAN', function() {
+        var patchData = { BOOLEAN: true };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data string', function() {
+        var patchData = { string: "changed" };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data timestamp', function() {
+        var patchData = { timestamp: new Date( 1500899999990 ) };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data integer', function() {
+        var patchData = { integer: 1500899999990 };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data float', function() {
+        var patchData = { float: 1500899.9990 };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data geopoint', function() {
+        var patchData = { geopoint: { longitude: 43.43, latitude: 76.43 } };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data object', function() {
+        var patchData = { object: { "test": "pratilipi" } };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data array', function() {
+        var patchData = { array: [ "pratilipi", "test" ] };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data null', function() {
+        var patchData = { null: null };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data boolean', function() {
+        var patchData = { boolean: true };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data', function() {
+        var patchData = {
+        'INTEGER' : 2,
+        'FLOAT' : 23.5,
+        'TIMESTAMP' : new Date(),
+        'GEOPOINT' : {latitude:12.1234,longitude:34.5678},
+        'OBJECT' : { ["test "+new Date().getTime()]: "test1 " + new Date().getTime()}
+        };
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data lowercase', function() {
+        var patchData = {
+        'integer' : 2,
+        'float' : 23.5,
+        'timestamp' : new Date(),
+        'geopoint' : {latitude:12.1234,longitude:34.5678},
+        'object' : { ["test "+new Date().getTime()]: "test1 " + new Date().getTime()}
+        };
+        testId = { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] }; 
+        return dbUtility1.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( testData[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and extra fields and data', function() {
+        testId.STRING = "fail";
+        var patchData = { BOOLEAN: false };
+        return dbUtility1.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with blank object and data', function() {
+        var patchData = { BOOLEAN: false };
+        return dbUtility1.patch( {}, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and blank data', function() {
+        return dbUtility1.patch( testId, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and extra fields and blank data', function() {
+        testId.STRING = "fail";
+        return dbUtility1.patch( testId, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and data BOOLEAN', function() {
+        testId = { STRING: "test" };
+        var patchData = { BOOLEAN: false };
+        return dbUtility1.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with string and data boolean', function() {
+        testId = { string: "test" };
+        var patchData = { boolean: false };
+        return dbUtility1.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with wrong key and wrong data', function() {
+        testId = { abba: "dabba" };
+        var patchData = { jabba: "oppa" };
+        return dbUtility1.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and data primary key', function() {
+        var patchData = { [ schema1.primaryKey ]: testId[ schema1.primaryKey ] };
+        testId = { STRING: "test" };
+        return dbUtility1.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and FLOAT and data primary key', function() {
+        var patchData = { [ schema1.primaryKey ]: testId[ schema1.primaryKey ] };
+        testId = { STRING: "test", FLOAT:12.34 };
+        return dbUtility1.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and wrong data', function() {
+        var patchData = { jabba: "oppa" };
+        return dbUtility1.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and data having primary key', function() {
+        var patchData = { BOOLEAN: false, [ schema1.primaryKey ]: testId[ schema1.primaryKey ] };
+        return dbUtility1.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+    } );
+
+    // DELETE
+    describe( 'delete', function() {
+      var testId;
+      var testData;
+      beforeEach( function() {
+        return dbUtility1.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema1.primaryKey );
+          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = {};
+          testId[ schema1.primaryKey ] = data[ schema1.primaryKey ];
+          testData = {};
+          testData = data;
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility1.delete()
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility1.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with blank object', function() {
+        return dbUtility1.delete( {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility1.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with wrong type', function() {
+        return dbUtility1.delete( 0 )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility1.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with wrong primary key', function() {
+        return dbUtility1.delete( { [ schema1.primaryKey ]: 100 } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility1.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with primary key', function() {
+        return dbUtility1.delete( testId )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+      it( 'with primary key as string enclosed', function() {
+        return dbUtility1.delete( { [ schema1.primaryKey ]: "1234512345123452" } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility1.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with another keyname', function() {
+        return dbUtility1.delete( { "STRING": "test1" } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility1.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with primary key negative number', function() {
+        return dbUtility1.delete( { [ schema1.primaryKey ]: -100 } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility1.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with wrong keyname', function() {
+        return dbUtility1.delete( { "abba": "dabba" } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility1.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with wrong key and primary key', function() {
+        return dbUtility1.delete( { "abba": "dabba", [ schema1.primaryKey ]: testId[ schema1.primaryKey ] } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility1.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with extra fieldname and primary key', function() {
+        return dbUtility1.delete( { "string": "test", [ schema1.primaryKey ]: testId[ schema1.primaryKey ] } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility1.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with primary key in small', function() {
+        return dbUtility1.delete( { [ schema1.primaryKey.toLowerCase() ]: testId[ schema1.primaryKey ] } )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+    } );
   } );
+
+  describe( 'dbUtility2 Tests', function() {
+    var withPrimaryKey = {
+    [ schema2.primaryKey ] : generateNewKey() + "",
+    'INTEGER' : 2,
+    'FLOAT' : 23.5,
+    'BOOLEAN' : true,
+    'ARRAY' : [ 123, 456 ],
+    'STRING' : 'test1',
+    'TIMESTAMP' : new Date(),
+    'GEOPOINT' : { latitude: 12.1234, longitude: 34.5678 },
+    'OBJECT' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() }
+    };
+    var withoutPrimaryKey = {
+    'INTEGER' : 2,
+    'FLOAT' : 23.5,
+    'BOOLEAN' : true,
+    'ARRAY' : [ 123, 456 ],
+    'STRING' : 'test1',
+    'TIMESTAMP' : new Date(),
+    'GEOPOINT' : { latitude: 12.1234, longitude: 34.5678 },
+    'OBJECT' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() }
+    };
+
+    var structureKeys = Object.keys( schema2.structure );
+
+    // INSERT
+    describe( 'insert', function() {
+      var testId;
+      afterEach( function() {
+        if( testId != null ) {
+          return dbUtility2.delete( { [ schema2.primaryKey ]: testId } )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        }
+      } );
+      it( 'with undefined', function() {
+        return dbUtility2.insert()
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          testId = null;
+        } );
+      } );
+      it( 'with blank object', function() {
+        return dbUtility2.insert( {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          testId = null;
+        } );
+      } );
+      it( 'with no primary key', function() {
+        return dbUtility2.insert( withoutPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withoutPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withoutPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it('with primary key',function() {
+        return dbUtility2.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with same primary key', function() {
+        return dbUtility2.insert( withPrimaryKey )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          testId = null;
+        } );
+      } );
+      it( 'with no primary key same data', function() {
+        return dbUtility2.insert( withoutPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withoutPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withoutPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just STRING', function() {
+        var testData = { "STRING": "test2" };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just TIMESTAMP', function() {
+        var testData = { "TIMESTAMP": new Date( 0 ) };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just INTEGER', function() {
+        var testData = { "INTEGER": 987 };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just FLOAT', function() {
+        var testData = { "FLOAT": 987.654 };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just GEOPOINT', function() {
+        var testData = { "GEOPOINT": { latitude:18.76, longitude: -18.76 } };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just OBJECT', function() {
+        var testData = { "OBJECT": { "test":"teststring", "test2": 123 } };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just ARRAY', function() {
+        var testData = { "ARRAY": [ 123, 456, "qwerty" ] };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just NULL', function() {
+        var testData = { "NULL": null };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+              
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just BOOLEAN', function() {
+        var testData = { "BOOLEAN": true };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+              
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just string', function() {
+        var testData = { "string": "test2" };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just timestamp', function() {
+        var testData = { "timestamp": new Date( 0 ) };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just integer', function() {
+        var testData = { "integer": 987 };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just float', function() {
+        var testData = { "float": 987.654 };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just geopoint', function() {
+        var testData = { "geopoint": { latitude:18.76, longitude: -18.76 } };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just object', function() {
+        var testData = { "object": { "test":"teststring", "test2": 123 } };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just array', function() {
+        var testData = { "array": [ 123, 456, "qwerty" ] };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just null', function() {
+        var testData = { "null": null };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and just boolean', function() {
+        var testData = { "boolean": true };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just STRING', function() {
+        var testData = { [ schema2.primaryKey ]: generateNewKey() + "", "STRING": "test2" };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just TIMESTAMP', function() {
+        var testData = { [ schema2.primaryKey ]: generateNewKey() + "", "TIMESTAMP": new Date( 0 ) };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just INTEGER', function() {
+        var testData = { [ schema2.primaryKey ]: generateNewKey() + "", "INTEGER": 987 };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just FLOAT', function() {
+        var testData = { [ schema2.primaryKey ]: generateNewKey() + "", "FLOAT": 987.654 };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just GEOPOINT', function() {
+        var testData = { [ schema2.primaryKey ]: generateNewKey() + "", "GEOPOINT": { latitude:18.76, longitude: -18.76 } };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just OBJECT', function() {
+        var testData = { [ schema2.primaryKey ]: generateNewKey() + "", "OBJECT": { "test":"teststring", "test2": 123 } };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just ARRAY', function() {
+        var testData = { [ schema2.primaryKey ]: generateNewKey() + "", "ARRAY": [ 123, 456, "qwerty" ] };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just NULL', function() {
+        var testData = { [ schema2.primaryKey ]: generateNewKey() + "", "NULL": null };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just BOOLEAN', function() {
+        var testData = { [ schema2.primaryKey ]: generateNewKey() + "", "BOOLEAN": true };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just string', function() {
+        var testData = { [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "", "string": "test2" };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just timestamp', function() {
+        var testData = { [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "", "timestamp": new Date( 0 ) };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just integer', function() {
+        var testData = { [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "", "integer": 987 };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just float', function() {
+        var testData = { [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "", "float": 987.654 };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just geopoint', function() {
+        var testData = { [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "", "geopoint": { latitude:18.76, longitude: -18.76 } };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just object', function() {
+        var testData = { [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "", "object": { "test":"teststring", "test2": 123 } };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just array', function() {
+        var testData = { [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "", "array": [ 123, 456, "qwerty" ] };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just null', function() {
+        var testData = { [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "", "null": null };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and just boolean', function() {
+        var testData = { [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "", "boolean": true };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and same small data jumbled up lowercase', function() {        
+        var testData = {
+        'geopoint' : { latitude: 12.1234, longitude: 34.5678 },
+        'integer' : 2,
+        'float' : 23.5,
+        'string' : 'test1',
+        'timestamp' : new Date(),
+        'array' : [ 123, 456 ],
+        'boolean' : true,
+        'object' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() }
+        };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and same data jumbled up lowercase', function() {
+        var testData = {
+        'float' : 23.5,
+        'boolean' : true,
+        'integer' : 2,
+        'geopoint' : { latitude: 12.1234, longitude: 34.5678 },
+        'array' : [ 123, 456 ],
+        'object' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() },
+        [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "",
+        'string' : 'test1',
+        'timestamp' : new Date()
+        };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and same data jumbled up', function() {        
+        var testData = {
+        'GEOPOINT' : { latitude: 12.1234, longitude: 34.5678 },
+        'INTEGER' : 2,
+        'FLOAT' : 23.5,
+        'STRING' : 'test1',
+        'TIMESTAMP' : new Date(),
+        'ARRAY' : [ 123, 456 ],
+        'BOOLEAN' : true,
+        'OBJECT' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() }
+        };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with primary key and same data jumbled up', function() {
+        var testData = {
+        'FLOAT' : 23.5,
+        'BOOLEAN' : true,
+        'INTEGER' : 2,
+        'GEOPOINT' : { latitude: 12.1234, longitude: 34.5678 },
+        'ARRAY' : [ 123, 456 ],
+        'OBJECT' : { [ "test "+new Date().getTime() ]: "test1 " + new Date().getTime() },
+        [ schema2.primaryKey ]: generateNewKey() + "",
+        'STRING' : 'test1',
+        'TIMESTAMP' : new Date()
+        };
+        return dbUtility2.insert( testData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( testData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = data[ schema2.primaryKey ];
+        } );
+      } );
+      it( 'with no primary key and data not conforming to schema', function() {
+        return dbUtility2.insert( { "abba":"dabba", "jaaba":"oppa" } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          testId = null;
+        } );
+      } );
+      it( 'with primary key and data not conforming to schema', function() {
+        return dbUtility2.insert( { [ schema2.primaryKey.toLowerCase() ]: generateNewKey() + "", "name":"sarah", "abba":"dabba" } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          testId = null;
+        } );
+      } );
+    } );
+
+    // QUERY
+    describe( 'query', function() {
+      var testData;
+      var testId;
+      beforeEach( function() {
+        return dbUtility2.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = {};
+          testId[ schema2.primaryKey ] = data[ schema2.primaryKey ];
+          testData = {};
+          testData = data;
+        } );
+      } );
+      afterEach( function() {
+        testId = {};
+        testId[ schema2.primaryKey ] = testData[ schema2.primaryKey ];
+        return dbUtility2.delete( testId )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+    } );
+
+    // LIST
+    describe( 'list', function() {
+      var testData=[];
+      var testId=[];
+      beforeEach( function() {
+        testId = [];
+        testData = [];
+        return new Promise( function( resolve, reject ) {
+          var insertMultiple = [];
+          for( var i = 0; i < 10; i++ ) {
+            insertMultiple.push(
+              dbUtility2.insert( withoutPrimaryKey )
+              .then( function( data ) {
+                expect( data ).to.be.an( 'object' );
+                expect( data ).to.have.deep.property( schema2.primaryKey );
+                // expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+                expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+                expect( data ).to.have.deep.property( 'TIMESTAMP' );
+                expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+                expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+                expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+                for( var i = 0; i < structureKeys.length; i++ ) {
+                  if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                    continue;
+                  }
+                  if( withoutPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+                    expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+                  } else {
+                    expect( data ).to.have.deep.property( structureKeys[i], withoutPrimaryKey[ structureKeys[ i ] ] );
+                  }
+                  if ( data[ structureKeys[ i ] ] === null ) {
+                    expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+                  } else {
+                    expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+                  }
+                }
+                testData[ data[ schema2.primaryKey ] ] = data;
+                testId.push( data[ schema2.primaryKey ] );
+                return data;
+              } )
+            );
+          }
+          Promise.all( insertMultiple )
+          .then( function( dataArray ) {
+            var testDataKeys = Object.keys( testData );
+            expect( dataArray.length ).to.be.deep.equal( testDataKeys.length );
+            resolve();
+          } );
+        } );
+      } );
+      afterEach( function() {
+        return new Promise( function( resolve, reject ) {
+          var deleteMultiple = [];
+          var testDataKeys = Object.keys( testData );
+          for( var i = 0; i < 10; i++ ) {
+            testId = {};
+            testId[ schema2.primaryKey ] = testData[ testDataKeys[ i ] ][ schema2.primaryKey ];
+            deleteMultiple.push(
+              dbUtility2.delete( testId )
+              .then( function( data ) {
+                expect(data).to.be.a('number');
+                expect(data).to.be.deep.equal(1);
+                return data;
+              } )
+            );
+          }
+          Promise.all( deleteMultiple )
+          .then( function( dataArray ) {
+            var testDataKeys = Object.keys( testData );
+            expect( dataArray.length ).to.be.deep.equal( testDataKeys.length );
+            resolve();
+          } );
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility2.list()
+        .catch( function( error ) {
+         expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with blank object', function() {
+      return dbUtility2.list( [] )
+        .catch( function( error ) {
+          expect(error).to.be.an('error');
+        } );
+      } );
+      it( 'with single primary key', function() {
+        var getId = testId[ 0 ];
+        return dbUtility2.list( getId )
+        .catch( function( error ) {
+          expect(error).to.be.an('error');
+        } );
+      } );
+      it( 'with single primary key in array', function() {
+        var getId = [ testId[ 0 ] ];
+        var getData = [ testData[ getId[ 0 ] ] ];
+        return dbUtility2.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          data = data[ 0 ];
+          getData = getData[ 0 ];
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( getData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], getData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with multiple primary key', function() {
+        var getId = [];
+        var getData = [];
+        for( var i = 0; i < 10; i++ ) {
+          getId.push( testId[ i ] );
+          getData.push( testData[ getId[ i ] ] );
+        }
+        return dbUtility2.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 10; i++ ) {
+            var dataTemp = data[ i ];
+            var getDataTemp = getData[ i ];
+            expect( dataTemp ).to.be.an( 'object' );
+            expect( dataTemp ).to.have.deep.property( schema2.primaryKey );
+            expect( dataTemp[ schema2.primaryKey ] ).to.be.deep.equal( getDataTemp[ schema2.primaryKey ] );
+            expect( dataTemp[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP' );
+            expect( dataTemp[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+            expect( dataTemp[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+            for( var i = 0; i < structureKeys.length; i++ ) {
+              if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                continue;
+              }
+              expect( dataTemp ).to.have.deep.property( structureKeys[i], getDataTemp[ structureKeys[ i ] ] );
+              if ( dataTemp[ structureKeys[ i ] ] === null ) {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( 'null' );
+              } else {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+              }
+            }
+          }
+        } );
+      } );
+      it( 'with duplicate primary key', function() {
+        var getId = [];
+        var getData = [];
+        for( var i = 0; i < 5; i++ ) {
+          getId.push( testId[ i ] );
+          getData.push( testData[ getId[ i ] ] );
+        }
+        for( var i = 0; i < 5; i++ ) {
+          getId.push( testId[ i ] );
+          getData.push( testData[ getId[ i + 5 ] ] );
+        }
+        return dbUtility2.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 10; i++ ) {
+            var dataTemp = data[ i ];
+            var getDataTemp = getData[ i ];
+            expect( dataTemp ).to.be.an( 'object' );
+            expect( dataTemp ).to.have.deep.property( schema2.primaryKey );
+            expect( dataTemp[ schema2.primaryKey ] ).to.be.deep.equal( getDataTemp[ schema2.primaryKey ] );
+            expect( dataTemp[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP' );
+            expect( dataTemp[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+            expect( dataTemp[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+            for( var i = 0; i < structureKeys.length; i++ ) {
+              if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                continue;
+              }
+              expect( dataTemp ).to.have.deep.property( structureKeys[i], getDataTemp[ structureKeys[ i ] ] );
+              if ( dataTemp[ structureKeys[ i ] ] === null ) {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( 'null' );
+              } else {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+              }
+            }
+          }
+        } );
+      } );
+      it( 'with multiple same primary key', function() {
+        var getId = [];
+        var getData = [];
+        for( var i = 0; i < 10; i++ ) {
+          getId.push( testId[ 0 ] );
+          getData.push( testData[ getId[ 0 ] ] );
+        }
+        return dbUtility2.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 10; i++ ) {
+            var dataTemp = data[ i ];
+            var getDataTemp = getData[ i ];
+            expect( dataTemp ).to.be.an( 'object' );
+            expect( dataTemp ).to.have.deep.property( schema2.primaryKey );
+            expect( dataTemp[ schema2.primaryKey ] ).to.be.deep.equal( getDataTemp[ schema2.primaryKey ] );
+            expect( dataTemp[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP' );
+            expect( dataTemp[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+            expect( dataTemp[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+            for( var i = 0; i < structureKeys.length; i++ ) {
+              if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                continue;
+              }
+              expect( dataTemp ).to.have.deep.property( structureKeys[i], getDataTemp[ structureKeys[ i ] ] );
+              if ( dataTemp[ structureKeys[ i ] ] === null ) {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( 'null' );
+              } else {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+              }
+            }
+          }
+        } );
+      } );
+      it( 'with wrong primary key number', function() {
+        var getId = [ -123,-0.0 ];
+        var getData = [ null, null ];
+        return dbUtility2.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 2; i++ ) {
+           expect( data[ i ] ).to.be.a( 'null' );
+           expect( data[ i ] ).to.be.deep.equal( getData[ i ] );
+          }          
+        } );
+      } );
+      it( 'with wrong primary key string', function() {
+        var getId = [ "-123,-0.0","test1_id" ];
+        var getData = [ null, null ];
+        return dbUtility2.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 2; i++ ) {
+           expect( data[ i ] ).to.be.a( 'null' );
+           expect( data[ i ] ).to.be.deep.equal( getData[ i ] );
+          }          
+        } );
+      } );
+      it( 'with wrong primary key but same field', function() {
+        var getId = [ "new Date()","2345-asd" ];
+        var getData = [ null, null ];
+        return dbUtility2.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 2; i++ ) {
+           expect( data[ i ] ).to.be.a( 'null' );
+           expect( data[ i ] ).to.be.deep.equal( getData[ i ] );
+          }          
+        } );
+      } );
+      it( 'with wrong primary key but different types', function() {
+        var getId = ["2001-01-01", 1234, true];
+        var getData = [ null, null, null ];
+        return dbUtility2.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 3; i++ ) {
+           expect( data[ i ] ).to.be.a( 'null' );
+           expect( data[ i ] ).to.be.deep.equal( getData[ i ] );
+          }          
+        } );
+      } );
+      it( 'with same wrong primary key', function() {
+        var getId = [ "0", "0", "0", "0" ];
+        var getData = [ null, null, null, null ]
+        return dbUtility2.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          for( var i = 0; i < 4; i++ ) {
+           expect( data[ i ] ).to.be.a( 'null' );
+           expect( data[ i ] ).to.be.deep.equal( getData[ i ] );
+          }          
+        } );
+      } );
+      it( 'with duplicate primary key and duplicate wrong key in specific order', function() {
+        var getId = [ "0", testId[0], testId[1], "0" ];
+        var getData = [ null, testData[testId[0]], testData[testId[1]], null ];
+        return dbUtility2.list( getId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( getData.length );
+          expect( data[ 0 ] ).to.be.a( 'null' );
+          expect( data[ 0 ] ).to.be.deep.equal( getData[ 0 ] );
+          expect( data[ 3 ] ).to.be.a( 'null' );
+          expect( data[ 3 ] ).to.be.deep.equal( getData[ 3 ] );
+          for( var i = 1; i < 3; i++ ) {
+            var dataTemp = data[ i ];
+            var getDataTemp = getData[ i ];
+            expect( dataTemp ).to.be.an( 'object' );
+            expect( dataTemp ).to.have.deep.property( schema2.primaryKey );
+            expect( dataTemp[ schema2.primaryKey ] ).to.be.deep.equal( getDataTemp[ schema2.primaryKey ] );
+            expect( dataTemp[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP' );
+            expect( dataTemp[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+            expect( dataTemp[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+            for( var i = 0; i < structureKeys.length; i++ ) {
+              if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                continue;
+              }
+              expect( dataTemp ).to.have.deep.property( structureKeys[i], getDataTemp[ structureKeys[ i ] ] );
+              if ( dataTemp[ structureKeys[ i ] ] === null ) {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( 'null' );
+              } else {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+              }
+            }
+          }
+        } );
+      } );
+    } );
+
+    // GET
+    describe( 'get', function() {
+      var testData;
+      var testId;
+      beforeEach( function() {
+        return dbUtility2.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = {};
+          testId = data[ schema2.primaryKey ];
+          testData = {};
+          testData = data;
+        } );
+      } );
+      afterEach( function() {
+        testId = {};
+        testId[ schema2.primaryKey ] = testData[ schema2.primaryKey ];
+        return dbUtility2.delete( testId )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility2.get()
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with wrong type array', function() {
+        return dbUtility2.get( [] )
+        .catch( function(error) {
+          expect(error).to.be.an('error');
+        } );
+      } );
+      it( 'with wrong type object', function() {
+        return dbUtility2.get( {} )
+        .catch( function(error) {
+          expect(error).to.be.an('error');
+        } );
+      } );
+      it( 'with single primary key', function() {
+        return dbUtility2.get( testId )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with wrong primary key number', function() {
+        return dbUtility2.get( -0.0 )
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with wrong primary key string', function() {
+        return dbUtility2.get( "test1_id" )
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with wrong primary key zero', function() {
+        return dbUtility2.get( 0 )
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with wrong primary key null', function() {
+        return dbUtility2.get( null )
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with wrong primary key empty string', function() {
+        return dbUtility2.get( "" )
+        .then( function( data ) {
+          expect( data ).to.be.a( 'null' );
+          expect( data ).to.be.deep.equal( null );
+        } );
+      } );
+      it( 'with multiple primary keys', function() {
+        return dbUtility2.get( testId, testId)
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+    } );
+
+    // UPDATE
+    describe( 'update', function() {
+      var testData;
+      var testId;
+      beforeEach( function() {
+        return dbUtility2.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = {};
+          testId[ schema2.primaryKey ] = data[ schema2.primaryKey ];
+          testData = {};
+          testData = data;
+        } );
+      } );
+      afterEach( function() {
+        testId = {};
+        testId[ schema2.primaryKey ] = testData[ schema2.primaryKey ];
+        return dbUtility2.delete( testId )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility2.update()
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with one blank object and other undefined', function() {
+        return dbUtility2.update( {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with both blank object', function() {
+        return dbUtility2.update( {}, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with just primary key', function() {
+        return dbUtility2.update( testId )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and data STRING', function() {
+        var updateData = { STRING: "changed" };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data TIMESTAMP', function() {
+        var updateData = { TIMESTAMP: new Date( 1500899999990 ) };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data INTEGER', function() {
+        var updateData = { INTEGER: 1500899999990 };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data FLOAT', function() {
+        var updateData = { FLOAT: 1500899.9990 };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data GEOPOINT', function() {
+        var updateData = { GEOPOINT: { longitude: 43.43, latitude: 76.43 } };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data OBJECT', function() {
+        var updateData = { OBJECT: { "test": "pratilipi" } };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data ARRAY', function() {
+        var updateData = { ARRAY: [ "pratilipi", "test" ] };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data NULL', function() {
+        var updateData = { NULL: null };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data BOOLEAN', function() {
+        var updateData = { BOOLEAN: true };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data string', function() {
+        var updateData = { string: "changed" };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data timestamp', function() {
+        var updateData = { timestamp: new Date( 1500899999990 ) };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data integer', function() {
+        var updateData = { integer: 1500899999990 };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data float', function() {
+        var updateData = { float: 1500899.9990 };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data geopoint', function() {
+        var updateData = { geopoint: { longitude: 43.43, latitude: 76.43 } };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey.toLowerCase().toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase().toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data object', function() {
+        var updateData = { object: { "test": "pratilipi" } };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data array', function() {
+        var updateData = { array: [ "pratilipi", "test" ] };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data null', function() {
+        var updateData = { null: null };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey.toLowerCase().toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data boolean', function() {
+        var updateData = { boolean: true };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey.toLowerCase().toLowerCase().toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data', function() {
+        var updateData = {
+        'INTEGER' : 2,
+        'FLOAT' : 23.5,
+        'TIMESTAMP' : new Date(),
+        'GEOPOINT' : {latitude:12.1234,longitude:34.5678},
+        'OBJECT' : { ["test "+new Date().getTime()]: "test1 " + new Date().getTime()}
+        };
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data lowercase', function() {
+        var updateData = {
+        'integer' : 2,
+        'float' : 23.5,
+        'timestamp' : new Date(),
+        'geopoint' : {latitude:12.1234,longitude:34.5678},
+        'object' : { ["test "+new Date().getTime()]: "test1 " + new Date().getTime()}
+        };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.update( testId, updateData )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testId[ schema2.primaryKey.toLowerCase() ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( updateData[ structureKeys[ i ].toLowerCase() ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], updateData[ structureKeys[ i ].toLowerCase() ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and extra fields and data', function() {
+        testId.STRING = "fail";
+        var updateData = { BOOLEAN: false };
+        return dbUtility2.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with blank object and data', function() {
+        var updateData = { BOOLEAN: false };
+        return dbUtility2.update( {}, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and blank data', function() {
+        return dbUtility2.update( testId, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and extra fields and blank data', function() {
+        testId.STRING = "fail";
+        return dbUtility2.update( testId, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and data BOOLEAN', function() {
+        testId = { STRING: "test" };
+        var updateData = { BOOLEAN: false };
+        return dbUtility2.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with string and data boolean', function() {
+        testId = { string: "test" };
+        var updateData = { boolean: false };
+        return dbUtility2.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with wrong key and wrong data', function() {
+        testId = { abba: "dabba" };
+        var updateData = { jabba: "oppa" };
+        return dbUtility2.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and data primary key', function() {
+        var updateData = { [ schema2.primaryKey ]: testId[ schema2.primaryKey ] };
+        testId = { STRING: "test" };
+        return dbUtility2.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and FLOAT and data primary key', function() {
+        var updateData = { [ schema2.primaryKey ]: testId[ schema2.primaryKey ] };
+        testId = { STRING: "test", FLOAT:12.34 };
+        return dbUtility2.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and wrong data', function() {
+        var updateData = { jabba: "oppa" };
+        return dbUtility2.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and data having primary key', function() {
+        var updateData = { BOOLEAN: false, [ schema2.primaryKey ]: testId[ schema2.primaryKey ] };
+        return dbUtility2.update( testId, updateData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+    } );
+
+    // PATCH
+    describe( 'patch', function() {
+      var testData;
+      var testId;
+      beforeEach( function() {
+        return dbUtility2.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = {};
+          testId[ schema2.primaryKey ] = data[ schema2.primaryKey ];
+          testData = {};
+          testData = data;
+        } );
+      } );
+      afterEach( function() {
+        testId = {};
+        testId[ schema2.primaryKey ] = testData[ schema2.primaryKey ];
+        return dbUtility2.delete( testId )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility2.patch()
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with one blank object and other undefined', function() {
+        return dbUtility2.patch( {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with both blank object', function() {
+        return dbUtility2.patch( {}, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with just primary key', function() {
+        return dbUtility2.patch( testId )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and data STRING', function() {
+        var patchData = { STRING: "changed" };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data TIMESTAMP', function() {
+        var patchData = { TIMESTAMP: new Date( 1500899999990 ) };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data INTEGER', function() {
+        var patchData = { INTEGER: 1500899999990 };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data FLOAT', function() {
+        var patchData = { FLOAT: 1500899.9990 };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data GEOPOINT', function() {
+        var patchData = { GEOPOINT: { longitude: 43.43, latitude: 76.43 } };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data OBJECT', function() {
+        var patchData = { OBJECT: { "test": "pratilipi" } };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data ARRAY', function() {
+        var patchData = { ARRAY: [ "pratilipi", "test" ] };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data NULL', function() {
+        var patchData = { NULL: null };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data BOOLEAN', function() {
+        var patchData = { BOOLEAN: true };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data string', function() {
+        var patchData = { string: "changed" };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data timestamp', function() {
+        var patchData = { timestamp: new Date( 1500899999990 ) };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data integer', function() {
+        var patchData = { integer: 1500899999990 };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data float', function() {
+        var patchData = { float: 1500899.9990 };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data geopoint', function() {
+        var patchData = { geopoint: { longitude: 43.43, latitude: 76.43 } };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data object', function() {
+        var patchData = { object: { "test": "pratilipi" } };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data array', function() {
+        var patchData = { array: [ "pratilipi", "test" ] };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data null', function() {
+        var patchData = { null: null };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data boolean', function() {
+        var patchData = { boolean: true };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data', function() {
+        var patchData = {
+        'INTEGER' : 2,
+        'FLOAT' : 23.5,
+        'TIMESTAMP' : new Date(),
+        'GEOPOINT' : {latitude:12.1234,longitude:34.5678},
+        'OBJECT' : { ["test "+new Date().getTime()]: "test1 " + new Date().getTime()}
+        };
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ] ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and data lowercase', function() {
+        var patchData = {
+        'integer' : 2,
+        'float' : 23.5,
+        'timestamp' : new Date(),
+        'geopoint' : {latitude:12.1234,longitude:34.5678},
+        'object' : { ["test "+new Date().getTime()]: "test1 " + new Date().getTime()}
+        };
+        testId = { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] }; 
+        return dbUtility2.patch( testId, patchData )
+        .then( function( data ) {
+          var patchKeys = Object.keys( patchData )
+          for( var i = 0; i < patchKeys.length; i++ ) {
+            testData[ patchKeys[ i ].toUpperCase() ] = patchData[ patchKeys[ i ] ];
+          }
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( testData[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            expect( data ).to.have.deep.property( structureKeys[i], testData[ structureKeys[ i ] ] );
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+        } );
+      } );
+      it( 'with primary key and extra fields and data', function() {
+        testId.STRING = "fail";
+        var patchData = { BOOLEAN: false };
+        return dbUtility2.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with blank object and data', function() {
+        var patchData = { BOOLEAN: false };
+        return dbUtility2.patch( {}, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and blank data', function() {
+        return dbUtility2.patch( testId, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and extra fields and blank data', function() {
+        testId.STRING = "fail";
+        return dbUtility2.patch( testId, {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and data BOOLEAN', function() {
+        testId = { STRING: "test" };
+        var patchData = { BOOLEAN: false };
+        return dbUtility2.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with string and data boolean', function() {
+        testId = { string: "test" };
+        var patchData = { boolean: false };
+        return dbUtility2.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with wrong key and wrong data', function() {
+        testId = { abba: "dabba" };
+        var patchData = { jabba: "oppa" };
+        return dbUtility2.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and data primary key', function() {
+        var patchData = { [ schema2.primaryKey ]: testId[ schema2.primaryKey ] };
+        testId = { STRING: "test" };
+        return dbUtility2.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with STRING and FLOAT and data primary key', function() {
+        var patchData = { [ schema2.primaryKey ]: testId[ schema2.primaryKey ] };
+        testId = { STRING: "test", FLOAT:12.34 };
+        return dbUtility2.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and wrong data', function() {
+        var patchData = { jabba: "oppa" };
+        return dbUtility2.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+      it( 'with primary key and data having primary key', function() {
+        var patchData = { BOOLEAN: false, [ schema2.primaryKey ]: testId[ schema2.primaryKey ] };
+        return dbUtility2.patch( testId, patchData )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+        } );
+      } );
+    } );
+
+    // DELETE
+    describe( 'delete', function() {
+      var testId;
+      var testData;
+      beforeEach( function() {
+        return dbUtility2.insert( withPrimaryKey )
+        .then( function( data ) {
+          expect( data ).to.be.an( 'object' );
+          expect( data ).to.have.deep.property( schema2.primaryKey );
+          expect( data[ schema2.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema2.primaryKey ] );
+          expect( data[ schema2.primaryKey ] ).to.be.a( typeConversion[ schema2.structure[ schema2.primaryKey ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP' );
+          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP' ].type ] );
+          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema2.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+          for( var i = 0; i < structureKeys.length; i++ ) {
+            if( structureKeys[ i ] === schema2.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+              continue;
+            }
+            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+              expect( data ).to.have.deep.property( structureKeys[i], schema2.structure[ structureKeys[ i ] ].default );
+            } else {
+              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
+            }
+            if ( data[ structureKeys[ i ] ] === null ) {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+            } else {
+              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema2.structure[ structureKeys[ i ] ].type ] );
+            }
+          }
+          testId = {};
+          testId[ schema2.primaryKey ] = data[ schema2.primaryKey ];
+          testData = {};
+          testData = data;
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility2.delete()
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility2.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with blank object', function() {
+        return dbUtility2.delete( {} )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility2.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with wrong type', function() {
+        return dbUtility2.delete( 0 )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility2.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with wrong primary key', function() {
+        return dbUtility2.delete( { [ schema2.primaryKey ]: "100" } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility2.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with primary key', function() {
+        return dbUtility2.delete( testId )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+      it( 'with primary key as number', function() {
+        return dbUtility2.delete( { [ schema2.primaryKey ]: 1000 } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility2.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with another keyname', function() {
+        return dbUtility2.delete( { "STRING": "test1" } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility2.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with primary key negative number', function() {
+        return dbUtility2.delete( { [ schema2.primaryKey ]: -100 } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility2.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with wrong keyname', function() {
+        return dbUtility2.delete( { "abba": "dabba" } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility2.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with wrong key and primary key', function() {
+        return dbUtility2.delete( { "abba": "dabba", [ schema2.primaryKey ]: testId[ schema2.primaryKey ] } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility2.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with extra fieldname and primary key', function() {
+        return dbUtility2.delete( { "string": "test", [ schema2.primaryKey ]: testId[ schema2.primaryKey ] } )
+        .catch( function( error ) {
+          expect( error ).to.be.an( 'error' );
+          return dbUtility2.delete( testId )
+          .then( function( data ) {
+            expect(data).to.be.a('number');
+            expect(data).to.be.deep.equal(1);
+          } );
+        } );
+      } );
+      it( 'with primary key in small', function() {
+        return dbUtility2.delete( { [ schema2.primaryKey.toLowerCase() ]: testId[ schema2.primaryKey ] } )
+        .then( function( data ) {
+          expect(data).to.be.a('number');
+          expect(data).to.be.deep.equal(1);
+        } );
+      } );
+    } );
+  } );
+
 } );
