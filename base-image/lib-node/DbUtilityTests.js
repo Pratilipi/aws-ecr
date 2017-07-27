@@ -1502,47 +1502,112 @@ describe( 'DbUtility Tests', function() {
 
     // QUERY
     describe( 'query', function() {
-      var testData;
-      var testId;
+      var testData=[];
+      var testId=[];
       beforeEach( function() {
-        return dbUtility1.insert( withPrimaryKey )
-        .then( function( data ) {
-          expect( data ).to.be.an( 'object' );
-          expect( data ).to.have.deep.property( schema1.primaryKey );
-          expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
-          expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
-          expect( data ).to.have.deep.property( 'TIMESTAMP' );
-          expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
-          expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
-          expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
-          for( var i = 0; i < structureKeys.length; i++ ) {
-            if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
-              continue;
-            }
-            if( withPrimaryKey[ structureKeys[ i ] ] === undefined ) {
-              expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
-            } else {
-              expect( data ).to.have.deep.property( structureKeys[i], withPrimaryKey[ structureKeys[ i ] ] );
-            }
-            if ( data[ structureKeys[ i ] ] === null ) {
-              expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
-            } else {
-              expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
-            }
+        testId = [];
+        testData = [];
+        return new Promise( function( resolve, reject ) {
+          var insertMultiple = [];
+          for( var i = 0; i < 10; i++ ) {
+            insertMultiple.push(
+              dbUtility1.insert( withoutPrimaryKey )
+              .then( function( data ) {
+                expect( data ).to.be.an( 'object' );
+                expect( data ).to.have.deep.property( schema1.primaryKey );
+                // expect( data[ schema1.primaryKey ] ).to.be.deep.equal( withPrimaryKey[ schema1.primaryKey ] );
+                expect( data[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+                expect( data ).to.have.deep.property( 'TIMESTAMP' );
+                expect( data[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+                expect( data ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+                expect( data[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+                for( var i = 0; i < structureKeys.length; i++ ) {
+                  if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                    continue;
+                  }
+                  if( withoutPrimaryKey[ structureKeys[ i ] ] === undefined ) {
+                    expect( data ).to.have.deep.property( structureKeys[i], schema1.structure[ structureKeys[ i ] ].default );
+                  } else {
+                    expect( data ).to.have.deep.property( structureKeys[i], withoutPrimaryKey[ structureKeys[ i ] ] );
+                  }
+                  if ( data[ structureKeys[ i ] ] === null ) {
+                    expect( data[ structureKeys[ i ] ] ).to.be.a( 'null' );
+                  } else {
+                    expect( data[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+                  }
+                }
+                testData[ data[ schema1.primaryKey ] ] = data;
+                testId.push( data[ schema1.primaryKey ] );
+                return data;
+              } )
+            );
           }
-          testId = {};
-          testId[ schema1.primaryKey ] = data[ schema1.primaryKey ];
-          testData = {};
-          testData = data;
+          Promise.all( insertMultiple )
+          .then( function( dataArray ) {
+            var testDataKeys = Object.keys( testData );
+            expect( dataArray.length ).to.be.deep.equal( testDataKeys.length );
+            resolve();
+          } );
         } );
       } );
       afterEach( function() {
-        testId = {};
-        testId[ schema1.primaryKey ] = testData[ schema1.primaryKey ];
-        return dbUtility1.delete( testId )
+        return new Promise( function( resolve, reject ) {
+          var deleteMultiple = [];
+          var testDataKeys = Object.keys( testData );
+          for( var i = 0; i < 10; i++ ) {
+            testId = {};
+            testId[ schema1.primaryKey ] = testData[ testDataKeys[ i ] ][ schema1.primaryKey ];
+            deleteMultiple.push(
+              dbUtility1.delete( testId )
+              .then( function( data ) {
+                expect(data).to.be.a('number');
+                expect(data).to.be.deep.equal(1);
+                return data;
+              } )
+            );
+          }
+          Promise.all( deleteMultiple )
+          .then( function( dataArray ) {
+            var testDataKeys = Object.keys( testData );
+            expect( dataArray.length ).to.be.deep.equal( testDataKeys.length );
+            resolve();
+          } );
+        } );
+      } );
+      it( 'with undefined', function() {
+        return dbUtility1.list()
         .then( function( data ) {
-          expect(data).to.be.a('number');
-          expect(data).to.be.deep.equal(1);
+          expect( data ).to.be.an( 'array' );
+          expect( data.length ).to.be.deep.equal( Object.keys( testData ).length );
+          for( var i = 0; i < 10; i++ ) {
+            var dataTemp = data[ i ];
+            var getDataTemp = testData[ dataTemp[ schema1.primaryKey ] ];
+            expect( dataTemp ).to.be.an( 'object' );
+            expect( dataTemp ).to.have.deep.property( schema1.primaryKey );
+            expect( dataTemp[ schema1.primaryKey ] ).to.be.deep.equal( getDataTemp[ schema1.primaryKey ] );
+            expect( dataTemp[ schema1.primaryKey ] ).to.be.a( typeConversion[ schema1.structure[ schema1.primaryKey ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP' );
+            expect( dataTemp[ 'TIMESTAMP' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP' ].type ] );
+            expect( dataTemp ).to.have.deep.property( 'TIMESTAMP_WITH_STRING' );
+            expect( dataTemp[ 'TIMESTAMP_WITH_STRING' ]).to.be.a( typeConversion[ schema1.structure[ 'TIMESTAMP_WITH_STRING' ].type ] );
+            for( var i = 0; i < structureKeys.length; i++ ) {
+              if( structureKeys[ i ] === schema1.primaryKey || structureKeys[ i ] === 'TIMESTAMP_WITH_STRING' || structureKeys[ i ] === 'TIMESTAMP' ) {
+                continue;
+              }
+              expect( dataTemp ).to.have.deep.property( structureKeys[i], getDataTemp[ structureKeys[ i ] ] );
+              if ( dataTemp[ structureKeys[ i ] ] === null ) {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( 'null' );
+              } else {
+                expect( dataTemp[ structureKeys[ i ] ] ).to.be.a( typeConversion[ schema1.structure[ structureKeys[ i ] ].type ] );
+              }
+            }
+          }
+        } );
+      } );
+      it( 'with blank object', function() {
+      return dbUtility1.list( [] )
+        .catch( function( error ) {
+          expect(error).to.be.an('error');
         } );
       } );
     } );
