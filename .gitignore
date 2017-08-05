@@ -1,6 +1,5 @@
 aws-devo
 aws-gamma
-aws-prod
 gcp-devo.json
 gcp-gamma.json
 gcp-prod.json
@@ -15,3 +14,4 @@ gcp-prod.json
 keyfile.json
 node_modules/
 */keyfile.json
+aws-prod
