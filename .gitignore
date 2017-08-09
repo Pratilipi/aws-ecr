@@ -1,6 +1,6 @@
 aws-devo
-aws-gamma
 aws-prod
+aws-gamma
 gcp-devo.json
 gcp-gamma.json
 gcp-prod.json

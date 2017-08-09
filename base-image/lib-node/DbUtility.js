@@ -18,7 +18,10 @@ function DbUtility ( config ) {
   const schema = config.schema;
   const structure = schema.structure;
   const primaryKey = schema.primaryKey;
-
+  var excludeFromIndexes = schema.excludeFromIndexes || [];
+  if( excludeFromIndexes.indexOf( primaryKey ) !== -1 ) {
+    excludeFromIndexes[ excludeFromIndexes.indexOf( primaryKey ) ] = '__key__';
+  }
   //CREATE A DATASTORE CLIENT FOR A SPECIFIC PROJECT
   const datastoreClient = datastoreModule( { 'projectId' : projectId } );
 
@@ -595,9 +598,9 @@ function DbUtility ( config ) {
               delete newData[ primaryKey ];
               var task = {
                 key: key,
+                excludeFromIndexes: excludeFromIndexes,
                 data: newData
               };
-
               //INSERT DATA IF IT NOT EXISTS
               return datastoreClient.insert( task )
               .then( () => {
@@ -776,6 +779,7 @@ function DbUtility ( config ) {
                 key = getKey( value );
                 var task = {
                   key: key,
+                  excludeFromIndexes: excludeFromIndexes,
                   data: newData
                 };
                 //UPDATE DATA IF IT EXISTS
@@ -858,6 +862,7 @@ function DbUtility ( config ) {
                   if( flag ) {
                     var task = {
                       key: key,
+                      excludeFromIndexes: excludeFromIndexes,
                       data: dataEntity
                     };
                     //UPDATE DATA IF IT EXISTS
