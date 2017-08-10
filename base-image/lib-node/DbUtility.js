@@ -284,10 +284,10 @@ function DbUtility ( config ) {
         var property = keys[ i ];
         if( structure[ property ] == null ) {
           //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-          throw new Error( 'Wrong field provided for ' + property + ' having value ' + JSON.stringify( entity[ property ] ) + ' and datatype of value is ' + typeof entity[ property ] + '. It is not in SCHEMA structure provided.' );
+          throw new Error( 'DbUtility: Wrong field provided for ' + property + ' having value ' + JSON.stringify( entity[ property ] ) + ' and datatype of value is ' + typeof entity[ property ] + '. It is not in SCHEMA structure provided.' );
         } else if(  !checkFunctions.NULL( entity[ property ] ) && !checkFunctions[ structure[ property ].type ]( entity[ property ] ) ) {
           //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-          throw new Error( 'Wrong field provided for ' + property + ' having value ' + JSON.stringify( entity[ property ] ) + ' and datatype of value is ' + typeof entity[ property ] + '. It is not according to SCHEMA structure provided.' );
+          throw new Error( 'DbUtility: Wrong field provided for ' + property + ' having value ' + JSON.stringify( entity[ property ] ) + ' and datatype of value is ' + typeof entity[ property ] + '. It is not according to SCHEMA structure provided.' );
         }
       }
       return true;
@@ -337,12 +337,12 @@ function DbUtility ( config ) {
                 filter[ i ][ 2 ] ); // value
               } else {
                 //Filter is not having 3 values
-                throw new Error( 'Filter not having 3 fields or not having correct type' );
+                throw new Error( 'DbUtility: Filter not having 3 fields or not having correct type' );
               }
             }
           }  else {
             //Filter is not an array
-            throw new Error( 'Wrong Type of filter' );
+            throw new Error( 'DbUtility: Wrong Type of filter' );
           }
         }
 
@@ -358,7 +358,7 @@ function DbUtility ( config ) {
       if( offset != null ) {
         //Offset should be an Integer
         if( isNaN(offset) || typeof offset === 'object' ) {
-          throw new Error( 'Wrong Type of offset' );
+          throw new Error( 'DbUtility: Wrong Type of offset' );
         } else {
           //Set Offset
           query.offset( Number(offset) );
@@ -378,7 +378,7 @@ function DbUtility ( config ) {
         //Cursor should be a string
         if( typeof cursor !== 'string' ) {
           //Cursor is not a string
-          throw new Error( 'Wrong Type of cursor' );
+          throw new Error( 'DbUtility: Wrong Type of cursor' );
         } else {
           //Point the cursor to the respective position
           query.start( cursor );
@@ -397,12 +397,12 @@ function DbUtility ( config ) {
       if( limit != null ) {
         //Limit should be an Integer
         if( isNaN( limit ) || typeof limit === 'object' ) {
-          throw new Error( 'Wrong Type of limit' );
+          throw new Error( 'DbUtility: Wrong Type of limit' );
         } else {
           //Limit is set till 1000
           if( Number( limit )>1000 ) {
             //Limit can't be set greater than 1000
-            throw new Error( 'Limit provided is greater than 1000' );
+            throw new Error( 'DbUtility: Limit provided is greater than 1000' );
           }
           //Set limit
           query.limit( Number( limit ) );
@@ -447,7 +447,7 @@ function DbUtility ( config ) {
           });
         } else {
           //Orderby is not an array
-          throw new Error( 'Wrong Type of order' );
+          throw new Error( 'DbUtility: Wrong Type of order' );
         }
       }
 
@@ -469,7 +469,7 @@ function DbUtility ( config ) {
           }
           query.select( select );
         } else {
-          throw new Error( 'Select is not having correct type.' );
+          throw new Error( 'DbUtility: Select is not having correct type.' );
         }
       }
     } catch( error ) {
@@ -486,7 +486,7 @@ function DbUtility ( config ) {
             query.select('__key__');
           }
         } else {
-          throw new Error( 'Select is not having correct type.' );
+          throw new Error( 'DbUtility: Select is not having correct type.' );
         }
       }
     } catch( error ) {
@@ -617,15 +617,15 @@ function DbUtility ( config ) {
               } );
             } else {
               //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-              throw new Error( 'Wrong fields provided. It is not according to SCHEMA structure provided.');
+              throw new Error( 'DbUtility: Wrong fields provided. It is not according to SCHEMA structure provided.');
             }
           } else {
             //EMPTY MAP IS PROVIDED
-            throw new Error( 'Empty Object' );
+            throw new Error( 'DbUtility: Empty Object' );
           }
         } else {
           //DATA IS NOT A MAP
-          throw new Error( 'Wrong type of data' );
+          throw new Error( 'DbUtility: Wrong type of data' );
         }
       } catch( error ) {
         return new Promise( ( resolve, reject ) => {
@@ -678,11 +678,11 @@ function DbUtility ( config ) {
             }
           } else {
             //NO ID IS PROVIDED
-            throw new Error( 'Empty Object' );
+            throw new Error( 'DbUtility: Empty Object' );
           }
         } else {
           //WRONG TYPE OF IDS
-          throw new Error( 'Not correct type of ids' );
+          throw new Error( 'DbUtility: Not correct type of ids' );
         }
       } catch( error ) {
         return new Promise( ( resolve, reject ) => {
@@ -714,7 +714,7 @@ function DbUtility ( config ) {
                 return datastoreClient.delete( getKey( idData[ primaryKey ] ) )
                 .then( (data) => {
                   if( data[ 0 ].indexUpdates === 0 ){
-                    throw new Error( 'Id doesn\'t exist' );
+                    throw new Error( 'DbUtility: Id doesn\'t exist' );
                   } else {
                     return 1;
                   }
@@ -727,15 +727,15 @@ function DbUtility ( config ) {
               }
             } else {
               //PRIMARY KEY IS NOT PROVIDED
-              throw new Error( 'Primary key not provided.');
+              throw new Error( 'DbUtility: Primary key not provided.');
             }
           } else{
             //EXTRA FIELDS ARE PROVIDED
-            throw new Error( 'Wrong number of arguments');
+            throw new Error( 'DbUtility: Wrong number of arguments');
           }
         } else {
           //ID TYPE IS NOT CORRECT
-          throw new Error( 'Not correct type of id' );
+          throw new Error( 'DbUtility: Not correct type of id' );
         }
       } catch( error ) {
         return new Promise( ( resolve, reject ) => {
@@ -798,18 +798,18 @@ function DbUtility ( config ) {
 
               } else {
                 //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-                throw new Error( 'Wrong fields provided. It is not according to SCHEMA structure provided.');
+                throw new Error( 'DbUtility: Wrong fields provided. It is not according to SCHEMA structure provided.');
               }
             } else {
-              throw new Error( 'Primary key provided in Data object or Primary key is not provided in ID object' );
+              throw new Error( 'DbUtility: Primary key provided in Data object or Primary key is not provided in ID object' );
             }
           } else {
             //EMPTY MAP IS PROVIDED
-            throw new Error( 'Empty Objects or Wrong number of keys in ID object.' );
+            throw new Error( 'DbUtility: Empty Objects or Wrong number of keys in ID object.' );
           }
         } else {
           //DATA IS NOT A MAP
-          throw new Error( 'Wrong type of data' );
+          throw new Error( 'DbUtility: Wrong type of data' );
         }
       } catch( error ) {
         return new Promise( ( resolve, reject ) => {
@@ -848,7 +848,7 @@ function DbUtility ( config ) {
               return datastoreClient.get( key )
               .then( ( dataArray ) => {
                 if( dataArray[ 0 ] === undefined ) {
-                  throw new Error( 'id doesn\'t exist' );
+                  throw new Error( 'DbUtility: Id doesn\'t exist' );
                 } else {
                   var dataEntity = dataArray[ 0 ];
                   for( var i = 0; i < keysUpper.length; i++ ) {
@@ -880,7 +880,7 @@ function DbUtility ( config ) {
                     } );
                   } else {
                     //WRONG FIELDS PROVIDED NOT CONFORMING TO SCHEMA
-                    throw new Error( 'Wrong fields provided. It is not according to SCHEMA structure provided.');
+                    throw new Error( 'DbUtility: Wrong fields provided. It is not according to SCHEMA structure provided.');
                   }
                 }
               } )
@@ -890,15 +890,15 @@ function DbUtility ( config ) {
                 } );
               } );
             } else {
-              throw new Error( 'Primary key provided in Data object or Primary key is not provided in ID object' );
+              throw new Error( 'DbUtility: Primary key provided in Data object or Primary key is not provided in ID object' );
             }
           } else {
             //EMPTY MAP IS PROVIDED
-            throw new Error( 'Empty Objects or Wrong number of keys in ID object.' );
+            throw new Error( 'DbUtility: Empty Objects or Wrong number of keys in ID object.' );
           }
         } else {
           //DATA IS NOT A MAP
-          throw new Error( 'Wrong type of data' );
+          throw new Error( 'DbUtility: Wrong type of data' );
         }
       } catch( error ) {
         return new Promise( ( resolve, reject ) => {
@@ -929,7 +929,7 @@ function DbUtility ( config ) {
             } );
           } );
         } else {
-          throw new Error( 'Wrong type of id' );
+          throw new Error( 'DbUtility: Wrong type of id' );
         }
       } catch(error) {
         return new Promise( ( resolve, reject ) => {
