@@ -155,6 +155,20 @@ function DbUtility ( config ) {
     }
   };
 
+  function makeData( data ) {
+    var newData = [];
+    var keyData = Object.keys( data );
+    var valueData = Object.values( data );
+    for( var i = 0; i < keyData.length; i++ ) {
+      var newObject = {};
+      newObject.name = keyData[ i ];
+      newObject.value = valueData[ i ];
+      newObject.excludeFromIndexes = excludeFromIndexes.indexOf( keyData[ i ] ) === -1 ? false : true;
+      newData.push( newObject );
+    }
+    return newData;
+  }
+
   //MAKE A PRIMARY KEY FOR DATASTORE WITH PROVIDED ID NOTE: DATASTORE SPECIFIC
   function getKey( id ) {
     return datastoreClient.key( [ kind, id ] );
@@ -596,10 +610,11 @@ function DbUtility ( config ) {
               }
               //NOTE: EXPLICIT DELETE OF KEY FROM DATA DUE TO DATASTORE SPECIFIC
               delete newData[ primaryKey ];
+              dbFormatData = makeData( newData );
               var task = {
                 key: key,
                 excludeFromIndexes: excludeFromIndexes,
-                data: newData
+                data: dbFormatData
               };
               //INSERT DATA IF IT NOT EXISTS
               return datastoreClient.insert( task )
@@ -777,10 +792,11 @@ function DbUtility ( config ) {
                 //CREATE KEY NOTE: DATASTORE SPECIFIC
                 var value = newIdData[ primaryKey ];
                 key = getKey( value );
+                dbFormatData = makeData( newData );
                 var task = {
                   key: key,
                   excludeFromIndexes: excludeFromIndexes,
-                  data: newData
+                  data: dbFormatData
                 };
                 //UPDATE DATA IF IT EXISTS
                 return datastoreClient.update( task )
@@ -860,10 +876,11 @@ function DbUtility ( config ) {
                   //CHECK IF NEWDATA IS CONFORMING TO THE SPECIFIED SCHEMA
                   var flag = checkSchema( dataEntity );
                   if( flag ) {
+                  dbFormatData = makeData( dataEntity );
                     var task = {
                       key: key,
                       excludeFromIndexes: excludeFromIndexes,
-                      data: dataEntity
+                      data: dbFormatData
                     };
                     //UPDATE DATA IF IT EXISTS
                     return datastoreClient.update( task )
