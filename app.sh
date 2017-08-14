@@ -441,7 +441,7 @@ then
   create_target
   add_target_to_ilb
   create_service
-  autoscaling_alarm
+#  autoscaling_alarm
 elif [ $COMMAND == "update" ]
 then
   echo "$APP_NAME***** executing $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION"
