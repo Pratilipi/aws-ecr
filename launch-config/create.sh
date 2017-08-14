@@ -9,12 +9,9 @@ then
 fi
 
 
-if [ $STAGE == "prod" -a $TYPE == "default" ]
+if [ $TYPE == "default" ]
 then
   INSTANCE_TYPE="m4.large"
-elif [ $STAGE == "prod" ] || [ $TYPE == "default" ]
-then
-  INSTANCE_TYPE="t2.medium"
 else
   INSTANCE_TYPE="t2.micro"
 fi
@@ -48,7 +45,7 @@ aws autoscaling create-launch-configuration \
     --key-name $STAGE \
     --iam-instance-profile ecsInstanceRole \
     --user-data file://userdata-$TYPE.txt \
-    --block-device-mappings "DeviceName=/dev/xvdcz,Ebs={VolumeSize=22,VolumeType=gp2,DeleteOnTermination=true,Encrypted=true}" \
+    --block-device-mappings "DeviceName=/dev/xvdcz,Ebs={VolumeSize=92,VolumeType=gp2,DeleteOnTermination=true,Encrypted=true}" \
     --instance-monitoring Enabled=true \
     --no-ebs-optimized \
     --associate-public-ip-address
