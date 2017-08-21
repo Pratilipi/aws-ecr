@@ -86,15 +86,18 @@ function getServiceCommand( appName, callback )
 
 } )();
 
-
-app.use( bodyParser.json() );
+console.log('--------------REACHED TILL BODY PARSES--------------');
+app.use( bodyParser.json({limit: '50mb'}));
+console.log('--------------REACHED END OF BODY PARSER------------');
 
 app.get( '/health', function ( req, res ) {
   res.send( 'Realm:' + REALM + ', Stage:' + STAGE );
 } );
 
 app.post( '/*', function ( req, res ) {
-
+  console.log('--------------REQUEST BODY---------------');
+  console.log(req.body);
+  console.log('--------------REQUEST BODY---------------');
   if( ( STAGE == 'devo' && req.body.ref != 'refs/heads/devo' )
       || ( STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma' )
       || ( STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
