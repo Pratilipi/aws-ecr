@@ -87,7 +87,7 @@ function getServiceCommand( appName, callback )
 } )();
 
 
-app.use( bodyParser.json() );
+// app.use( bodyParser.json() );
 app.use( bodyParser.urlencoded({ extended:true }) );
 
 app.get( '/health', function ( req, res ) {
