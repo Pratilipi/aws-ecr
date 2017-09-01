@@ -15,7 +15,7 @@ const commands = [
 
 function checkServiceWhitelist( appName )
 {
-  var whitelist = [ "ecs", "auth", "author", "image", "pag", "page", "pratilipi", "recommendation", "search", "user-activity", "web", "hello-python", "social-connect" ];
+  var whitelist = [ "ecs", "auth", "author", "image", "pag", "page", "pratilipi", "recommendation", "search", "user-activity", "web", "hello-python", "mini", "follow", "social-connect" ];
   if( STAGE === "prod" && REALM === "product" ) {
     whitelist.push( "datastore-util" );
   }
@@ -86,18 +86,17 @@ function getServiceCommand( appName, callback )
 
 } )();
 
-console.log('--------------REACHED TILL BODY PARSES--------------');
+app.use( bodyParser.urlencoded({ extended:true }) );
 app.use( bodyParser.json({limit: '50mb'}));
-console.log('--------------REACHED END OF BODY PARSER------------');
 
 app.get( '/health', function ( req, res ) {
   res.send( 'Realm:' + REALM + ', Stage:' + STAGE );
 } );
 
 app.post( '/*', function ( req, res ) {
-  console.log('--------------REQUEST BODY---------------');
-  console.log(req.body);
-  console.log('--------------REQUEST BODY---------------');
+
+  req.body = JSON.parse( req.body.payload );
+  
   if( ( STAGE == 'devo' && req.body.ref != 'refs/heads/devo' )
       || ( STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma' )
       || ( STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
