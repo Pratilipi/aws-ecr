@@ -96,7 +96,7 @@ app.get( '/health', function ( req, res ) {
 
 app.post( '/*', function ( req, res ) {
 
-  console.log(req.body);
+  req.body = JSON.parse( req.body.payload );
   
   if( ( STAGE == 'devo' && req.body.ref != 'refs/heads/devo' )
       || ( STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma' )
