@@ -96,6 +96,8 @@ app.get( '/health', function ( req, res ) {
 
 app.post( '/*', function ( req, res ) {
 
+  console.log(req.body);
+  
   if( ( STAGE == 'devo' && req.body.ref != 'refs/heads/devo' )
       || ( STAGE == 'gamma' && req.body.ref != 'refs/heads/gamma' )
       || ( STAGE == 'prod' && req.body.ref != 'refs/heads/master') ) {
@@ -107,7 +109,7 @@ app.post( '/*', function ( req, res ) {
     res.status( 400 ).send( `No deployment in ${REALM}/${STAGE} for deleted ${req.body.repository.name}/${req.body.ref.substr(11)} branch.` );
     return;
   }
-console.log(req.body);
+
   var appName = req.body.repository.name;
   if( appName === 'pratilipi' ) {
     res.status( 400 ).send( `No deployment in ${REALM}/${STAGE} for repository: ${appName}.` );
