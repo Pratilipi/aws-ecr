@@ -10,7 +10,7 @@ var logging;
 ( function authenticate() {
   google.auth.getApplicationDefault( ( err, authClient ) => {
     if( err ) {
-      console.log( 'Failed to get the default credentials: ' + String( err ) );
+      console.error( 'LogginGcp: Failed to get the default credentials: ' +  err );
       setTimeout( authenticate, 15 * 1000 );
     }
     if( authClient.createScopedRequired && authClient.createScopedRequired() ) {
@@ -102,7 +102,7 @@ class LoggingGcp {
 
       logging.entries.write( { resource: this.logEntry }, ( err, result ) => {
         if( err ) {
-          console.error( String( err ) );
+          console.error( 'LoggingGcp: ' + err );
         }
       } );
     } else {

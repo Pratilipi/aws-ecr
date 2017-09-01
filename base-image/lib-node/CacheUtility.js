@@ -13,11 +13,11 @@ function cacheUtility( config ) {
   } );
 
   redisClient.on( 'connect', () => {
-    console.log( 'Redis Connected on port: ' + config.port + ' with db: ' + config.db + ' for resource:' + config.resource );
+    console.log( 'CacheUtility: Redis Connected on port: ' + config.port + ' with db: ' + config.db + ' for resource:' + config.resource );
   } );
 
   redisClient.on( 'error', function( err ) {
-    console.log( 'Error connecting to redis ' + err );
+    console.log( 'CacheUtility: Error connecting to redis ' + err );
   } );
 
   return {
@@ -25,7 +25,7 @@ function cacheUtility( config ) {
     get: function( id ) {
       return new Promise( ( resolve, reject ) => {
         if( arguments.length === 0 ) {
-          var err = new Error( 'Bad Request' );
+          var err = new Error( 'CacheUtility: Bad Request' );
           err.status = 400;
           reject( err );
         } else {
@@ -39,7 +39,7 @@ function cacheUtility( config ) {
     list: function( ids ) {
       return new Promise( ( resolve, reject ) => {
         if( arguments.length === 0 || !Array.isArray( ids ) || ids.length === 0 ) {
-          var err = new Error( 'Bad Request' );
+          var err = new Error( 'CacheUtility: Bad Request' );
           err.status = 400;
           reject( err );
         } else {
@@ -53,7 +53,7 @@ function cacheUtility( config ) {
     insert: function( id, entity ) {
       return new Promise( ( resolve, reject ) => {
         if( arguments.length < 2 || typeof( entity ) != 'object' ) {
-          var err = new Error( 'Bad Request' );
+          var err = new Error( 'CacheUtility: Bad Request' );
           err.status = 400;
           reject( err );
         } else {
@@ -69,7 +69,7 @@ function cacheUtility( config ) {
     delete: function( id ) {
       return new Promise( ( resolve, reject ) => {
         if( arguments.length === 0 ) {
-          var err = new Error( 'Bad Request' );
+          var err = new Error( 'CacheUtility: Bad Request' );
           err.status = 400;
           reject( err );
         } else {
@@ -85,7 +85,7 @@ function cacheUtility( config ) {
     insertMultiple: function( ids, entities ) {
       return new Promise( ( resolve, reject ) => {
         if( arguments.length < 2 || typeof( entities ) != 'object' || !Array.isArray( ids ) ) {
-          var err = new Error( 'Bad Request' );
+          var err = new Error( 'CacheUtility: Bad Request' );
           err.status = 400;
           reject( err );
         } else {

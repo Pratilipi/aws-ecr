@@ -5,8 +5,9 @@
         {
             "name": "$APP_NAME",
             "image": "$DOCKER_REPO/$APP_NAME:$APP_VERSION",
-            "cpu": 128,
-            "memoryReservation": 256,
+            "cpu": 64,
+            "memoryReservation": 128,
+            "memory": 256,
             "portMappings": [
                 {
                     "hostPort": 0,
@@ -41,7 +42,7 @@
     ],
     "placementConstraints": [
         {
-            "expression": "attribute:instance-category-devops == true",
+            "expression": "attribute:instance-category-default == true",
             "type": "memberOf"
         }
     ]

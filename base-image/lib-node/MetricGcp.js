@@ -68,7 +68,7 @@ class MetricGcp {
     // Writes time series data
     client.createTimeSeries( request, function( err, result ) {
       if ( err ) {
-        console.error( String( err ) );
+        console.error( 'MetricGcp: ' + err );
       }
     } );
 

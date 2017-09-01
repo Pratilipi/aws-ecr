@@ -29,7 +29,7 @@ var schema1 = { structure   : {
   'OBJECT_WITH_OBJECT'     : { 'type' : 'OBJECT'     , 'default' : {}   }
 },
 primaryKey  : 'TEST1_ID',
-excludeFromIndexes: ['STRING','INTEGER']};
+excludeFromIndexes: [ 'STRING', 'INTEGER', 'OBJECT', 'ARRAY' ] };
 
 var schema2 = { structure   : {
   'TEST2_ID'    : { 'type' : 'STRING'   , 'default' : ""     },

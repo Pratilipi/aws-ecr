@@ -11,7 +11,7 @@ gcp-prod.json
 .jshintrc
 .settings/
 */lib/
+*/keyfile.json
 */npm-debug.log
 keyfile.json
 node_modules/
-*/keyfile.json
