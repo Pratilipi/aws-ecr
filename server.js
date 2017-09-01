@@ -107,7 +107,7 @@ app.post( '/*', function ( req, res ) {
     res.status( 400 ).send( `No deployment in ${REALM}/${STAGE} for deleted ${req.body.repository.name}/${req.body.ref.substr(11)} branch.` );
     return;
   }
-
+console.log(req.body);
   var appName = req.body.repository.name;
   if( appName === 'pratilipi' ) {
     res.status( 400 ).send( `No deployment in ${REALM}/${STAGE} for repository: ${appName}.` );
