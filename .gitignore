@@ -15,3 +15,6 @@ gcp-prod.json
 */npm-debug.log
 keyfile.json
 node_modules/
+.DS_Store
+base-image/.DS_Store
+dump.rdb
