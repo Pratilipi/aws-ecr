@@ -5,9 +5,9 @@
   "author": "Prashant",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/monitoring": "0.2.0",
-    "googleapis": "18.0.0",
-    "redis": "2.7.1",
+    "@google-cloud/monitoring": "0.3.0",
+    "googleapis": "21.3.0",
+    "redis": "2.8.0",
     "@google-cloud/datastore": "1.1.0",
     "bluebird": "3.5.0",
     "lodash": "4.17.4"
