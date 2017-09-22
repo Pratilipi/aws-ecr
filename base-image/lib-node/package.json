@@ -6,7 +6,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/monitoring": "0.3.0",
-    "googleapis": "21.3.0",
+    "googleapis": "22.1.0",
     "redis": "2.8.0",
     "@google-cloud/datastore": "1.1.0",
     "bluebird": "3.5.0",
