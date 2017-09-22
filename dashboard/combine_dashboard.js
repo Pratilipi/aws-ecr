@@ -1,8 +1,6 @@
 var fs = require('fs');
 
-var service=[	
-				[ "appName", "targetGroup", "loadBalancer", "name" ]
-			];
+var service = require('./config.js');
 
 var template = fs.readFileSync(`DashBoard.template`,'utf8');
 
