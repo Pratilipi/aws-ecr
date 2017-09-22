@@ -1,0 +1,226 @@
+{
+  "widgets": [
+    {
+      "type": "text",
+      "width": 24,
+      "height": 2,
+      "properties": {
+        "markdown": "\n## $name\n[EC2 Container Service](https://ap-southeast-1.console.aws.amazon.com/ecs/home?region=ap-southeast-1#/clusters/prod-ecs/services/$appName/tasks)\n"
+      }
+    },
+    {
+      "type": "metric",
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [
+            "AWS/ApplicationELB",
+            "TargetResponseTime",
+            "TargetGroup",
+            "$targetGroup",
+            "LoadBalancer",
+            "$loadBalancer",
+            {
+              "period": 60
+            }
+          ],
+          [
+            ".",
+            "RequestCountPerTarget",
+            ".",
+            ".",
+            ".",
+            ".",
+            {
+              "period": 60,
+              "stat": "Sum",
+              "yAxis": "right"
+            }
+          ]
+        ],
+        "region": "ap-southeast-1",
+        "yAxis": {
+          "left": {
+            "min": 0
+          },
+          "right": {
+            "min": 0
+          }
+        },
+        "period": 300,
+        "title": "Latencies"
+      }
+    },
+    {
+      "type": "metric",
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [
+            "AWS/ApplicationELB",
+            "HTTPCode_Target_3XX_Count",
+            "TargetGroup",
+            "$targetGroup",
+            "LoadBalancer",
+            "$loadBalancer",
+            {
+              "period": 60,
+              "stat": "Sum",
+              "label": "3XX"
+            }
+          ],
+          [
+            ".",
+            "HTTPCode_Target_4XX_Count",
+            ".",
+            ".",
+            ".",
+            ".",
+            {
+              "period": 60,
+              "stat": "Sum",
+              "label": "4XX"
+            }
+          ],
+          [
+            ".",
+            "HTTPCode_Target_5XX_Count",
+            ".",
+            ".",
+            ".",
+            ".",
+            {
+              "period": 60,
+              "stat": "Sum",
+              "label": "5XX"
+            }
+          ]
+        ],
+        "region": "ap-southeast-1",
+        "period": 300,
+        "title": "Status Codes",
+        "yAxis": {
+          "left": {
+            "min": 0
+          },
+          "right": {
+            "min": 0
+          }
+        }
+      }
+    },
+    {
+      "type": "metric",
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [
+            "AWS/ApplicationELB",
+            "RequestCount",
+            "TargetGroup",
+            "$targetGroup",
+            "LoadBalancer",
+            "$loadBalancer",
+            {
+              "stat": "Sum",
+              "period": 60
+            }
+          ],
+          [
+            ".",
+            "HealthyHostCount",
+            ".",
+            ".",
+            ".",
+            ".",
+            {
+              "yAxis": "right",
+              "period": 60,
+              "stat": "Maximum"
+            }
+          ],
+          [
+            ".",
+            "UnHealthyHostCount",
+            ".",
+            ".",
+            ".",
+            ".",
+            {
+              "yAxis": "right",
+              "period": 60,
+              "stat": "Maximum"
+            }
+          ]
+        ],
+        "region": "ap-southeast-1",
+        "period": 300,
+        "yAxis": {
+          "left": {
+            "min": 0
+          },
+          "right": {
+            "min": 0
+          }
+        },
+        "title": "Request Count"
+      }
+    },
+    {
+      "type": "metric",
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [
+            "AWS/ECS",
+            "CPUUtilization",
+            "ServiceName",
+            "$appName",
+            "ClusterName",
+            "prod-ecs",
+            {
+              "period": 60,
+              "label": "CPUUtilization Average"
+            }
+          ],
+          [
+            ".",
+            "MemoryUtilization",
+            ".",
+            ".",
+            ".",
+            ".",
+            {
+              "period": 60,
+              "stat": "Maximum",
+              "label": "MemoryUtilization Maximum"
+            }
+          ]
+        ],
+        "region": "ap-southeast-1",
+        "period": 300,
+        "yAxis": {
+          "left": {
+            "min": 0
+          },
+          "right": {
+            "min": 0
+          }
+        },
+        "title": "Resource Utilization"
+      }
+    }
+  ]
+}
