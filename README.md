@@ -23,6 +23,9 @@ On Mac:
 ### Giridhar ###
 * [Recommandation Service](https://github.com/Pratilipi/recommendation-engine)
 * [Auth Service](https://github.com/Pratilipi/ecs-auth)
+* [Follow Service](https://github.com/Pratilipi/ecs-follow)
+* [Social Service](https://github.com/Pratilipi/ecs-social)
+* [User Service](https://github.com/Pratilipi/ecs-user)
 
 ### Amit ###
 * [Image Service](https://github.com/Pratilipi/ecs-image)
