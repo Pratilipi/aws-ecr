@@ -602,7 +602,7 @@ function DbUtility ( config ) {
                 key = getKey( value );
               } else if( newData[ primaryKey ] === structure[ primaryKey ].default ) {
                 key = getNewKey();
-              } else if( newData[ primaryKey ].value === structure[ primaryKey ].default ) {
+              } else if( newData[ primaryKey ].value !== undefined && newData[ primaryKey ].value == structure[ primaryKey ].default ) {
                 key = getNewKey();
               } else {
                 var value = newData[ primaryKey ];
