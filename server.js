@@ -15,7 +15,7 @@ const commands = [
 
 function checkServiceWhitelist( appName )
 {
-  var whitelist = [ "ecs", "auth", "author", "image", "pag", "page", "pratilipi", "recommendation", "search", "user-activity", "web", "hello-python", "mini", "follow", "social-connect", "traffic-splitter", "pwg", "blog-scrapper" ];
+  var whitelist = [ "ecs", "auth", "author", "image", "pag", "page", "pratilipi", "recommendation", "search", "user-activity", "web", "hello-python", "mini", "follow", "social-connect", "traffic-splitter", "pwg", "blog-scraper" ];
   if( STAGE === "prod" && REALM === "product" ) {
     whitelist.push( "datastore-util" );
   }
