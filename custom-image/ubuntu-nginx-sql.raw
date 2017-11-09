@@ -12,4 +12,3 @@ RUN apt-get autoremove
 RUN apt-get clean
 
 CMD ["service",  "nginx", "start"]
-
