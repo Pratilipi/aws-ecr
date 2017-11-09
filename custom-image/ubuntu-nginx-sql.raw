@@ -1,0 +1,14 @@
+FROM $DOCKER_REPO/ubuntu:16.04
+
+RUN apt-get update
+RUN apt-get install -y --force-yes build-essential ca-certificates gcc git libpq-dev make python-pip python2.7 python2.7-dev ssh 
+RUN apt-get install -y --force-yes mysql-client
+RUN apt-get install -y --force-yes nginx
+RUN apt-get install -y --force-yes libmysqlclient-dev
+RUN pip install --upgrade pip
+RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
+RUN chown -R www-data:www-data /var/lib/nginx
+RUN apt-get autoremove
+RUN apt-get clean
+
+CMD ["service",  "nginx", "start"]

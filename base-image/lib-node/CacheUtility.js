@@ -50,12 +50,18 @@ function cacheUtility( config ) {
       } );
     },
 
-    insert: function( id, entity ) {
+    insert: function( id, entity, ttl ) {
       return new Promise( ( resolve, reject ) => {
-        if( arguments.length < 2 || typeof( entity ) != 'object' ) {
+        if( arguments.length < 2 || typeof( entity ) != 'object' || ( ttl && !Number.isInteger( ttl ) ) ) {
           var err = new Error( 'CacheUtility: Bad Request' );
           err.status = 400;
           reject( err );
+        } else if( ttl ) {
+          var pr = redisClient.setexAsync( id, ttl, JSON.stringify( entity ) )
+          .then( reply => {
+            return reply === 'OK';
+          } );
+          resolve( pr );
         } else {
           var pr = redisClient.setAsync( id, JSON.stringify( entity ) )
           .then( reply => {
