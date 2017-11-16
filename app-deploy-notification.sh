@@ -221,7 +221,6 @@ create_service()
     --cluster $PREFIX$STAGE-ecs \
     --service-name $APP_NAME \
     --task-definition $APP_NAME:$TASK_DEF_VER \
-    --role ecsServiceRole \
     --desired-count 1
   echo "****************************************************************"
   echo ... created service: $APP_NAME
