@@ -44,6 +44,7 @@ COPY custom-image custom-image
 COPY custom-image.sh .
 COPY app.sh .
 COPY app-deploy.sh .
+COPY app-deploy-notification.sh .
 COPY server.js .
 
 EXPOSE 80
