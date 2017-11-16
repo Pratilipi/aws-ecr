@@ -14,10 +14,8 @@ fi
 
 if [ "$APP_NAME" == "notification" ]
 then
-  bash ../app-deploy-notification.sh $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION
   bash ../app-deploy-notification.sh $COMMAND $REALM $STAGE $APP_NAME-daemon $APP_VERSION
   bash ../app-deploy-notification.sh $COMMAND $REALM $STAGE $APP_NAME-worker $APP_VERSION
-  exit 0
 fi
 
 if [ ! -f "Dockerfile.raw" ]
