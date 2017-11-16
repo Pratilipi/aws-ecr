@@ -1,4 +1,4 @@
-echo "$4***** Running bash app.sh $1 $2 $3 $4 $5"
+echo "$4***** Running bash app-deploy-notification.sh $1 $2 $3 $4 $5"
 
 COMMAND=$1
 REALM=$2
@@ -12,34 +12,26 @@ then
   exit 1
 fi
 
-if [ "$APP_NAME" == "notification" ]
+if [ ! -f "Dockerfile-$APP_NAME.raw" ]
 then
-  bash ../app-deploy-notification.sh $COMMAND $REALM $STAGE $APP_NAME $APP_VERSION
-  bash ../app-deploy-notification.sh $COMMAND $REALM $STAGE $APP_NAME-daemon $APP_VERSION
-  bash ../app-deploy-notification.sh $COMMAND $REALM $STAGE $APP_NAME-worker $APP_VERSION
-  exit 0
-fi
-
-if [ ! -f "Dockerfile.raw" ]
-then
-  echo "$APP_NAME***** Could not find Dockerfile.raw !"
+  echo "$APP_NAME***** Could not find Dockerfile-$APP_NAME.raw !"
   exit 1
 fi
 
-if [ ! -f "ecr-task-def.raw" ]
+if [ ! -f "ecr-task-def-$APP_NAME.raw" ]
 then
-  echo "$APP_NAME***** Could not find ecr-task-def.raw !"
+  echo "$APP_NAME***** Could not find ecr-task-def-$APP_NAME.raw !"
   exit 1
 fi
 
 replace_dockerfile()
 {
-  echo "$APP_NAME***** replacing Dockerfile.raw and storing in Dockerfile"
-  cat Dockerfile.raw \
+  echo "$APP_NAME***** replacing Dockerfile-$APP_NAME.raw and storing in Dockerfile"
+  cat Dockerfile-$APP_NAME.raw \
   | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
   | sed "s#\$STAGE#$STAGE#g" \
   > Dockerfile
-  echo "$APP_NAME***** created Dockerfile with replaced contents of Dockerfile.raw"
+  echo "$APP_NAME***** created Dockerfile with replaced contents of Dockerfile-$APP_NAME.raw"
 }
 
 build_image()
@@ -123,8 +115,8 @@ push_image()
 
 replace_task_def()
 {
-  echo "$APP_NAME***** replacing ecr-task-def.raw and storing in ecr-task-def.json"
-  cat ecr-task-def.raw \
+  echo "$APP_NAME***** replacing ecr-task-def-$APP_NAME.raw and storing in ecr-task-def.json"
+  cat ecr-task-def-$APP_NAME.raw \
     | sed "s#\$STAGE#$STAGE#g" \
     | sed "s#\$PREFIX#$PREFIX#g" \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
@@ -132,7 +124,7 @@ replace_task_def()
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
     | sed "s#\$AWS_PROJ_ID#$AWS_PROJ_ID#g" \
     > ecr-task-def.json
-  echo "$APP_NAME***** created ecr-task-def.json with replaced contents of ecr-task-def.raw"
+  echo "$APP_NAME***** created ecr-task-def.json with replaced contents of ecr-task-def-$APP_NAME.raw"
 }
 
 register_task_def()
@@ -471,4 +463,4 @@ then
   echo "$APP_NAME***** service: $APP_NAME deleted."
 fi
 
-echo "$APP_NAME***** app.sh $1 $2 $3 $4 $5 SUCCESS"
+echo "$APP_NAME***** app-deploy-notification.sh $1 $2 $3 $4 $5 SUCCESS"
