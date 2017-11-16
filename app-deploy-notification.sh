@@ -222,8 +222,6 @@ create_service()
     --service-name $APP_NAME \
     --task-definition $APP_NAME:$TASK_DEF_VER \
     --role ecsServiceRole \
-    --load-balancers targetGroupArn=$TARGET_GRP_ARN,containerName=$APP_NAME,containerPort=80 \
-    --placement-strategy type="spread",field="instanceId" \
     --desired-count 1
   echo "****************************************************************"
   echo ... created service: $APP_NAME
@@ -438,8 +436,6 @@ then
   replace_task_def
   register_task_def
   create_log
-  create_target
-  add_target_to_ilb
   create_service
 #  autoscaling_alarm
 elif [ $COMMAND == "update" ]
