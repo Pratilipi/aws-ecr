@@ -1,4 +1,4 @@
-echo "$4***** Running bash app.sh $1 $2 $3 $4 $5"
+echo "$4***** Running bash app-deploy-notification.sh $1 $2 $3 $4 $5"
 
 COMMAND=$1
 REALM=$2
@@ -12,32 +12,26 @@ then
   exit 1
 fi
 
-if [ "$APP_NAME" == "notification" ]
+if [ ! -f "Dockerfile-$APP_NAME.raw" ]
 then
-  bash ../app-deploy-notification.sh $COMMAND $REALM $STAGE $APP_NAME-daemon $APP_VERSION
-  bash ../app-deploy-notification.sh $COMMAND $REALM $STAGE $APP_NAME-worker $APP_VERSION
-fi
-
-if [ ! -f "Dockerfile.raw" ]
-then
-  echo "$APP_NAME***** Could not find Dockerfile.raw !"
+  echo "$APP_NAME***** Could not find Dockerfile-$APP_NAME.raw !"
   exit 1
 fi
 
-if [ ! -f "ecr-task-def.raw" ]
+if [ ! -f "ecr-task-def-$APP_NAME.raw" ]
 then
-  echo "$APP_NAME***** Could not find ecr-task-def.raw !"
+  echo "$APP_NAME***** Could not find ecr-task-def-$APP_NAME.raw !"
   exit 1
 fi
 
 replace_dockerfile()
 {
-  echo "$APP_NAME***** replacing Dockerfile.raw and storing in Dockerfile"
-  cat Dockerfile.raw \
+  echo "$APP_NAME***** replacing Dockerfile-$APP_NAME.raw and storing in Dockerfile"
+  cat Dockerfile-$APP_NAME.raw \
   | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
   | sed "s#\$STAGE#$STAGE#g" \
   > Dockerfile
-  echo "$APP_NAME***** created Dockerfile with replaced contents of Dockerfile.raw"
+  echo "$APP_NAME***** created Dockerfile with replaced contents of Dockerfile-$APP_NAME.raw"
 }
 
 build_image()
@@ -121,8 +115,8 @@ push_image()
 
 replace_task_def()
 {
-  echo "$APP_NAME***** replacing ecr-task-def.raw and storing in ecr-task-def.json"
-  cat ecr-task-def.raw \
+  echo "$APP_NAME***** replacing ecr-task-def-$APP_NAME.raw and storing in ecr-task-def.json"
+  cat ecr-task-def-$APP_NAME.raw \
     | sed "s#\$STAGE#$STAGE#g" \
     | sed "s#\$PREFIX#$PREFIX#g" \
     | sed "s#\$DOCKER_REPO#$ECR_REPO#g" \
@@ -130,7 +124,7 @@ replace_task_def()
     | sed "s#\$APP_VERSION#$APP_VERSION#g" \
     | sed "s#\$AWS_PROJ_ID#$AWS_PROJ_ID#g" \
     > ecr-task-def.json
-  echo "$APP_NAME***** created ecr-task-def.json with replaced contents of ecr-task-def.raw"
+  echo "$APP_NAME***** created ecr-task-def.json with replaced contents of ecr-task-def-$APP_NAME.raw"
 }
 
 register_task_def()
@@ -181,43 +175,6 @@ create_log()
   fi
 }
 
-create_target()
-{
-  echo ... started creating target group
-  echo AWS Response:
-  echo "****************************************************************"
-  TARGET_GRP=$(aws elbv2 create-target-group \
-    --name ecs-$PREFIX$STAGE-$APP_NAME-tg \
-    --protocol HTTP \
-    --port 80 \
-    --vpc-id $VPC_ID \
-    --health-check-protocol HTTP \
-    --health-check-path /health \
-    --health-check-interval-seconds 30 \
-    --health-check-timeout-seconds 5 \
-    --healthy-threshold-count 5 \
-    --unhealthy-threshold-count 2 \
-    --matcher HttpCode=200)
-  echo $TARGET_GRP
-  echo "****************************************************************"
-  TARGET_GRP_ARN=$(echo $TARGET_GRP | jq -r '.TargetGroups[0]["TargetGroupArn"]')
-  echo ... created target group: $TARGET_GRP_ARN
-}
-
-add_target_to_ilb()
-{
-  echo ... started adding target group to the internal load balancer
-  echo AWS Response:
-  echo "****************************************************************"
-  aws elbv2 create-rule \
-    --listener-arn $LB_LISTNER \
-    --priority $(date +%M)$(date +%H) \
-    --conditions Field=path-pattern,Values=\'/$APP_NAME/*\' \
-    --actions Type=forward,TargetGroupArn=$TARGET_GRP_ARN
-  echo "****************************************************************"
-  echo ... added target group to the internal load balancer
-}
-
 create_service()
 {
   echo ... started creating service
@@ -227,9 +184,6 @@ create_service()
     --cluster $PREFIX$STAGE-ecs \
     --service-name $APP_NAME \
     --task-definition $APP_NAME:$TASK_DEF_VER \
-    --role ecsServiceRole \
-    --load-balancers targetGroupArn=$TARGET_GRP_ARN,containerName=$APP_NAME,containerPort=80 \
-    --placement-strategy type="spread",field="instanceId" \
     --desired-count 1
   echo "****************************************************************"
   echo ... created service: $APP_NAME
@@ -249,114 +203,6 @@ update_service()
   else
     echo "$APP_NAME***** error while updating service: $APP_NAME"
     exit $STATUS
-  fi
-}
-
-autoscaling_alarm()
-{
-  if [ $STAGE == "prod" ]
-  then
-    aws application-autoscaling register-scalable-target \
-      --resource-id service/$PREFIX$STAGE-ecs/$APP_NAME \
-      --service-namespace ecs \
-      --scalable-dimension ecs:service:DesiredCount \
-      --min-capacity 2 \
-      --max-capacity 100 \
-      --role-arn $AUTO_SCALING_IAM_ROLE >> /dev/null 2>&1
-
-    SCALING_POLICY_ARN=$(aws application-autoscaling put-scaling-policy \
-      --policy-name ecs-$PREFIX$STAGE-$APP_NAME-scaleup-cpu \
-      --service-namespace ecs \
-      --resource-id service/$PREFIX$STAGE-ecs/$APP_NAME \
-      --scalable-dimension ecs:service:DesiredCount \
-      --policy-type StepScaling \
-      --step-scaling-policy-configuration "AdjustmentType=ChangeInCapacity,StepAdjustments=[{MetricIntervalLowerBound=0.0,ScalingAdjustment=1}],Cooldown=300,MetricAggregationType=Average" \
-      | jq -r '.PolicyARN')
-
-    aws cloudwatch put-metric-alarm \
-      --alarm-name ecs-$PREFIX$STAGE-$APP_NAME-cpu80-hi \
-      --alarm-description "ECS CPU utilization for $APP_NAME service is greater than 80% for 2 minutes" \
-      --metric-name CPUUtilization \
-      --namespace AWS/ECS \
-      --statistic Average \
-      --period 60 \
-      --threshold 80 \
-      --comparison-operator GreaterThanThreshold \
-      --dimensions Name="ServiceName",Value="$APP_NAME" Name="ClusterName",Value="$PREFIX$STAGE-ecs" \
-      --evaluation-periods 2 \
-      --treat-missing-data missing \
-      --alarm-actions $SNS_RESOURCE $SCALING_POLICY_ARN >> /dev/null 2>&1
-
-    SCALING_POLICY_ARN=$(aws application-autoscaling put-scaling-policy \
-      --policy-name ecs-$PREFIX$STAGE-$APP_NAME-scaledown-cpu \
-      --service-namespace ecs \
-      --resource-id service/$PREFIX$STAGE-ecs/$APP_NAME \
-      --scalable-dimension ecs:service:DesiredCount \
-      --policy-type StepScaling \
-      --step-scaling-policy-configuration "AdjustmentType=ChangeInCapacity,StepAdjustments=[{MetricIntervalUpperBound=0.0,ScalingAdjustment=-1}],Cooldown=300,MetricAggregationType=Average" \
-      | jq -r '.PolicyARN')
-
-    aws cloudwatch put-metric-alarm \
-      --alarm-name ecs-$PREFIX$STAGE-$APP_NAME-cpu40-lo \
-      --alarm-description "ECS CPU utilization for $APP_NAME service is less than 40% for 10 minutes" \
-      --metric-name CPUUtilization \
-      --namespace AWS/ECS \
-      --statistic Average \
-      --period 60 \
-      --threshold 40 \
-      --comparison-operator LessThanThreshold \
-      --dimensions Name="ServiceName",Value="$APP_NAME" Name="ClusterName",Value="$PREFIX$STAGE-ecs" \
-      --evaluation-periods 10 \
-      --treat-missing-data missing \
-      --alarm-actions $SNS_RESOURCE $SCALING_POLICY_ARN >> /dev/null 2>&1
-
-    SCALING_POLICY_ARN=$(aws application-autoscaling put-scaling-policy \
-      --policy-name ecs-$PREFIX$STAGE-$APP_NAME-scaleup-burst \
-      --service-namespace ecs \
-      --resource-id service/$PREFIX$STAGE-ecs/$APP_NAME \
-      --scalable-dimension ecs:service:DesiredCount \
-      --policy-type StepScaling \
-      --step-scaling-policy-configuration "AdjustmentType=ChangeInCapacity,StepAdjustments=[{MetricIntervalLowerBound=0.0,ScalingAdjustment=10}],Cooldown=300,MetricAggregationType=Average" \
-      | jq -r '.PolicyARN')
-
-    aws cloudwatch put-metric-alarm \
-      --alarm-name ecs-$PREFIX$STAGE-$APP_NAME-cpu100-hi \
-      --alarm-description "ECS CPU utilization for $APP_NAME service is 100% for 15 minutes" \
-      --metric-name CPUUtilization \
-      --namespace AWS/ECS \
-      --statistic Average \
-      --period 60 \
-      --threshold 100 \
-      --comparison-operator GreaterThanOrEqualToThreshold \
-      --dimensions Name="ServiceName",Value="$APP_NAME" Name="ClusterName",Value="$PREFIX$STAGE-ecs" \
-      --evaluation-periods 15 \
-      --treat-missing-data missing \
-      --alarm-actions $SNS_RESOURCE $SCALING_POLICY_ARN >> /dev/null 2>&1
-
-    SCALING_POLICY_ARN=$(aws application-autoscaling put-scaling-policy \
-      --policy-name ecs-$PREFIX$STAGE-$APP_NAME-scaleup-mem \
-      --service-namespace ecs \
-      --resource-id service/$PREFIX$STAGE-ecs/$APP_NAME \
-      --scalable-dimension ecs:service:DesiredCount \
-      --policy-type StepScaling \
-      --step-scaling-policy-configuration "AdjustmentType=ChangeInCapacity,StepAdjustments=[{MetricIntervalLowerBound=0.0,ScalingAdjustment=1}],Cooldown=300,MetricAggregationType=Average" \
-      | jq -r '.PolicyARN')
-
-    aws cloudwatch put-metric-alarm \
-      --alarm-name ecs-$PREFIX$STAGE-$APP_NAME-memory90-hi \
-      --alarm-description "ECS memory utilization for $APP_NAME service is more than 90% for 5 minutes" \
-      --metric-name MemoryUtilization \
-      --namespace AWS/ECS \
-      --statistic Average \
-      --period 60 \
-      --threshold 90 \
-      --comparison-operator GreaterThanThreshold \
-      --dimensions Name="ServiceName",Value="$APP_NAME" Name="ClusterName",Value="$PREFIX$STAGE-ecs" \
-      --evaluation-periods 5 \
-      --treat-missing-data missing \
-      --alarm-actions $SNS_RESOURCE $SCALING_POLICY_ARN >> /dev/null 2>&1
-
-    echo ... service autoscaling rules and alarms created: $APP_NAME
   fi
 }
 
@@ -444,8 +290,6 @@ then
   replace_task_def
   register_task_def
   create_log
-  create_target
-  add_target_to_ilb
   create_service
 #  autoscaling_alarm
 elif [ $COMMAND == "update" ]
@@ -469,4 +313,4 @@ then
   echo "$APP_NAME***** service: $APP_NAME deleted."
 fi
 
-echo "$APP_NAME***** app.sh $1 $2 $3 $4 $5 SUCCESS"
+echo "$APP_NAME***** app-deploy-notification.sh $1 $2 $3 $4 $5 SUCCESS"

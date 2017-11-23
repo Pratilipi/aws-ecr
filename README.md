@@ -19,6 +19,7 @@ On Mac:
 
 ### Raghu ###
 * Content Service
+* [User Service](https://github.com/Pratilipi/ecs-user)
 
 ### Giridhar ###
 * [Recommandation Service](https://github.com/Pratilipi/recommendation-engine)
