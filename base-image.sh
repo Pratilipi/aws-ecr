@@ -6,7 +6,7 @@ cp gcp-$STAGE.json base-image/keyfile.json
 cd base-image
 
 # bash build-image.sh $REALM $STAGE ubuntu 14.04
-bash build-image.sh $REALM $STAGE ubuntu 16.04
+# bash build-image.sh $REALM $STAGE ubuntu 16.04
 # bash build-image.sh $REALM $STAGE node 8.0.0
 # bash build-image.sh $REALM $STAGE node 8.3.0
 # bash build-image.sh $REALM $STAGE java 8u111
