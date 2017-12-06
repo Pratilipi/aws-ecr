@@ -29,7 +29,7 @@ build_image()
 {
   echo "$DOCKER_IMAGE***** image: building $ECR_IMAGE"
   $(aws ecr get-login --no-include-email)
-  docker build --tag $ECR_IMAGE .
+  docker build --no-cache --tag $ECR_IMAGE .
   STATUS=$?
   echo "$DOCKER_IMAGE***** Deleting Dockerfile"
   rm Dockerfile
