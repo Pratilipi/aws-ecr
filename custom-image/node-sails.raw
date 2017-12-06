@@ -1,0 +1,8 @@
+FROM $DOCKER_REPO/node:8.3.0
+
+RUN apt-get update && apt-get -y install python-dev && \
+    cd /tmp && curl -O https://bootstrap.pypa.io/get-pip.py && \
+    python get-pip.py --user && \
+    ~/.local/bin/pip install awscli --upgrade --user
+
+RUN npm install -g sails@0.12.13
