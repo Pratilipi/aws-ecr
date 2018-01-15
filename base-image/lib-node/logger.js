@@ -3,6 +3,7 @@ const date_time = require('moment-timezone');
 const on_headers = require('on-headers');
 const on_finished = require('on-finished');
 const continuation_local_storage = require('continuation-local-storage');
+var appName = undefined;
 
 const winston_config = winston.config;
 
@@ -21,16 +22,6 @@ const getNamespace = continuation_local_storage.getNamespace;
 const createNamespace = continuation_local_storage.createNamespace;
 const createRequest = createNamespace( 'Request-Id' );
 const getRequest = getNamespace( 'Request-Id' );
-const check = [];
-
-
-const ANDROID_ENDPOINTS = [ "temp.pratilipi.com", "android.pratilipi.com", "app.pratilipi.com", "android-gamma.pratilipi.com", "android-gamma-gr.pratilipi.com", "android-devo.ptlp.co" ];
-const DICTIONARY = '0123456789abcdefghijklmnopqrstuvwxyz';
-const uuidLength = 6;
-
-Array.prototype.contains = function ( obj ) {
-    return this.indexOf( obj ) > -1;
-};
 
 function logger() {
 }
@@ -55,77 +46,29 @@ logger.prototype.error = function( message ) {
     winstonLogger.error( formatterMessage( 'error', message ) );
 };
 
-logger.prototype.logger = function( req, res, next ) {
-    // create requestId and append it in header as Request-Id...
-    req._logStartTime = process.hrtime();
+logger.prototype.logger = function( appNameLocal ) { 
+    return function( req, res, next ) {
+        // create requestId and append it in header as Request-Id...
+        appName = appNameLocal;
+        req._logStartTime = process.hrtime();
+        on_finished( res, function() {
+            res._logEndTime = process.hrtime();
+            res._logDiffTime = process.hrtime( req._logStartTime );
+            winstonLogger.info( formatterHTTP( 'info', req, res ) );
+        } );
 
-    on_finished( res, function() {
-        res._logEndTime = process.hrtime();
-        winstonLogger.info( formatterHTTP( 'info', req, res ) );
-    } );
+        var requestId = req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
 
-    if( req.headers[ 'Request-Id'.toLowerCase() ] == null ) {
-        var requestId = createUnique( req );
-        req.headers[ 'Request-Id'.toLowerCase() ] = requestId;
+        if( requestId === '' ) {
+            winstonLogger.error( formatterMessage( 'error', 'Request-Id not found in headers.' ) )
+        }
+
         createRequest.run( function() {
             createRequest.set( 'Request-Id', requestId );
             next();
         } );
-    } else {
-        var requestId = req.headers[ 'Request-Id'.toLowerCase() ];
-        createRequest.run( function() {
-            createRequest.set( 'Request-Id', requestId );
-            next();
-        } );
-    }
+    };
 };
-
-function createUnique( req ) {
-    var realm = getRealm( req ) || 'pr';
-    var client = getClient( req );
-    var uuid = getUuid( uuidLength );
-    var page = getPage( req ) || 'undefined';
-    var requestId = realm + client + uuid + page;
-    if( check.contains( requestId ) ) {
-        var requestId2 = createUnique( req );
-        return requestId2;
-    } else {
-        check.push( requestId );
-        return requestId;
-    }
-}
-
-function getRealm( req ) {
-    
-}
-
-function getClient( req ) {
-    var clientType = ANDROID_ENDPOINTS.contains( req.headers.host ) ? "a" : "w";
-    return clientType;
-    
-}
-
-function getUuid( uuidLength ) {
-    // logic 1
-    var uuid = Math.random().toString( 36 ).substr( 2, uuidLength );
-    return uuid;
-    // logic 2 Duplicates are generated more frequently
-    // var uuid = "";
-    // for( var i = 0; i < uuidLength; i++ ) {
-    //     uuid += DICTIONARY.charAt( parseInt( Math.random() * DICTIONARY.length) % DICTIONARY.length );
-    // }
-    // return uuid;
-    // logic 3 Duplicates are generated more frequently
-    // var uuid = "";
-    // for( var i = 0; i < uuidLength; i++ ) {
-    //     uuid += DICTIONARY.charAt( Math.floor( Math.random() * DICTIONARY.length ) %DICTIONARY.length );
-    // }
-    // return uuid;
-}
-
-function getPage( req ) {
-    
-}
 
 function formatterMessage( logLevel, message ) {
     var timestamp = dateTimeIST();
@@ -144,20 +87,16 @@ function getLogLevel( logLevel ) {
     return logLevel.toLowerCase();
 }
 
-function getLogLevelWithColor( logLevel ) {
-    return winston_config.colorize( logLevel, logLevel.toLowerCase() );
-}
-
 function getRequestId() {
     return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : '';
 }
 
 function getRequestIdAfterFinished( req ) {
-    return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : req.headers[ 'Request-Id'.toLowerCase() ];
+    return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
 }
 
 function getServiceName() {
-    return process.env.APP_NAME || 'local';
+    return appName || process.env.APP_NAME || 'local';
 }
 
 function formatterHTTP( logLevel, req, res ) {
