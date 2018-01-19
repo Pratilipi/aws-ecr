@@ -110,7 +110,7 @@ function formatterHTTP( logLevel, req, res ) {
 }
 
 function buildHTTPMessage( req, res ) {
-    return `[${ req.method }] [${ req.originalUrl || req.url }] [${ res.statusCode }] [${ res.getHeader( 'Content-Length' ) }] [${ ( ( res._logEndTime[ 0 ] - req._logStartTime[ 0 ] ) * 1e3 + ( res._logEndTime[ 1 ] - req._logStartTime[ 1 ] ) * 1e-6 ).toFixed(3) }ms]`;
+    return `[${ req.method }] [${ req.originalUrl || req.url }] [${ res.getHeader( 'Content-Length' ) ? res.statusCode : 504 }] [${ res.getHeader( 'Content-Length' ) }] [${ ( ( res._logEndTime[ 0 ] - req._logStartTime[ 0 ] ) * 1e3 + ( res._logEndTime[ 1 ] - req._logStartTime[ 1 ] ) * 1e-6 ).toFixed(3) }ms]`;
 }
 
 module.exports = new logger();
