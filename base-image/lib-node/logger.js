@@ -59,12 +59,11 @@ logger.prototype.logger = function( appNameLocal ) {
 
         var requestId = req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
 
-        if( requestId === '' ) {
-            winstonLogger.error( formatterMessage( 'error', 'Request-Id not found in headers.' ) )
-        }
-
         createRequest.run( function() {
             createRequest.set( 'Request-Id', requestId );
+            if( requestId === '' ) {
+                winstonLogger.error( formatterMessage( 'error', 'Request-Id not found in headers.' ) )
+            }
             next();
         } );
     };
@@ -92,7 +91,7 @@ function getRequestId() {
 }
 
 function getRequestIdAfterFinished( req ) {
-    return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
+    return ( req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '' );
 }
 
 function getServiceName() {
