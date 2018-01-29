@@ -18,10 +18,10 @@ var winstonLogger = new winston.Logger({
 });
 
 
-const getNamespace = continuation_local_storage.getNamespace;
-const createNamespace = continuation_local_storage.createNamespace;
-const createRequest = createNamespace( 'Request-Id' );
-const getRequest = getNamespace( 'Request-Id' );
+var getNamespace = continuation_local_storage.getNamespace;
+var createNamespace = continuation_local_storage.createNamespace;
+var createRequest = createNamespace( 'Request-Id' );
+var getRequest = getNamespace( 'Request-Id' );
 
 function logger() {
 }
