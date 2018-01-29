@@ -20,6 +20,8 @@ var winstonLogger = new winston.Logger({
 
 var getNamespace = continuation_local_storage.getNamespace;
 var createNamespace = continuation_local_storage.createNamespace;
+var createRequest = createNamespace( 'Request-Id' );
+var getRequest = getNamespace( 'Request-Id' );
 
 function logger() {
 }
@@ -57,14 +59,13 @@ logger.prototype.logger = function( appNameLocal ) {
 
         var requestId = req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
         
-        var createRequest = createNamespace( 'Request-Id' );
-        createRequest.run( function() {
+        // createRequest.run( function() {
             createRequest.set( 'Request-Id', requestId );
             if( requestId === '' ) {
                 winstonLogger.error( formatterMessage( 'error', 'Request-Id not found in headers.' ) )
             }
             next();
-        } );
+        // } );
     };
 };
 
@@ -86,7 +87,6 @@ function getLogLevel( logLevel ) {
 }
 
 function getRequestId() {
-    var getRequest = getNamespace( 'Request-Id' );
     return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : '';
 }
 
