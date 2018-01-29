@@ -50,16 +50,16 @@ logger.prototype.logger = function( appNameLocal ) {
     return function( req, res, next ) {
         // create requestId and append it in header as Request-Id...
         appName = appNameLocal;
-        req._logStartTime = process.hrtime();
-        on_finished( res, function() {
-            res._logEndTime = process.hrtime();
-            res._logDiffTime = process.hrtime( req._logStartTime );
-            winstonLogger.info( formatterHTTP( 'info', req, res ) );
-        } );
+        createRequest.run( function( context ) {
+            req._logStartTime = process.hrtime();
+            on_finished( res, function() {
+                res._logEndTime = process.hrtime();
+                res._logDiffTime = process.hrtime( req._logStartTime );
+                winstonLogger.info( formatterHTTP( 'info', req, res ) );
+            } );
 
-        var requestId = req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
+            var requestId = req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
         
-        createRequest.bind( function() {
             createRequest.set( 'Request-Id', requestId );
             if( requestId === '' ) {
                 winstonLogger.error( formatterMessage( 'error', 'Request-Id not found in headers.' ) )
