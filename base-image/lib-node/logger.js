@@ -21,7 +21,6 @@ var winstonLogger = new winston.Logger({
 var getNamespace = continuation_local_storage.getNamespace;
 var createNamespace = continuation_local_storage.createNamespace;
 var createRequest = createNamespace( 'Request-Id' );
-var getRequest = getNamespace( 'Request-Id' );
 
 function logger() {
 }
@@ -89,6 +88,7 @@ function getLogLevel( logLevel ) {
 }
 
 function getRequestId() {
+    var getRequest = getNamespace( 'Request-Id' );
     return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : '';
 }
 
