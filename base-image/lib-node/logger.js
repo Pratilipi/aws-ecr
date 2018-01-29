@@ -59,13 +59,13 @@ logger.prototype.logger = function( appNameLocal ) {
 
         var requestId = req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
         
-        // createRequest.run( function() {
+        createRequest.bind( function() {
             createRequest.set( 'Request-Id', requestId );
             if( requestId === '' ) {
                 winstonLogger.error( formatterMessage( 'error', 'Request-Id not found in headers.' ) )
             }
             next();
-        // } );
+        } );
     };
 };
 
