@@ -52,7 +52,6 @@ logger.prototype.logger = function( appNameLocal ) {
 
         appName = appNameLocal;
         getRequest.run( function( context ) {
-            // getRequest.exit( context );
             req._logStartTime = process.hrtime();
             on_finished( res, function() {
                 getRequest.exit( context );
