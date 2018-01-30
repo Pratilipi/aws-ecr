@@ -21,6 +21,7 @@ var winstonLogger = new winston.Logger({
 var getNamespace = continuation_local_storage.getNamespace;
 var createNamespace = continuation_local_storage.createNamespace;
 var createRequest = createNamespace( 'Request-Id' );
+var getRequest = getNamespace( 'Request-Id' );
 
 function logger() {
 }
@@ -53,7 +54,7 @@ logger.prototype.logger = function( appNameLocal ) {
         createRequest.run( function( context ) {
             req._logStartTime = process.hrtime();
             on_finished( res, function() {
-                createRequest.exit( context );
+                getRequest.exit( context );
                 res._logEndTime = process.hrtime();
                 res._logDiffTime = process.hrtime( req._logStartTime );
                 winstonLogger.info( formatterHTTP( 'info', req, res ) );
@@ -89,7 +90,6 @@ function getLogLevel( logLevel ) {
 }
 
 function getRequestId() {
-    var getRequest = getNamespace( 'Request-Id' );
     return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : '';
 }
 
