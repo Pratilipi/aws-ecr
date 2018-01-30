@@ -54,7 +54,6 @@ logger.prototype.logger = function( appNameLocal ) {
         getRequest.run( function( context ) {
             req._logStartTime = process.hrtime();
             on_finished( res, function() {
-                getRequest.exit( context );
                 res._logEndTime = process.hrtime();
                 res._logDiffTime = process.hrtime( req._logStartTime );
                 winstonLogger.info( formatterHTTP( 'info', req, res ) );
