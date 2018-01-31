@@ -10,6 +10,8 @@
     "@google-cloud/monitoring": "~0",
     "aws-sdk": "~2",
     "bluebird": "~3",
+    "cls-bluebird": "~2",
+    "cls-hooked": "~4",
     "continuation-local-storage": "~3",
     "dateformat": "~3",
     "googleapis": "~22",
