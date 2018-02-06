@@ -21,8 +21,8 @@ var winstonLogger = new winston.Logger({
 
 var getNamespace = continuation_local_storage.getNamespace;
 var createNamespace = continuation_local_storage.createNamespace;
-var createRequest = createNamespace( 'Request-Id' );
-var getRequest = getNamespace( 'Request-Id' );
+// var createRequest = createNamespace( 'Request-Id' );
+// var getRequest = getNamespace( 'Request-Id' );
 
 function logger() {
 }
@@ -48,11 +48,11 @@ logger.prototype.error = function( message ) {
 };
 
 logger.prototype.logger = function( appNameLocal ) { 
+    var createRequest = createNamespace( 'Request-Id' );
     return function( req, res, next ) {
         // create requestId and append it in header as Request-Id...
-
         appName = appNameLocal;
-        getRequest.run( function( context ) {
+        createRequest.run( function( context ) {
             req._logStartTime = process.hrtime();
             on_finished( res, function() {
                 res._logEndTime = process.hrtime();
@@ -61,9 +61,9 @@ logger.prototype.logger = function( appNameLocal ) {
             } );
 
             var requestId = req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
-            // getRequest.bindEmitter( req );
-            // getRequest.bindEmitter( res );
-            getRequest.set( 'Request-Id', requestId );
+            // createRequest.bindEmitter( req );
+            // createRequest.bindEmitter( res );
+            createRequest.set( 'Request-Id', requestId );
             if( requestId === '' ) {
                 winstonLogger.error( formatterMessage( 'error', 'Request-Id not found in headers.' ) )
             }
@@ -90,7 +90,9 @@ function getLogLevel( logLevel ) {
 }
 
 function getRequestId() {
-    return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : '';
+    var getRequest = getNamespace( 'Request-Id' );
+    return getRequest.get( 'Request-Id' ) || '';
+    // return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : '';
 }
 
 function getRequestIdAfterFinished( req ) {
@@ -112,7 +114,7 @@ function formatterHTTP( logLevel, req, res ) {
 }
 
 function buildHTTPMessage( req, res ) {
-    return `[${ req.method }] [${ req.originalUrl || req.url }] [${ res.getHeader( 'Content-Length' ) ? res.statusCode : 504 }] [${ res.getHeader( 'Content-Length' ) }] [${ ( ( res._logEndTime[ 0 ] - req._logStartTime[ 0 ] ) * 1e3 + ( res._logEndTime[ 1 ] - req._logStartTime[ 1 ] ) * 1e-6 ).toFixed(3) }ms]`;
+    return `[${ req.method }] [${ req.originalUrl || req.url }] [${ res.getHeader( 'Content-Length' ) ? res.statusCode : 504 }] [${ res.getHeader( 'Content-Length' ) || 0 }] [${ ( ( res._logEndTime[ 0 ] - req._logStartTime[ 0 ] ) * 1e3 + ( res._logEndTime[ 1 ] - req._logStartTime[ 1 ] ) * 1e-6 ).toFixed(3) }ms]`;
 }
 
 module.exports = new logger();
