@@ -2,8 +2,8 @@ const winston = require('winston');
 const date_time = require('moment-timezone');
 const on_headers = require('on-headers');
 const on_finished = require('on-finished');
-// const continuation_local_storage = require('continuation-local-storage');
-const continuation_local_storage = require('cls-hooked');
+const continuation_local_storage = require('continuation-local-storage');
+// const continuation_local_storage = require('cls-hooked');
 var appName = undefined;
 
 const winston_config = winston.config;
@@ -61,8 +61,8 @@ logger.prototype.logger = function( appNameLocal ) {
             } );
 
             var requestId = req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
-            getRequest.bindEmitter( req );
-            getRequest.bindEmitter( res );
+            // getRequest.bindEmitter( req );
+            // getRequest.bindEmitter( res );
             getRequest.set( 'Request-Id', requestId );
             if( requestId === '' ) {
                 winstonLogger.error( formatterMessage( 'error', 'Request-Id not found in headers.' ) )
