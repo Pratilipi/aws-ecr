@@ -15,9 +15,10 @@ const commands = [
 
 function checkServiceWhitelist( appName )
 {
-  var whitelist = [ "ecs", "auth", "author", "image", "pag", "page", "recommendation", "search", "user-activity", "web", "mini", "follow", "category-datasync", "social", "pwg", "user", "library", "event", "notification", "content", "cms", "report", "init","oasis" ];
+  var whitelist = [ "ecs", "auth", "image", "pag", "page", "recommendation", "search", "user-activity", "web", "mini", "follow", "category-datasync", "social", "pwg", "user", "library", "event", "notification", "content", "cms", "report", "init","oasis" ];
   if( STAGE === "devo" ) {
     whitelist.push( "pratilipi" );
+    whitelist.push( "author" );
   }
   if( STAGE === "prod" && REALM === "product" ) {
     whitelist.push( "datastore-util" );
