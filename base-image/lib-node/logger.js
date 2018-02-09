@@ -8,7 +8,7 @@ const Promise = require('bluebird');
 const continuation_local_storage_bluebird = require('cls-bluebird');
 const Sequelize = require('sequelize');
 const redis = require('redis');
-const continuation_local_storage_bluebird_redis = require('cls-redis');
+const continuation_local_storage_redis = require('cls-redis');
 var appName = undefined;
 
 const winston_config = winston.config;
