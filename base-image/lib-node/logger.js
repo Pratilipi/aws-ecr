@@ -6,6 +6,7 @@ const on_finished = require('on-finished');
 const continuation_local_storage = require('cls-hooked');
 const Promise = require('bluebird');
 const continuation_local_storage_bluebird = require('cls-bluebird');
+var Sequelize = require('sequelize');
 var appName = undefined;
 
 const winston_config = winston.config;
@@ -52,6 +53,7 @@ logger.prototype.error = function( message ) {
 logger.prototype.logger = function( appNameLocal ) { 
     var createRequest = createNamespace( 'Request-Id' );
     continuation_local_storage_bluebird( createRequest );
+    continuation_local_storage_bluebird( Sequelize );
     return function( req, res, next ) {
         // create requestId and append it in header as Request-Id...
         appName = appNameLocal;
