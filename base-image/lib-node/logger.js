@@ -53,7 +53,7 @@ logger.prototype.error = function( message ) {
 logger.prototype.logger = function( appNameLocal ) { 
     var createRequest = createNamespace( 'Request-Id' );
     continuation_local_storage_bluebird( createRequest );
-    Sequelize.cls = createRequest;
+    Sequelize.useCLS(createRequest);
     return function( req, res, next ) {
         // create requestId and append it in header as Request-Id...
         appName = appNameLocal;
