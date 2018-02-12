@@ -4,6 +4,8 @@ var Promise = require( 'bluebird' );
 var redisModule = require( 'redis' );
 Promise.promisifyAll( redisModule.RedisClient.prototype );
 
+var logger = require( './logger.js' );
+
 function cacheUtility( config ) {
 
   // private data
@@ -13,11 +15,11 @@ function cacheUtility( config ) {
   } );
 
   redisClient.on( 'connect', () => {
-    console.log( 'CacheUtility: Redis Connected on port: ' + config.port + ' with db: ' + config.db + ' for resource:' + config.resource );
+    logger.info( 'CacheUtility: Redis Connected on port: ' + config.port + ' with db: ' + config.db + ' for resource:' + config.resource );
   } );
 
   redisClient.on( 'error', function( err ) {
-    console.log( 'CacheUtility: Error connecting to redis ' + err );
+    logger.error( 'CacheUtility: Error connecting to redis ' + err );
   } );
 
   return {

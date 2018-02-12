@@ -2,7 +2,13 @@ const winston = require('winston');
 const date_time = require('moment-timezone');
 const on_headers = require('on-headers');
 const on_finished = require('on-finished');
-const continuation_local_storage = require('continuation-local-storage');
+// const continuation_local_storage = require('continuation-local-storage');
+const continuation_local_storage = require('cls-hooked');
+const Promise = require('bluebird');
+const continuation_local_storage_bluebird = require('cls-bluebird');
+const Sequelize = require('sequelize');
+const redis = require('redis');
+const continuation_local_storage_redis = require('cls-redis');
 var appName = undefined;
 
 const winston_config = winston.config;
@@ -18,48 +24,60 @@ var winstonLogger = new winston.Logger({
 });
 
 
-const getNamespace = continuation_local_storage.getNamespace;
-const createNamespace = continuation_local_storage.createNamespace;
-const createRequest = createNamespace( 'Request-Id' );
-const getRequest = getNamespace( 'Request-Id' );
+var getNamespace = continuation_local_storage.getNamespace;
+var createNamespace = continuation_local_storage.createNamespace;
+var createRequest = createNamespace( 'Request-Id' );
+var getRequest = getNamespace( 'Request-Id' );
+continuation_local_storage_bluebird( createRequest );
+continuation_local_storage_redis( createRequest );
+Sequelize.useCLS(createRequest);
 
 function logger() {
 }
 
-logger.prototype.log = function( level, message ) {
+logger.prototype.log = function( level, ...message ) {
     // body...
-    winstonLogger.log( formatterMessage( level, message ) );
+    var combinedMessage = combineMessage( message );
+    winstonLogger.log( formatterMessage( level, combinedMessage ) );
 };
 
-logger.prototype.info = function( message ) {
+logger.prototype.info = function( ...message ) {
     // body...
-    winstonLogger.info( formatterMessage( 'info', message ) );
+    var combinedMessage = combineMessage( message );
+    winstonLogger.info( formatterMessage( 'info', combinedMessage ) );
 };
 
-logger.prototype.debug = function( message ) {
+logger.prototype.debug = function( ...message ) {
     // body...
-    winstonLogger.debug( formatterMessage( 'debug', message ) );
+    var combinedMessage = combineMessage( message );
+    winstonLogger.debug( formatterMessage( 'debug', combinedMessage ) );
 };
 
-logger.prototype.error = function( message ) {
+logger.prototype.error = function( ...message ) {
     // body...
-    winstonLogger.error( formatterMessage( 'error', message ) );
+    var combinedMessage = combineMessage( message );
+    winstonLogger.error( formatterMessage( 'error', combinedMessage ) );
 };
 
 logger.prototype.logger = function( appNameLocal ) { 
+    // var createRequest = createNamespace( 'Request-Id' );
+    // continuation_local_storage_bluebird( createRequest );
+    // continuation_local_storage_redis( createRequest );
+    // Sequelize.useCLS(createRequest);
     return function( req, res, next ) {
         // create requestId and append it in header as Request-Id...
         appName = appNameLocal;
-        req._logStartTime = process.hrtime();
-        on_finished( res, function() {
-            res._logEndTime = process.hrtime();
-            res._logDiffTime = process.hrtime( req._logStartTime );
-            winstonLogger.info( formatterHTTP( 'info', req, res ) );
-        } );
+        createRequest.run( function( context ) {
+            req._logStartTime = process.hrtime();
+            on_finished( res, function() {
+                res._logEndTime = process.hrtime();
+                res._logDiffTime = process.hrtime( req._logStartTime );
+                winstonLogger.info( formatterHTTP( 'info', req, res ) );
+            } );
 
-        var requestId = req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
-
-        createRequest.run( function() {
+            var requestId = req.get( 'Request-Id' ) || req.headers[ 'Request-Id' ] || '';
+            // createRequest.bindEmitter( req );
+            // createRequest.bindEmitter( res );
             createRequest.set( 'Request-Id', requestId );
             if( requestId === '' ) {
                 winstonLogger.error( formatterMessage( 'error', 'Request-Id not found in headers.' ) )
@@ -87,7 +105,9 @@ function getLogLevel( logLevel ) {
 }
 
 function getRequestId() {
-    return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : '';
+    // var getRequest = getNamespace( 'Request-Id' );
+    return getRequest.get( 'Request-Id' ) || '';
+    // return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : '';
 }
 
 function getRequestIdAfterFinished( req ) {
@@ -109,7 +129,11 @@ function formatterHTTP( logLevel, req, res ) {
 }
 
 function buildHTTPMessage( req, res ) {
-    return `[${ req.method }] [${ req.originalUrl || req.url }] [${ res.getHeader( 'Content-Length' ) ? res.statusCode : 504 }] [${ res.getHeader( 'Content-Length' ) }] [${ ( ( res._logEndTime[ 0 ] - req._logStartTime[ 0 ] ) * 1e3 + ( res._logEndTime[ 1 ] - req._logStartTime[ 1 ] ) * 1e-6 ).toFixed(3) }ms]`;
+    return `[${ req.method }] [${ req.originalUrl || req.url }] [${ res.getHeader( 'Content-Length' ) ? res.statusCode : 504 }] [${ res.getHeader( 'Content-Length' ) || 0 }] [${ ( ( res._logEndTime[ 0 ] - req._logStartTime[ 0 ] ) * 1e3 + ( res._logEndTime[ 1 ] - req._logStartTime[ 1 ] ) * 1e-6 ).toFixed(3) }ms]`;
+}
+
+function combineMessage( message ) {
+    return message.join( ' ' );
 }
 
 module.exports = new logger();

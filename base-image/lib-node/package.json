@@ -10,6 +10,9 @@
     "@google-cloud/monitoring": "~0",
     "aws-sdk": "~2",
     "bluebird": "~3",
+    "cls-bluebird": "~2",
+    "cls-hooked": "~4",
+    "cls-redis": "~1",
     "continuation-local-storage": "~3",
     "dateformat": "~3",
     "googleapis": "~22",
@@ -18,6 +21,7 @@
     "on-finished": "~2",
     "on-headers": "~1",
     "redis": "~2",
+    "sequelize": "~4",
     "winston": "~2"
   },
   "devDependencies": {
