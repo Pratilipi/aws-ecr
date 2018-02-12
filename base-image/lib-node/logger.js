@@ -26,8 +26,11 @@ var winstonLogger = new winston.Logger({
 
 var getNamespace = continuation_local_storage.getNamespace;
 var createNamespace = continuation_local_storage.createNamespace;
-// var createRequest = createNamespace( 'Request-Id' );
-// var getRequest = getNamespace( 'Request-Id' );
+var createRequest = createNamespace( 'Request-Id' );
+var getRequest = getNamespace( 'Request-Id' );
+continuation_local_storage_bluebird( createRequest );
+continuation_local_storage_redis( createRequest );
+Sequelize.useCLS(createRequest);
 
 function logger() {
 }
@@ -53,10 +56,10 @@ logger.prototype.error = function( message ) {
 };
 
 logger.prototype.logger = function( appNameLocal ) { 
-    var createRequest = createNamespace( 'Request-Id' );
-    continuation_local_storage_bluebird( createRequest );
-    continuation_local_storage_redis( createRequest );
-    Sequelize.useCLS(createRequest);
+    // var createRequest = createNamespace( 'Request-Id' );
+    // continuation_local_storage_bluebird( createRequest );
+    // continuation_local_storage_redis( createRequest );
+    // Sequelize.useCLS(createRequest);
     return function( req, res, next ) {
         // create requestId and append it in header as Request-Id...
         appName = appNameLocal;
@@ -98,7 +101,7 @@ function getLogLevel( logLevel ) {
 }
 
 function getRequestId() {
-    var getRequest = getNamespace( 'Request-Id' );
+    // var getRequest = getNamespace( 'Request-Id' );
     return getRequest.get( 'Request-Id' ) || '';
     // return getRequest && getRequest.get( 'Request-Id' ) ? getRequest.get( 'Request-Id' ) : '';
 }
