@@ -35,24 +35,28 @@ Sequelize.useCLS(createRequest);
 function logger() {
 }
 
-logger.prototype.log = function( level, message ) {
+logger.prototype.log = function( level, ...message ) {
     // body...
-    winstonLogger.log( formatterMessage( level, message ) );
+    var combinedMessage = combineMessage( message );
+    winstonLogger.log( formatterMessage( level, combinedMessage ) );
 };
 
-logger.prototype.info = function( message ) {
+logger.prototype.info = function( ...message ) {
     // body...
-    winstonLogger.info( formatterMessage( 'info', message ) );
+    var combinedMessage = combineMessage( message );
+    winstonLogger.info( formatterMessage( 'info', combinedMessage ) );
 };
 
-logger.prototype.debug = function( message ) {
+logger.prototype.debug = function( ...message ) {
     // body...
-    winstonLogger.debug( formatterMessage( 'debug', message ) );
+    var combinedMessage = combineMessage( message );
+    winstonLogger.debug( formatterMessage( 'debug', combinedMessage ) );
 };
 
-logger.prototype.error = function( message ) {
+logger.prototype.error = function( ...message ) {
     // body...
-    winstonLogger.error( formatterMessage( 'error', message ) );
+    var combinedMessage = combineMessage( message );
+    winstonLogger.error( formatterMessage( 'error', combinedMessage ) );
 };
 
 logger.prototype.logger = function( appNameLocal ) { 
@@ -126,6 +130,10 @@ function formatterHTTP( logLevel, req, res ) {
 
 function buildHTTPMessage( req, res ) {
     return `[${ req.method }] [${ req.originalUrl || req.url }] [${ res.getHeader( 'Content-Length' ) ? res.statusCode : 504 }] [${ res.getHeader( 'Content-Length' ) || 0 }] [${ ( ( res._logEndTime[ 0 ] - req._logStartTime[ 0 ] ) * 1e3 + ( res._logEndTime[ 1 ] - req._logStartTime[ 1 ] ) * 1e-6 ).toFixed(3) }ms]`;
+}
+
+function combineMessage( message ) {
+    return message.join( ' ' );
 }
 
 module.exports = new logger();
