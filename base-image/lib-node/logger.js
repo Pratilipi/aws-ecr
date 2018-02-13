@@ -59,6 +59,11 @@ logger.prototype.error = function( ...message ) {
     winstonLogger.error( formatterMessage( 'error', combinedMessage ) );
 };
 
+logger.prototype.getNamespace = function() {
+    // body...
+    return getRequest;
+};
+
 logger.prototype.logger = function( appNameLocal ) { 
     // var createRequest = createNamespace( 'Request-Id' );
     // continuation_local_storage_bluebird( createRequest );
