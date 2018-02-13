@@ -6,10 +6,10 @@ const on_finished = require('on-finished');
 const continuation_local_storage = require('cls-hooked');
 const Promise = require('bluebird');
 const continuation_local_storage_bluebird = require('cls-bluebird');
-const Sequelize = require('sequelize');
 const redis = require('redis');
 const continuation_local_storage_redis = require('cls-redis');
 var appName = undefined;
+var Sequelize = require('sequelize');
 
 const winston_config = winston.config;
 
@@ -67,6 +67,7 @@ logger.prototype.getNamespace = function() {
 logger.prototype.useSequelizeCls = function( serviceSequelize ) {
     // body...
     serviceSequelize.useCLS( createRequest );
+    Sequelize = serviceSequelize;
     return serviceSequelize;
 };
 
