@@ -6,10 +6,10 @@ const on_finished = require('on-finished');
 const continuation_local_storage = require('cls-hooked');
 const Promise = require('bluebird');
 const continuation_local_storage_bluebird = require('cls-bluebird');
-const Sequelize = require('sequelize');
 const redis = require('redis');
 const continuation_local_storage_redis = require('cls-redis');
 var appName = undefined;
+var Sequelize = require('sequelize');
 
 const winston_config = winston.config;
 
@@ -30,7 +30,7 @@ var createRequest = createNamespace( 'Request-Id' );
 var getRequest = getNamespace( 'Request-Id' );
 continuation_local_storage_bluebird( createRequest );
 continuation_local_storage_redis( createRequest );
-Sequelize.useCLS(createRequest);
+Sequelize.useCLS( createRequest );
 
 function logger() {
 }
@@ -57,6 +57,18 @@ logger.prototype.error = function( ...message ) {
     // body...
     var combinedMessage = combineMessage( message );
     winstonLogger.error( formatterMessage( 'error', combinedMessage ) );
+};
+
+logger.prototype.getNamespace = function() {
+    // body...
+    return getRequest;
+};
+
+logger.prototype.useSequelizeCls = function( serviceSequelize ) {
+    // body...
+    serviceSequelize.useCLS( createRequest );
+    Sequelize = serviceSequelize;
+    return serviceSequelize;
 };
 
 logger.prototype.logger = function( appNameLocal ) { 
